@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "highlight_item",
+  "version": "${version}",
+
+  "name": "Highlight Item",
+  "description": "Highlight hovered item in inventory",
+  "authors": [
+    "elmital"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": ""
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/highlight_item/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "be.elmital.highlightItem.HighlightItem"
+    ]
+  },
+  "mixins": [
+    "highlight_item.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.18.x",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
