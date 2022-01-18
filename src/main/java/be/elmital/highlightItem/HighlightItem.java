@@ -29,6 +29,24 @@ import org.apache.logging.log4j.Logger;
 public class HighlightItem implements ModInitializer {
 	public static final String MOD_ID = "highlight_item";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+	public static final float[] activeHighLightColor = HighLightColor.BLUE.getShaderColor();
+
+	public enum HighLightColor {
+		BLUE(new float[]{0.5f, 1.0f, 1.0f, 1.0f}),
+		YELLOW(new float[]{255.0f, 244.0f, 0.0f, 1.0f}),
+		RED(new float[]{255.0f, 0.0f, 0.0f, 1.0f}),
+		GREEN(new float[]{0.0f, 255.0f, 0.0f, 1.0f});
+
+		private final float[] shaderColor;
+
+		HighLightColor(float[] shaderColor) {
+			this.shaderColor = shaderColor;
+		}
+
+		public float[] getShaderColor() {
+			return shaderColor;
+		}
+	}
 
 	@Override
 	public void onInitialize() {

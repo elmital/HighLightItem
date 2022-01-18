@@ -22,6 +22,8 @@
 
 package be.elmital.highlightItem.mixin;
 
+import be.elmital.highlightItem.HighlightItem;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -62,9 +64,11 @@ public class HandledScreenMixin {
 				continue;
 
 			if(slot.isEnabled() && focusedSlot.getStack() != null && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
+				RenderSystem.setShaderColor(HighlightItem.activeHighLightColor[0], HighlightItem.activeHighLightColor[1], HighlightItem.activeHighLightColor[2], HighlightItem.activeHighLightColor[3]);
 				drawSlotHighlight(matrices, slot.x, slot.y, zOffset);
 			}
 		}
+		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 }
