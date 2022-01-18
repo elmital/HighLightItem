@@ -58,6 +58,9 @@ public class HandledScreenMixin {
 			if(focusedSlot == null)
 				break;
 
+			if(focusedSlot.equals(slot))
+				continue;
+
 			if(slot.isEnabled() && focusedSlot.getStack() != null && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
 				drawSlotHighlight(matrices, slot.x, slot.y, zOffset);
 			}
