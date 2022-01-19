@@ -26,13 +26,36 @@ import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class HighlightItem implements ModInitializer {
 	public static final String MOD_ID = "highlight_item";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+	public static Configurator configurator;
+
+	public enum HighLightColor {
+		DEFAULT(new float[]{1.0f, 1.0f, 1.0f, 1.0f}),
+		BLUE(new float[]{0.5f, 1.0f, 1.0f, 1.0f}),
+		YELLOW(new float[]{255.0f, 244.0f, 0.0f, 1.0f}),
+		RED(new float[]{255.0f, 0.0f, 0.0f, 1.0f}),
+		GREEN(new float[]{0.0f, 255.0f, 0.0f, 1.0f});
+
+		private final float[] shaderColor;
+
+		HighLightColor(float[] shaderColor) {
+			this.shaderColor = shaderColor;
+		}
+
+		public float[] getShaderColor() {
+			return shaderColor;
+		}
+	}
 
 	@Override
 	public void onInitialize() {
 		LOGGER.info("""
+    
 				-------------
 				 HighLightItem
 				 Copyright (C) 2022  elmital
@@ -42,5 +65,28 @@ public class HighlightItem implements ModInitializer {
 				 See the GNU General Public License for more details. <https://www.gnu.org/licenses/>
 				-------------
 				""");
+		try {
+			LOGGER.info("Checking for configuration file");
+			configurator = Configurator.getInstance();
+			LOGGER.info("Config file loaded!");
+
+			var com = HighLightCommands.inst();
+			LOGGER.info("Registering commands...");
+			com.register();
+			LOGGER.info("Commands registered!");
+			LOGGER.info("Registering command arguments...");
+			com.registerArgumentTypes();
+			LOGGER.info("Command arguments registered!");
+			LOGGER.info("Mod init!");
+		} catch (IOException | URISyntaxException e) {
+			LOGGER.error("Can't setup mod properly !");
+			LOGGER.throwing(e);
+		} finally {
+			LOGGER.info("""
+         
+     				-------------
+     				
+					""");
+		}
 	}
 }

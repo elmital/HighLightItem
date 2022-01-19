@@ -22,6 +22,8 @@
 
 package be.elmital.highlightItem.mixin;
 
+import be.elmital.highlightItem.Configurator;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -48,19 +50,25 @@ public class HandledScreenMixin {
 			)
 	)
 	private void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo info) {
-		ScreenHandler handler = ((HandledScreenAccessor) this).getHandler();
 		Slot focusedSlot = ((HandledScreenAccessor) this).getFocusedSlot();
 
-		int zOffset = ((HandledScreen) (Object)this).getZOffset();
+		if(focusedSlot != null && focusedSlot.getStack() != null) {
+			ScreenHandler handler = ((HandledScreenAccessor) this).getHandler();
+			int zOffset = ((HandledScreen) (Object)this).getZOffset();
 
-		for(int k = 0; k < handler.slots.size(); ++k) {
-			Slot slot = handler.slots.get(k);
-			if(focusedSlot == null)
-				break;
+			for(int k = 0; k < handler.slots.size(); ++k) {
+				Slot slot = handler.slots.get(k);
 
-			if(slot.isEnabled() && focusedSlot.getStack() != null && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
-				drawSlotHighlight(matrices, slot.x, slot.y, zOffset);
+				if(focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
+					continue;
+
+				if(slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
+					var activeHighLightColor = Configurator.HIGHLIGHT_COLOR.getShaderColor();
+					RenderSystem.setShaderColor(activeHighLightColor[0], activeHighLightColor[1], activeHighLightColor[2], activeHighLightColor[3]);
+					drawSlotHighlight(matrices, slot.x, slot.y, zOffset);
+				}
 			}
+			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 	}
 
