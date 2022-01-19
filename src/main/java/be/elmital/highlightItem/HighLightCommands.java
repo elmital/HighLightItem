@@ -23,6 +23,7 @@
 package be.elmital.highlightItem;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
@@ -58,6 +59,15 @@ public class HighLightCommands {
                                         return Command.SINGLE_SUCCESS;
                                     })
                     ))
+                    .then(literal("hoverColor")
+                            .then(argument("boolean", BoolArgumentType.bool())
+                                    .executes(context -> {
+                                        boolean bool =  BoolArgumentType.getBool(context, "boolean");
+                                        Configurator.COLOR_HOVERED = bool;
+                                        context.getSource().getServer().getPlayerManager().broadcast(Text.of(bool ? "Hovered item are now colored" : "Hovered item aren't colored"), MessageType.SYSTEM, context.getSource().getPlayer().getUuid());
+                                        return Command.SINGLE_SUCCESS;
+                                    }))
+                    )
             );
         });
     }

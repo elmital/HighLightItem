@@ -59,7 +59,7 @@ public class HandledScreenMixin {
 			for(int k = 0; k < handler.slots.size(); ++k) {
 				Slot slot = handler.slots.get(k);
 
-				if(focusedSlot.equals(slot))
+				if(focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
 					continue;
 
 				if(slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {

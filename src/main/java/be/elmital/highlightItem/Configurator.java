@@ -35,6 +35,7 @@ import static be.elmital.highlightItem.Configurator.Config.COLOR;
 public class Configurator {
     private final Path currentDirectory;
     public static HighlightItem.HighLightColor HIGHLIGHT_COLOR;
+    public static boolean COLOR_HOVERED;
     private final String CONFIG = "HighLightItemConfig";
     private final Properties properties = new Properties();
 
@@ -48,7 +49,8 @@ public class Configurator {
     }
 
     public enum Config {
-        COLOR("highlight-color", HighlightItem.HighLightColor.DEFAULT.name());
+        COLOR("highlight-color", HighlightItem.HighLightColor.DEFAULT.name()),
+        COLOR_HOVERED("color-hovered", "false");
 
         private final String key;
         private final String def;
@@ -80,6 +82,7 @@ public class Configurator {
         }
 
         HIGHLIGHT_COLOR = HighlightItem.HighLightColor.valueOf(properties.getProperty(COLOR.getKey(), COLOR.getDefault()));
+        COLOR_HOVERED = Boolean.parseBoolean(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
     }
 
     public Path getConfigDirectoryPath() {
