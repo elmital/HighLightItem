@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 public class HighlightItem implements ModInitializer {
 	public static final String MOD_ID = "highlight_item";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
-	public static final float[] activeHighLightColor = HighLightColor.BLUE.getShaderColor();
+	public static float[] activeHighLightColor = HighLightColor.BLUE.getShaderColor();
 
 	public enum HighLightColor {
 		BLUE(new float[]{0.5f, 1.0f, 1.0f, 1.0f}),
@@ -60,5 +60,13 @@ public class HighlightItem implements ModInitializer {
 				 See the GNU General Public License for more details. <https://www.gnu.org/licenses/>
 				-------------
 				""");
+		var com = HighLightCommands.inst();
+		LOGGER.info("Registering commands...");
+		com.register();
+		LOGGER.info("Commands registered!");
+		LOGGER.info("Registering command arguments...");
+		com.registerArgumentTypes();
+		LOGGER.info("Command arguments registered!");
+		LOGGER.info("Mod init!");
 	}
 }
