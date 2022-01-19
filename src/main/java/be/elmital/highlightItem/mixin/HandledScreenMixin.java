@@ -22,7 +22,7 @@
 
 package be.elmital.highlightItem.mixin;
 
-import be.elmital.highlightItem.HighlightItem;
+import be.elmital.highlightItem.Configurator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -63,7 +63,8 @@ public class HandledScreenMixin {
 					continue;
 
 				if(slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
-					RenderSystem.setShaderColor(HighlightItem.activeHighLightColor[0], HighlightItem.activeHighLightColor[1], HighlightItem.activeHighLightColor[2], HighlightItem.activeHighLightColor[3]);
+					var activeHighLightColor = Configurator.HIGHLIGHT_COLOR.getShaderColor();
+					RenderSystem.setShaderColor(activeHighLightColor[0], activeHighLightColor[1], activeHighLightColor[2], activeHighLightColor[3]);
 					drawSlotHighlight(matrices, slot.x, slot.y, zOffset);
 				}
 			}
