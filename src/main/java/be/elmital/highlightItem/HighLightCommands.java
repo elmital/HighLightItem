@@ -36,6 +36,8 @@ import java.io.IOException;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
+import be.elmital.highlightItem.HighlightItem.HighLightColor;
+
 
 public class HighLightCommands {
     public static HighLightCommands inst() {
@@ -58,7 +60,7 @@ public class HighLightCommands {
                                         }
                                         return Command.SINGLE_SUCCESS;
                                     })
-                    ))
+                            ))
                     .then(literal("hoverColor")
                             .then(argument("boolean", BoolArgumentType.bool())
                                     .executes(context -> {
