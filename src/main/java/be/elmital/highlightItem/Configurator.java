@@ -86,7 +86,7 @@ public class Configurator {
     }
 
     public Path getConfigDirectoryPath() {
-         return currentDirectory;
+        return currentDirectory;
     }
 
     public Path getConfigPath() {
