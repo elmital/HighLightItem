@@ -30,7 +30,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,7 +61,7 @@ public class HighLightColorArgumentType implements ArgumentType<HighlightItem.Hi
         try {
             return HighlightItem.HighLightColor.valueOf(colorString.toUpperCase());
         } catch (IllegalArgumentException iae) {
-            throw new SimpleCommandExceptionType(new LiteralText(iae.getMessage())).createWithContext(reader);
+            throw new SimpleCommandExceptionType(Text.of(iae.getMessage())).createWithContext(reader);
         }
     }
 
@@ -71,7 +71,7 @@ public class HighLightColorArgumentType implements ArgumentType<HighlightItem.Hi
     }
 
     private static Collection<String> generateExamples() {
-        return Arrays.stream(HighlightItem.HighLightColor.values()).map(HighlightItem.HighLightColor::name).toList();
+        return Arrays.stream(HighlightItem.HighLightColor.values()).map(highLightColor -> highLightColor.name().toLowerCase()).toList();
     }
 
     @Override
