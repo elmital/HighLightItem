@@ -71,7 +71,7 @@ public class HighLightColorArgumentType implements ArgumentType<HighlightItem.Hi
     }
 
     private static Collection<String> generateExamples() {
-        return Arrays.stream(HighlightItem.HighLightColor.values()).map(HighlightItem.HighLightColor::name).toList();
+        return Arrays.stream(HighlightItem.HighLightColor.values()).map(highLightColor -> highLightColor.name().toLowerCase()).toList();
     }
 
     @Override
