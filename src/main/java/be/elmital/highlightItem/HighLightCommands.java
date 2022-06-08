@@ -24,12 +24,14 @@ package be.elmital.highlightItem;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.minecraft.command.argument.ArgumentTypes;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
-import net.minecraft.network.MessageType;
+import net.minecraft.network.message.MessageType;
+import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 
@@ -45,7 +47,7 @@ public class HighLightCommands {
     }
 
     public void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(CommandManager.literal("highlightitem")
                     .then(literal("color")
                             .then(argument("color", HighLightColorArgumentType.color())
@@ -54,9 +56,9 @@ public class HighLightCommands {
                                         Configurator.HIGHLIGHT_COLOR = color;
                                         try {
                                             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.name());
-                                            context.getSource().getServer().getPlayerManager().broadcast(Text.of("Color changed!"), MessageType.SYSTEM, context.getSource().getPlayer().getUuid());
+                                            context.getSource().getServer().getPlayerManager().broadcast(SignedMessage.of(Text.of("Color changed!")), context.getSource().getPlayerOrThrow().asMessageSender(), MessageType.SYSTEM);
                                         } catch (IOException e) {
-                                            context.getSource().getServer().getPlayerManager().broadcast(Text.of("The config file can't be updated!"), MessageType.SYSTEM, context.getSource().getPlayer().getUuid());
+                                            context.getSource().getServer().getPlayerManager().broadcast(SignedMessage.of(Text.of("The config file can't be updated!")), context.getSource().getPlayerOrThrow().asMessageSender(), MessageType.SYSTEM);
                                         }
                                         return Command.SINGLE_SUCCESS;
                                     })
@@ -66,7 +68,7 @@ public class HighLightCommands {
                                     .executes(context -> {
                                         boolean bool =  BoolArgumentType.getBool(context, "boolean");
                                         Configurator.COLOR_HOVERED = bool;
-                                        context.getSource().getServer().getPlayerManager().broadcast(Text.of(bool ? "Hovered item are now colored" : "Hovered item aren't colored"), MessageType.SYSTEM, context.getSource().getPlayer().getUuid());
+                                        context.getSource().getServer().getPlayerManager().broadcast(SignedMessage.of(Text.of(bool ? "Hovered item are now colored" : "Hovered item aren't colored")), context.getSource().getPlayerOrThrow().asMessageSender(), MessageType.SYSTEM);
                                         return Command.SINGLE_SUCCESS;
                                     }))
                     )
@@ -75,6 +77,6 @@ public class HighLightCommands {
     }
 
     public void registerArgumentTypes() {
-        ArgumentTypes.register("highlightitem:color", HighLightColorArgumentType.class, new ConstantArgumentSerializer<>(HighLightColorArgumentType::color));
+        ArgumentTypeRegistry.registerArgumentType(new Identifier("highlightitem:color"), HighLightColorArgumentType.class, ConstantArgumentSerializer.of(HighLightColorArgumentType::color));
     }
 }
