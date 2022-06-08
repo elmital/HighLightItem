@@ -81,6 +81,12 @@ public class HighlightItem implements ModInitializer {
 		} catch (IOException | URISyntaxException e) {
 			LOGGER.error("Can't setup mod properly !");
 			LOGGER.throwing(e);
+		} finally {
+			LOGGER.info("""
+     
+					-------------
+     				
+					""");
 		}
 	}
 }
