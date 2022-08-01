@@ -27,8 +27,6 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
-import net.minecraft.network.message.MessageType;
-import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -37,8 +35,6 @@ import java.io.IOException;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
-
-import be.elmital.highlightItem.HighlightItem.HighLightColor;
 
 
 public class HighLightCommands {
@@ -56,9 +52,9 @@ public class HighLightCommands {
                                         Configurator.HIGHLIGHT_COLOR = color;
                                         try {
                                             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.name());
-                                            context.getSource().getServer().getPlayerManager().broadcast(SignedMessage.of(Text.of("Color changed!")), context.getSource().getPlayerOrThrow().asMessageSender(), MessageType.SYSTEM);
+                                            context.getSource().getPlayerOrThrow().sendMessage(Text.of("Color changed!"));
                                         } catch (IOException e) {
-                                            context.getSource().getServer().getPlayerManager().broadcast(SignedMessage.of(Text.of("The config file can't be updated!")), context.getSource().getPlayerOrThrow().asMessageSender(), MessageType.SYSTEM);
+                                            context.getSource().getPlayerOrThrow().sendMessage(Text.of("The config file can't be updated!"));
                                         }
                                         return Command.SINGLE_SUCCESS;
                                     })
@@ -68,7 +64,7 @@ public class HighLightCommands {
                                     .executes(context -> {
                                         boolean bool =  BoolArgumentType.getBool(context, "boolean");
                                         Configurator.COLOR_HOVERED = bool;
-                                        context.getSource().getServer().getPlayerManager().broadcast(SignedMessage.of(Text.of(bool ? "Hovered item are now colored" : "Hovered item aren't colored")), context.getSource().getPlayerOrThrow().asMessageSender(), MessageType.SYSTEM);
+                                        context.getSource().getPlayerOrThrow().sendMessage(Text.of(bool ? "Hovered item are now colored" : "Hovered item aren't colored"));
                                         return Command.SINGLE_SUCCESS;
                                     }))
                     )
