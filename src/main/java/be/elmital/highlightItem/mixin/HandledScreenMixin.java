@@ -54,7 +54,6 @@ public class HandledScreenMixin {
 
 		if(focusedSlot != null && focusedSlot.getStack() != null) {
 			ScreenHandler handler = ((HandledScreenAccessor) this).getHandler();
-			int zOffset = ((HandledScreen) (Object)this).getZOffset();
 
 			for(int k = 0; k < handler.slots.size(); ++k) {
 				Slot slot = handler.slots.get(k);
@@ -65,7 +64,7 @@ public class HandledScreenMixin {
 				if(slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
 					var activeHighLightColor = Configurator.HIGHLIGHT_COLOR.getShaderColor();
 					RenderSystem.setShaderColor(activeHighLightColor[0], activeHighLightColor[1], activeHighLightColor[2], activeHighLightColor[3]);
-					drawSlotHighlight(matrices, slot.x, slot.y, zOffset);
+					drawSlotHighlight(matrices, slot.x, slot.y, 0);
 				}
 			}
 			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
