@@ -65,6 +65,11 @@ public class HighLightCommands {
                                     context.getSource().getPlayer().sendMessage(Text.of(bool ? "Hovered item are now colored" : "Hovered item aren't colored"));
                                     return Command.SINGLE_SUCCESS;
                                 })))
+                .then(literal("toggle").executes(context -> {
+                    Configurator.TOGGLE = !Configurator.TOGGLE;
+                    context.getSource().getPlayer().sendMessage(Text.of("Highlighting is " + (Configurator.TOGGLE ? "activated!" : "deactivated!")));
+                    return Command.SINGLE_SUCCESS;
+                }))
         ));
     }
 

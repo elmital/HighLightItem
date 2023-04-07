@@ -33,6 +33,7 @@ import java.util.Properties;
 import static be.elmital.highlightItem.Configurator.Config.COLOR;
 
 public class Configurator {
+    public static boolean TOGGLE = true;
     private final Path currentDirectory;
     public static HighlightItem.HighLightColor HIGHLIGHT_COLOR;
     public static boolean COLOR_HOVERED;

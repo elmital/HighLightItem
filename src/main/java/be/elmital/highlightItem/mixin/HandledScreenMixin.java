@@ -50,24 +50,26 @@ public class HandledScreenMixin {
 			)
 	)
 	private void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo info) {
-		Slot focusedSlot = ((HandledScreenAccessor) this).getFocusedSlot();
+		if (Configurator.TOGGLE) {
+			Slot focusedSlot = ((HandledScreenAccessor) this).getFocusedSlot();
 
-		if(focusedSlot != null && focusedSlot.getStack() != null) {
-			ScreenHandler handler = ((HandledScreenAccessor) this).getHandler();
+			if(focusedSlot != null && focusedSlot.getStack() != null) {
+				ScreenHandler handler = ((HandledScreenAccessor) this).getHandler();
 
-			for(int k = 0; k < handler.slots.size(); ++k) {
-				Slot slot = handler.slots.get(k);
+				for(int k = 0; k < handler.slots.size(); ++k) {
+					Slot slot = handler.slots.get(k);
 
-				if(focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
-					continue;
+					if(focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
+						continue;
 
-				if(slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
-					var activeHighLightColor = Configurator.HIGHLIGHT_COLOR.getShaderColor();
-					RenderSystem.setShaderColor(activeHighLightColor[0], activeHighLightColor[1], activeHighLightColor[2], activeHighLightColor[3]);
-					drawSlotHighlight(matrices, slot.x, slot.y, 0);
+					if(slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
+						var activeHighLightColor = Configurator.HIGHLIGHT_COLOR.getShaderColor();
+						RenderSystem.setShaderColor(activeHighLightColor[0], activeHighLightColor[1], activeHighLightColor[2], activeHighLightColor[3]);
+						drawSlotHighlight(matrices, slot.x, slot.y, 0);
+					}
 				}
+				RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 			}
-			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 	}
 
