@@ -24,17 +24,16 @@ package be.elmital.highlightItem;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 
 public class HighLightCommands {
@@ -43,33 +42,30 @@ public class HighLightCommands {
     }
 
     public void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(CommandManager.literal("highlightitem")
-                    .then(literal("color")
-                            .then(argument("color", HighLightColorArgumentType.color())
-                                    .executes(context -> {
-                                        var color = HighLightColorArgumentType.getColor("color", context);
-                                        Configurator.HIGHLIGHT_COLOR = color;
-                                        try {
-                                            HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.name());
-                                            context.getSource().getPlayerOrThrow().sendMessage(Text.of("Color changed!"));
-                                        } catch (IOException e) {
-                                            context.getSource().getPlayerOrThrow().sendMessage(Text.of("The config file can't be updated!"));
-                                        }
-                                        return Command.SINGLE_SUCCESS;
-                                    })
-                            ))
-                    .then(literal("hoverColor")
-                            .then(argument("boolean", BoolArgumentType.bool())
-                                    .executes(context -> {
-                                        boolean bool =  BoolArgumentType.getBool(context, "boolean");
-                                        Configurator.COLOR_HOVERED = bool;
-                                        context.getSource().getPlayerOrThrow().sendMessage(Text.of(bool ? "Hovered item are now colored" : "Hovered item aren't colored"));
-                                        return Command.SINGLE_SUCCESS;
-                                    }))
-                    )
-            );
-        });
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, environment) -> dispatcher.register(literal("highlightitem")
+                .then(literal("color")
+                        .then(argument("color", HighLightColorArgumentType.color())
+                                .executes(context -> {
+                                    var color = HighLightColorArgumentType.getColor("color", context);
+                                    Configurator.HIGHLIGHT_COLOR = color;
+                                    try {
+                                        HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.name());
+                                        context.getSource().getPlayer().sendMessage(Text.of("Color changed!"));
+                                    } catch (IOException e) {
+                                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
+                                    }
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        ))
+                .then(literal("hoverColor")
+                        .then(argument("boolean", BoolArgumentType.bool())
+                                .executes(context -> {
+                                    boolean bool =  BoolArgumentType.getBool(context, "boolean");
+                                    Configurator.COLOR_HOVERED = bool;
+                                    context.getSource().getPlayer().sendMessage(Text.of(bool ? "Hovered item are now colored" : "Hovered item aren't colored"));
+                                    return Command.SINGLE_SUCCESS;
+                                })))
+        ));
     }
 
     public void registerArgumentTypes() {
