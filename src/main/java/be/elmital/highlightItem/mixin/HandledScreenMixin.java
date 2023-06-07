@@ -26,8 +26,8 @@ import be.elmital.highlightItem.Configurator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,26 +46,26 @@ public class HandledScreenMixin {
 			method = "render",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawForeground(Lnet/minecraft/client/util/math/MatrixStack;II)V"
+					target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawForeground(Lnet/minecraft/client/gui/DrawContext;II)V"
 			)
 	)
-	private void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo info) {
+	private void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo info) {
 		if (Configurator.TOGGLE) {
 			Slot focusedSlot = ((HandledScreenAccessor) this).getFocusedSlot();
 
-			if(focusedSlot != null && focusedSlot.getStack() != null) {
+			if (focusedSlot != null && focusedSlot.getStack() != null) {
 				ScreenHandler handler = ((HandledScreenAccessor) this).getHandler();
 
-				for(int k = 0; k < handler.slots.size(); ++k) {
+				for (int k = 0; k < handler.slots.size(); ++k) {
 					Slot slot = handler.slots.get(k);
 
-					if(focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
+					if (focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
 						continue;
 
-					if(slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
+					if (slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
 						var activeHighLightColor = Configurator.HIGHLIGHT_COLOR.getShaderColor();
 						RenderSystem.setShaderColor(activeHighLightColor[0], activeHighLightColor[1], activeHighLightColor[2], activeHighLightColor[3]);
-						drawSlotHighlight(matrices, slot.x, slot.y, 0);
+						drawSlotHighlight(context, slot.x, slot.y, 0);
 					}
 				}
 				RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
