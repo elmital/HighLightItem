@@ -9,11 +9,11 @@
     "elmital"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": ""
+    "homepage": "https://modrinth.com/mod/highlightitem",
+    "sources": "https://github.com/elmital/HighLightItem"
   },
 
-  "license": "CC0-1.0",
+  "license": "GPL-3.0",
   "icon": "assets/highlight_item/icon.png",
 
   "environment": "*",
