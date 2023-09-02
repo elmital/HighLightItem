@@ -78,11 +78,24 @@ public class HighLightCommands {
                         context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
                     }
                     return Command.SINGLE_SUCCESS;
-                }))
+                })).then(literal("mode")
+                        .then(argument("mode", ItemComparator.ComparatorArgumentType.comparator())
+                                .executes(context -> {
+                                    var mode = ItemComparator.ComparatorArgumentType.getComparator("mode", context);
+                                    Configurator.COMPARATOR = mode;
+                                    try {
+                                        HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
+                                        context.getSource().getPlayer().sendMessage(Text.of("Mode changed!"));
+                                    } catch (IOException e) {
+                                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
+                                    }
+                                    return Command.SINGLE_SUCCESS;
+                                })))
         ));
     }
 
     public void registerArgumentTypes() {
         ArgumentTypeRegistry.registerArgumentType(new Identifier("highlightitem:color"), HighLightColorArgumentType.class, ConstantArgumentSerializer.of(HighLightColorArgumentType::color));
+        ArgumentTypeRegistry.registerArgumentType(new Identifier("highlightitem:mode"), ItemComparator.ComparatorArgumentType.class, ConstantArgumentSerializer.of(ItemComparator.ComparatorArgumentType::comparator));
     }
 }
