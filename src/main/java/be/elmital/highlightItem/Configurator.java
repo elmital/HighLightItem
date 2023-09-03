@@ -22,6 +22,7 @@
 
 package be.elmital.highlightItem;
 
+import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
@@ -30,12 +31,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-import static be.elmital.highlightItem.Configurator.Config.COLOR;
 
 public class Configurator {
     public static boolean TOGGLE;
     private final Path currentDirectory;
-    public static HighlightItem.HighLightColor HIGHLIGHT_COLOR;
+    public static float[] COLOR;
     public static boolean COLOR_HOVERED;
     public static ItemComparator.Comparators COMPARATOR;
     private final String CONFIG = "HighLightItemConfig";
@@ -51,7 +51,7 @@ public class Configurator {
     }
 
     public enum Config {
-        COLOR("highlight-color", HighlightItem.HighLightColor.DEFAULT.name()),
+        COLOR("color", Colors.HighLightColor.DEFAULT.json().toString()),
         COLOR_HOVERED("color-hovered", "false"),
         TOGGLE("toggle", "true"),
         COMPARATOR("comparator", ItemComparator.Comparators.ITEM_ONLY.name());
@@ -73,7 +73,7 @@ public class Configurator {
     }
 
     public void loadOrGenerateConfig() throws IOException, IllegalArgumentException {
-        if(Files.exists(getConfigPath())) {
+        if (Files.exists(getConfigPath())) {
             InputStream input = new FileInputStream(getConfigPath().toString());
             properties.load(input);
         } else {
@@ -86,7 +86,20 @@ public class Configurator {
         }
 
         TOGGLE = Boolean.parseBoolean(properties.getProperty(Config.TOGGLE.getKey(), Config.TOGGLE.getDefault()));
-        HIGHLIGHT_COLOR = HighlightItem.HighLightColor.valueOf(properties.getProperty(COLOR.getKey(), COLOR.getDefault()));
+
+        if (properties.containsKey("color")) {
+            var jsonColor = JsonParser.parseString(properties.getProperty(Config.COLOR.getKey())).getAsJsonObject();
+            if (jsonColor.has("default"))
+                COLOR = Colors.HighLightColor.fromJson(jsonColor).getShaderColor();
+            else
+                COLOR = Colors.customFromJson(jsonColor);
+        } else {
+            var highlightColor = Colors.HighLightColor.valueOf(properties.getProperty("highlight-color", Colors.HighLightColor.DEFAULT.name()));
+            COLOR = highlightColor.getShaderColor();
+            removeFromConfig("highlight-color"); // Color system is changed
+            updateConfig(Config.COLOR, highlightColor.json().toString());
+        }
+
         COLOR_HOVERED = Boolean.parseBoolean(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
         COMPARATOR = ItemComparator.Comparators.valueOf(properties.getProperty(Config.COMPARATOR.getKey(), Config.COMPARATOR.getDefault()));
     }
@@ -102,6 +115,12 @@ public class Configurator {
     public void updateConfig(Config config, String value) throws IOException {
         var stream = new FileOutputStream(getConfigPath().toString());
         properties.setProperty(config.getKey(), value);
+        properties.store(stream, null);
+    }
+
+    public void removeFromConfig(String key) throws IOException {
+        var stream = new FileOutputStream(getConfigPath().toString());
+        properties.remove(key);
         properties.store(stream, null);
     }
 }
