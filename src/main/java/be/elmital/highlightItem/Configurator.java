@@ -24,6 +24,10 @@ package be.elmital.highlightItem;
 
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -34,10 +38,13 @@ import java.util.Properties;
 
 public class Configurator {
     public static boolean TOGGLE;
+    public static KeyBinding TOGGLE_BIND;
     private final Path currentDirectory;
     public static float[] COLOR;
     public static boolean COLOR_HOVERED;
+    public static KeyBinding COLOR_HOVERED_BIND;
     public static ItemComparator.Comparators COMPARATOR;
+    public static KeyBinding COMPARATOR_BIND;
     private final String CONFIG = "HighLightItemConfig";
     private final Properties properties = new Properties();
 
@@ -122,5 +129,35 @@ public class Configurator {
         var stream = new FileOutputStream(getConfigPath().toString());
         properties.remove(key);
         properties.store(stream, null);
+    }
+
+    public void updateToggle(ClientPlayerEntity player) {
+        Configurator.TOGGLE = !Configurator.TOGGLE;
+        try {
+            HighlightItem.configurator.updateConfig(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE);
+            player.sendMessage(Configurator.TOGGLE ? Text.literal( "Highlighting is activated!").formatted(Formatting.GRAY) : Text.literal("Highlighting is deactivated!").formatted(Formatting.DARK_GRAY));
+        } catch (IOException e) {
+            player.sendMessage(Text.literal("The config file can't be updated!").formatted(Formatting.RED));
+        }
+    }
+
+    public void updateColorHovered(boolean hovered, ClientPlayerEntity player) {
+        Configurator.COLOR_HOVERED = hovered;
+        try {
+            HighlightItem.configurator.updateConfig(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED);
+            player.sendMessage(Configurator.COLOR_HOVERED ? Text.literal( "Hovered item is now colored").formatted(Formatting.GRAY) : Text.literal("Hovered item isn't colored").formatted(Formatting.DARK_GRAY));
+        } catch (IOException e) {
+            player.sendMessage(Text.literal("The config file can't be updated!").formatted(Formatting.RED));
+        }
+    }
+
+    public void updateMode(ItemComparator.Comparators mode, ClientPlayerEntity player) {
+        Configurator.COMPARATOR = mode;
+        try {
+            HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
+            player.sendMessage(Text.literal("Mode changed to " + mode.name()).formatted(Formatting.GRAY));
+        } catch (IOException e) {
+            player.sendMessage(Text.literal("The config file can't be updated!").formatted(Formatting.RED));
+        }
     }
 }

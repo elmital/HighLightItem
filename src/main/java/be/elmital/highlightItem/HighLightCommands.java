@@ -80,35 +80,16 @@ public class HighLightCommands {
                 .then(literal("hoverColor")
                         .then(argument("boolean", BoolArgumentType.bool())
                                 .executes(context -> {
-                                    Configurator.COLOR_HOVERED = BoolArgumentType.getBool(context, "boolean");
-                                    try {
-                                        HighlightItem.configurator.updateConfig(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED);
-                                        context.getSource().getPlayer().sendMessage(Text.of(Configurator.COLOR_HOVERED ? "Hovered item are now colored" : "Hovered item aren't colored"));
-                                    } catch (IOException e) {
-                                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
-                                    }
+                                    HighlightItem.configurator.updateColorHovered(BoolArgumentType.getBool(context, "boolean"), context.getSource().getPlayer());
                                     return Command.SINGLE_SUCCESS;
                                 })))
                 .then(literal("toggle").executes(context -> {
-                    Configurator.TOGGLE = !Configurator.TOGGLE;
-                    try {
-                        HighlightItem.configurator.updateConfig(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE);
-                        context.getSource().getPlayer().sendMessage(Text.of("Highlighting is " + (Configurator.TOGGLE ? "activated!" : "deactivated!")));
-                    } catch (IOException e) {
-                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
-                    }
+                    HighlightItem.configurator.updateToggle(context.getSource().getPlayer());
                     return Command.SINGLE_SUCCESS;
                 })).then(literal("mode")
                         .then(argument("mode", ItemComparator.ComparatorArgumentType.comparator())
                                 .executes(context -> {
-                                    var mode = ItemComparator.ComparatorArgumentType.getComparator("mode", context);
-                                    Configurator.COMPARATOR = mode;
-                                    try {
-                                        HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
-                                        context.getSource().getPlayer().sendMessage(Text.of("Mode changed!"));
-                                    } catch (IOException e) {
-                                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
-                                    }
+                                    HighlightItem.configurator.updateMode(ItemComparator.ComparatorArgumentType.getComparator("mode", context), context.getSource().getPlayer());
                                     return Command.SINGLE_SUCCESS;
                                 })))
         ));
