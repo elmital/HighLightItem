@@ -135,9 +135,9 @@ public class Configurator {
         Configurator.TOGGLE = !Configurator.TOGGLE;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE);
-            player.sendMessage(Configurator.TOGGLE ? Text.literal( "Highlighting is activated!").formatted(Formatting.GRAY) : Text.literal("Highlighting is deactivated!").formatted(Formatting.DARK_GRAY));
+            player.sendMessage(Configurator.TOGGLE ? Text.translatable( "notification.highlightitem.highlighting.update").append(Text.literal(" ")).append(Text.translatable("notification.highlightitem.activate")).formatted(Formatting.GRAY) : Text.translatable( "notification.highlightitem.highlighting.update").append(Text.literal(" ")).append(Text.translatable("notification.highlightitem.deactivate")).formatted(Formatting.DARK_GRAY));
         } catch (IOException e) {
-            player.sendMessage(Text.literal("The config file can't be updated!").formatted(Formatting.RED));
+            player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
         }
     }
 
@@ -145,9 +145,9 @@ public class Configurator {
         Configurator.COLOR_HOVERED = hovered;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED);
-            player.sendMessage(Configurator.COLOR_HOVERED ? Text.literal( "Hovered item is now colored").formatted(Formatting.GRAY) : Text.literal("Hovered item isn't colored").formatted(Formatting.DARK_GRAY));
+            player.sendMessage(Configurator.COLOR_HOVERED ? Text.translatable( "notification.highlightitem.color_hovered_activated").formatted(Formatting.GRAY) : Text.translatable("notification.highlightitem.color_hovered_deactivated").formatted(Formatting.DARK_GRAY));
         } catch (IOException e) {
-            player.sendMessage(Text.literal("The config file can't be updated!").formatted(Formatting.RED));
+            player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
         }
     }
 
@@ -155,9 +155,9 @@ public class Configurator {
         Configurator.COMPARATOR = mode;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
-            player.sendMessage(Text.literal("Mode changed to " + mode.name()).formatted(Formatting.GRAY));
+            player.sendMessage(Text.translatable("notification.highlightitem.toggle", mode.name()).formatted(Formatting.GRAY));
         } catch (IOException e) {
-            player.sendMessage(Text.literal("The config file can't be updated!").formatted(Formatting.RED));
+            player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
         }
     }
 }

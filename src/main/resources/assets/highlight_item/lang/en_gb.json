@@ -1,0 +1,12 @@
+{
+  "notification.highlightitem.config.update.fail" : "The config file can't be updated!",
+  "notification.highlightitem.highlighting.update" : "Highlighting is now",
+  "notification.highlightitem.activate" : "activated",
+  "notification.highlightitem.deactivate" : "deactivated",
+  "notification.highlightitem.color_hovered_activated" : "Hovered item is now colored",
+  "notification.highlightitem.color_hovered_deactivated" : "Hovered item is no more colored",
+  "notification.highlightitem.toggle" : "Mode changed to %s",
+  "key.highlightitem.toggle" : "Toggle activation",
+  "key.highlightitem.color_hover" : "Color hovered item",
+  "key.highlightitem.comparator" : "Switch comparator modes"
+}
