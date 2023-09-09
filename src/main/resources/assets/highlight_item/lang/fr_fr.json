@@ -6,7 +6,14 @@
   "notification.highlightitem.color_hovered_activated" : "L'item survolé est désormais coloré",
   "notification.highlightitem.color_hovered_deactivated" : "L'item survolé n'est plus coloré",
   "notification.highlightitem.toggle" : "Mode de comparaison modifié en %s",
+  "notification.highlightitem.color" : "Couleur modifiée!",
+  "notification.highlightitem.title" : "Configuration couleur",
+  "key.highlightitem.color_menu" : "Configuration couleur",
   "key.highlightitem.toggle" : "Activer/Désactiver",
   "key.highlightitem.color_hover" : "Colorer l'item survolé",
-  "key.highlightitem.comparator" : "Changer mode de comparaison"
+  "key.highlightitem.comparator" : "Changer mode de comparaison",
+  "options.highlightitem.color.alpha" : "Transparence",
+  "options.highlightitem.color.red" : "Rouge",
+  "options.highlightitem.color.green" : "Vert",
+  "options.highlightitem.color.blue" : "Bleu"
 }

@@ -28,6 +28,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -41,6 +42,8 @@ public class Configurator {
     public static KeyBinding TOGGLE_BIND;
     private final Path currentDirectory;
     public static float[] COLOR;
+
+    public static KeyBinding COLOR_MENU;
     public static boolean COLOR_HOVERED;
     public static KeyBinding COLOR_HOVERED_BIND;
     public static ItemComparator.Comparators COMPARATOR;
@@ -159,5 +162,16 @@ public class Configurator {
         } catch (IOException e) {
             player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
         }
+    }
+
+    public void updateColor(float[] rgba, @Nullable ClientPlayerEntity player) {
+        Configurator.COLOR = rgba;
+        try {
+            HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, Colors.customToJson(Configurator.COLOR).toString());
+            if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.color").formatted(Formatting.GRAY));
+        } catch (IOException e) {
+            if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
+        }
+
     }
 }

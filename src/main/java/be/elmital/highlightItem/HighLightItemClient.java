@@ -13,6 +13,7 @@ public class HighLightItemClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Configurator.TOGGLE_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_H, "HighLightItem"));
+        Configurator.COLOR_MENU = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.color_menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_B, "HighLightItem"));
         Configurator.COLOR_HOVERED_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.color_hover", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, "HighLightItem"));
         Configurator.COMPARATOR_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.comparator", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V, "HighLightItem"));
 
@@ -20,6 +21,10 @@ public class HighLightItemClient implements ClientModInitializer {
             assert client.player != null;
             if (Configurator.TOGGLE_BIND.wasPressed()) {
                 HighlightItem.configurator.updateToggle(client.player);
+            }
+
+            if (Configurator.COLOR_MENU.wasPressed()) {
+                client.setScreen(new ConfigurationScreen(client.options));
             }
 
             if (Configurator.COLOR_HOVERED_BIND.wasPressed()) {

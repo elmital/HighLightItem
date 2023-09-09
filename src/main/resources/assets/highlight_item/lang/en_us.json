@@ -6,7 +6,14 @@
   "notification.highlightitem.color_hovered_activated" : "Hovered item is now colored",
   "notification.highlightitem.color_hovered_deactivated" : "Hovered item is no more colored",
   "notification.highlightitem.toggle" : "Mode changed to %s",
+  "notification.highlightitem.color" : "Color modified!",
+  "notification.highlightitem.title" : "Configure color",
+  "key.highlightitem.color_menu" : "Color configuration",
   "key.highlightitem.toggle" : "Toggle activation",
   "key.highlightitem.color_hover" : "Color hovered item",
-  "key.highlightitem.comparator" : "Switch comparator modes"
+  "key.highlightitem.comparator" : "Switch comparator modes",
+  "options.highlightitem.color.alpha" : "Transparency",
+  "options.highlightitem.color.red" : "Red",
+  "options.highlightitem.color.green" : "Green",
+  "options.highlightitem.color.blue" : "Blue"
 }

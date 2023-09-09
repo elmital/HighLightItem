@@ -49,16 +49,10 @@ public class HighLightCommands {
                         .then(literal("custom")
                                 .then(argument("red", IntegerArgumentType.integer(0, 255)).then(argument("green", IntegerArgumentType.integer(0, 255)).then(argument("blue", IntegerArgumentType.integer(0, 255)).then(argument("alpha", FloatArgumentType.floatArg(0.0f, 1.0f))
                                         .executes(context -> {
-                                            try {
-                                                Configurator.COLOR = new float[]{context.getArgument("red", int.class) / 255.0f,
+                                            HighlightItem.configurator.updateColor(new float[]{context.getArgument("red", int.class) / 255.0f,
                                                         context.getArgument("green", int.class) / 255.0f,
                                                         context.getArgument("blue", int.class) / 255.0f,
-                                                        context.getArgument("alpha", float.class)};
-                                                HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, Colors.customToJson(Configurator.COLOR).toString());
-                                                context.getSource().getPlayer().sendMessage(Text.of("Color changed!"));
-                                            } catch (IOException e) {
-                                                context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
-                                            }
+                                                        context.getArgument("alpha", float.class)}, context.getSource().getPlayer());
 
                                             return Command.SINGLE_SUCCESS;
                                         }))))
