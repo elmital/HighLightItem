@@ -23,19 +23,20 @@
 package be.elmital.highlightItem.mixin;
 
 import be.elmital.highlightItem.Configurator;
-import com.mojang.blaze3d.systems.RenderSystem;
+import be.elmital.highlightItem.ItemComparator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import static net.minecraft.client.gui.screen.ingame.HandledScreen.drawSlotHighlight;
 
 
 @Environment(EnvType.CLIENT)
@@ -62,13 +63,16 @@ public class HandledScreenMixin {
 					if (focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
 						continue;
 
-					if (slot.isEnabled() && !slot.getStack().isEmpty() && slot.getStack().getItem().equals(focusedSlot.getStack().getItem())) {
-						var activeHighLightColor = Configurator.HIGHLIGHT_COLOR.getShaderColor();
-						RenderSystem.setShaderColor(activeHighLightColor[0], activeHighLightColor[1], activeHighLightColor[2], activeHighLightColor[3]);
-						drawSlotHighlight(context, slot.x, slot.y, 0);
+					if (slot.isEnabled() && !slot.getStack().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, focusedSlot.getStack(), slot.getStack())) {
+						Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
+						VertexConsumer vertexConsumer = context.getVertexConsumers().getBuffer(RenderLayer.getGuiOverlay());
+						vertexConsumer.vertex(matrix4f, (float)slot.x, (float)slot.y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						vertexConsumer.vertex(matrix4f, (float)slot.x, (float)slot.y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						vertexConsumer.vertex(matrix4f, (float)slot.x + 16, (float)slot.y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						vertexConsumer.vertex(matrix4f, (float)slot.x + 16, (float)slot.y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						context.draw();
 					}
 				}
-				RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 			}
 		}
 	}

@@ -24,6 +24,8 @@ package be.elmital.highlightItem;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
@@ -44,12 +46,24 @@ public class HighLightCommands {
     public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, environment) -> dispatcher.register(literal("highlightitem")
                 .then(literal("color")
-                        .then(argument("color", HighLightColorArgumentType.color())
+                        .then(literal("custom")
+                                .then(argument("red", IntegerArgumentType.integer(0, 255)).then(argument("green", IntegerArgumentType.integer(0, 255)).then(argument("blue", IntegerArgumentType.integer(0, 255)).then(argument("alpha", FloatArgumentType.floatArg(0.0f, 1.0f))
+                                        .executes(context -> {
+                                            HighlightItem.configurator.updateColor(new float[]{context.getArgument("red", int.class) / 255.0f,
+                                                        context.getArgument("green", int.class) / 255.0f,
+                                                        context.getArgument("blue", int.class) / 255.0f,
+                                                        context.getArgument("alpha", float.class)}, context.getSource().getPlayer());
+
+                                            return Command.SINGLE_SUCCESS;
+                                        }))))
+                                )
+                        )
+                        .then(argument("color", Colors.HighLightColorArgumentType.color())
                                 .executes(context -> {
-                                    var color = HighLightColorArgumentType.getColor("color", context);
-                                    Configurator.HIGHLIGHT_COLOR = color;
+                                    var color = Colors.HighLightColorArgumentType.getColor("color", context);
+                                    Configurator.COLOR = color.getShaderColor();
                                     try {
-                                        HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.name());
+                                        HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.json().toString());
                                         context.getSource().getPlayer().sendMessage(Text.of("Color changed!"));
                                     } catch (IOException e) {
                                         context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
@@ -60,29 +74,23 @@ public class HighLightCommands {
                 .then(literal("hoverColor")
                         .then(argument("boolean", BoolArgumentType.bool())
                                 .executes(context -> {
-                                    Configurator.COLOR_HOVERED = BoolArgumentType.getBool(context, "boolean");
-                                    try {
-                                        HighlightItem.configurator.updateConfig(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED);
-                                        context.getSource().getPlayer().sendMessage(Text.of(Configurator.COLOR_HOVERED ? "Hovered item are now colored" : "Hovered item aren't colored"));
-                                    } catch (IOException e) {
-                                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
-                                    }
+                                    HighlightItem.configurator.updateColorHovered(BoolArgumentType.getBool(context, "boolean"), context.getSource().getPlayer());
                                     return Command.SINGLE_SUCCESS;
                                 })))
                 .then(literal("toggle").executes(context -> {
-                    Configurator.TOGGLE = !Configurator.TOGGLE;
-                    try {
-                        HighlightItem.configurator.updateConfig(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE);
-                        context.getSource().getPlayer().sendMessage(Text.of("Highlighting is " + (Configurator.TOGGLE ? "activated!" : "deactivated!")));
-                    } catch (IOException e) {
-                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
-                    }
+                    HighlightItem.configurator.updateToggle(context.getSource().getPlayer());
                     return Command.SINGLE_SUCCESS;
-                }))
+                })).then(literal("mode")
+                        .then(argument("mode", ItemComparator.ComparatorArgumentType.comparator())
+                                .executes(context -> {
+                                    HighlightItem.configurator.updateMode(ItemComparator.ComparatorArgumentType.getComparator("mode", context), context.getSource().getPlayer());
+                                    return Command.SINGLE_SUCCESS;
+                                })))
         ));
     }
 
     public void registerArgumentTypes() {
-        ArgumentTypeRegistry.registerArgumentType(new Identifier("highlightitem:color"), HighLightColorArgumentType.class, ConstantArgumentSerializer.of(HighLightColorArgumentType::color));
+        ArgumentTypeRegistry.registerArgumentType(new Identifier("highlightitem:color"), Colors.HighLightColorArgumentType.class, ConstantArgumentSerializer.of(Colors.HighLightColorArgumentType::color));
+        ArgumentTypeRegistry.registerArgumentType(new Identifier("highlightitem:mode"), ItemComparator.ComparatorArgumentType.class, ConstantArgumentSerializer.of(ItemComparator.ComparatorArgumentType::comparator));
     }
 }
