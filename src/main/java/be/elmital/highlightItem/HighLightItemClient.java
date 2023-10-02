@@ -54,16 +54,7 @@ public class HighLightItemClient implements ClientModInitializer {
             }
 
             if (Configurator.COMPARATOR_BIND.wasPressed()) {
-                if (Configurator.COMPARATOR.ordinal() == ItemComparator.Comparators.values().length - 1) {
-                    HighlightItem.configurator.updateMode(ItemComparator.Comparators.ITEM_ONLY, client.player);
-                } else {
-                    for (ItemComparator.Comparators mode : ItemComparator.Comparators.values()) {
-                        if (mode.ordinal() == Math.min(Configurator.COMPARATOR.ordinal() + 1, ItemComparator.Comparators.values().length - 1)) {
-                            HighlightItem.configurator.updateMode(mode, client.player);
-                            break;
-                        }
-                    }
-                }
+                HighlightItem.configurator.changeMode(client.player);
             }
         });
     }

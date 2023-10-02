@@ -154,6 +154,19 @@ public class Configurator {
         }
     }
 
+    public void changeMode(ClientPlayerEntity player) {
+        if (Configurator.COMPARATOR.ordinal() == ItemComparator.Comparators.values().length - 1) {
+            HighlightItem.configurator.updateMode(ItemComparator.Comparators.ITEM_ONLY, player);
+        } else {
+            for (ItemComparator.Comparators mode : ItemComparator.Comparators.values()) {
+                if (mode.ordinal() == Math.min(Configurator.COMPARATOR.ordinal() + 1, ItemComparator.Comparators.values().length - 1)) {
+                    HighlightItem.configurator.updateMode(mode, player);
+                    break;
+                }
+            }
+        }
+    }
+
     public void updateMode(ItemComparator.Comparators mode, ClientPlayerEntity player) {
         Configurator.COMPARATOR = mode;
         try {

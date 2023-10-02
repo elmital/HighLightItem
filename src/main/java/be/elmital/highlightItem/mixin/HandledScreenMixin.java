@@ -23,6 +23,7 @@
 package be.elmital.highlightItem.mixin;
 
 import be.elmital.highlightItem.Configurator;
+import be.elmital.highlightItem.HighlightItem;
 import be.elmital.highlightItem.ItemComparator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -37,6 +38,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
 @Environment(EnvType.CLIENT)
@@ -74,6 +76,31 @@ public class HandledScreenMixin {
 					}
 				}
 			}
+		}
+	}
+
+	@Inject(
+			method = "keyPressed(III)Z",
+			at = @At("RETURN")
+	)
+	private boolean keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
+		assert HighlightItem.CLIENT.player != null;
+		if (Configurator.TOGGLE_BIND.matchesKey(keyCode, scanCode)) {
+            HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player);
+			return true;
+		}
+
+		if (!Configurator.TOGGLE)
+			return info.getReturnValue();
+
+		if (Configurator.COLOR_HOVERED_BIND.matchesKey(keyCode, scanCode)) {
+			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, HighlightItem.CLIENT.player);
+			return true;
+		} else if (Configurator.COMPARATOR_BIND.matchesKey(keyCode, scanCode)) {
+			HighlightItem.configurator.changeMode(HighlightItem.CLIENT.player);
+			return true;
+		} else {
+			return info.getReturnValue();
 		}
 	}
 

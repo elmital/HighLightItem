@@ -23,6 +23,8 @@
 package be.elmital.highlightItem;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,6 +33,7 @@ import java.net.URISyntaxException;
 
 public class HighlightItem implements ModInitializer {
 	public static final String MOD_ID = "highlight_item";
+	public static MinecraftClient CLIENT;
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 	public static Configurator configurator;
 
@@ -59,6 +62,9 @@ public class HighlightItem implements ModInitializer {
 			LOGGER.info("Registering command arguments...");
 			com.registerArgumentTypes();
 			LOGGER.info("Command arguments registered!");
+			LOGGER.info("Registering events...");
+			ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> HighlightItem.CLIENT = client);
+			LOGGER.info("Events registered!");
 			LOGGER.info("Mod init!");
 		} catch (IOException | URISyntaxException e) {
 			LOGGER.error("Can't setup mod properly !");
