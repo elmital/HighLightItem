@@ -77,6 +77,8 @@ public class HandledScreenMixin {
 				}
 			}
 		}
+		if (Configurator.notificationTicks > 0 && Configurator.notification != null)
+			context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 2, 0);
 	}
 
 	@Inject(
@@ -86,7 +88,7 @@ public class HandledScreenMixin {
 	private boolean keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
 		assert HighlightItem.CLIENT.player != null;
 		if (Configurator.TOGGLE_BIND.matchesKey(keyCode, scanCode)) {
-            HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player);
+            HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationType.ON_SCREEN);
 			return true;
 		}
 
@@ -94,10 +96,10 @@ public class HandledScreenMixin {
 			return info.getReturnValue();
 
 		if (Configurator.COLOR_HOVERED_BIND.matchesKey(keyCode, scanCode)) {
-			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, HighlightItem.CLIENT.player);
+			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, HighlightItem.CLIENT.player, Configurator.NotificationType.ON_SCREEN);
 			return true;
 		} else if (Configurator.COMPARATOR_BIND.matchesKey(keyCode, scanCode)) {
-			HighlightItem.configurator.changeMode(HighlightItem.CLIENT.player);
+			HighlightItem.configurator.changeMode(HighlightItem.CLIENT.player, Configurator.NotificationType.ON_SCREEN);
 			return true;
 		} else {
 			return info.getReturnValue();

@@ -74,16 +74,16 @@ public class HighLightCommands {
                 .then(literal("hoverColor")
                         .then(argument("boolean", BoolArgumentType.bool())
                                 .executes(context -> {
-                                    HighlightItem.configurator.updateColorHovered(BoolArgumentType.getBool(context, "boolean"), context.getSource().getPlayer());
+                                    HighlightItem.configurator.updateColorHovered(BoolArgumentType.getBool(context, "boolean"), context.getSource().getPlayer(), Configurator.NotificationType.ON_CHAT);
                                     return Command.SINGLE_SUCCESS;
                                 })))
                 .then(literal("toggle").executes(context -> {
-                    HighlightItem.configurator.updateToggle(context.getSource().getPlayer());
+                    HighlightItem.configurator.updateToggle(context.getSource().getPlayer(), Configurator.NotificationType.ON_CHAT);
                     return Command.SINGLE_SUCCESS;
                 })).then(literal("mode")
                         .then(argument("mode", ItemComparator.ComparatorArgumentType.comparator())
                                 .executes(context -> {
-                                    HighlightItem.configurator.updateMode(ItemComparator.ComparatorArgumentType.getComparator("mode", context), context.getSource().getPlayer());
+                                    HighlightItem.configurator.updateMode(ItemComparator.ComparatorArgumentType.getComparator("mode", context), context.getSource().getPlayer(), Configurator.NotificationType.ON_CHAT);
                                     return Command.SINGLE_SUCCESS;
                                 })))
         ));

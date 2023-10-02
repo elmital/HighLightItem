@@ -50,6 +50,8 @@ public class Configurator {
     public static KeyBinding COMPARATOR_BIND;
     private final String CONFIG = "HighLightItemConfig";
     private final Properties properties = new Properties();
+    public static @Nullable Text notification;
+    public static int notificationTicks = 0;
 
     public static Configurator getInstance() throws IOException, URISyntaxException {
         return new Configurator();
@@ -58,6 +60,12 @@ public class Configurator {
     public Configurator() throws IOException {
         currentDirectory = FabricLoader.getInstance().getConfigDir();
         loadOrGenerateConfig();
+    }
+
+    public enum NotificationType {
+        NONE,
+        ON_SCREEN,
+        ON_CHAT
     }
 
     public enum Config {
@@ -134,46 +142,46 @@ public class Configurator {
         properties.store(stream, null);
     }
 
-    public void updateToggle(ClientPlayerEntity player) {
+    public void updateToggle(ClientPlayerEntity player, NotificationType notification) {
         Configurator.TOGGLE = !Configurator.TOGGLE;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE);
-            player.sendMessage(Configurator.TOGGLE ? Text.translatable( "notification.highlightitem.highlighting.update").append(Text.literal(" ")).append(Text.translatable("notification.highlightitem.activate")).formatted(Formatting.GRAY) : Text.translatable( "notification.highlightitem.highlighting.update").append(Text.literal(" ")).append(Text.translatable("notification.highlightitem.deactivate")).formatted(Formatting.DARK_GRAY));
+            notify(notification, Configurator.TOGGLE ? Text.translatable( "notification.highlightitem.highlighting.update").append(Text.literal(" ")).append(Text.translatable("notification.highlightitem.activate")).formatted(Formatting.GRAY) : Text.translatable( "notification.highlightitem.highlighting.update").append(Text.literal(" ")).append(Text.translatable("notification.highlightitem.deactivate")).formatted(Formatting.DARK_GRAY), player);
         } catch (IOException e) {
-            player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
+            notify(notification, Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), player);
         }
     }
 
-    public void updateColorHovered(boolean hovered, ClientPlayerEntity player) {
+    public void updateColorHovered(boolean hovered, ClientPlayerEntity player, NotificationType notification) {
         Configurator.COLOR_HOVERED = hovered;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED);
-            player.sendMessage(Configurator.COLOR_HOVERED ? Text.translatable( "notification.highlightitem.color_hovered_activated").formatted(Formatting.GRAY) : Text.translatable("notification.highlightitem.color_hovered_deactivated").formatted(Formatting.DARK_GRAY));
+            notify(notification, Configurator.COLOR_HOVERED ? Text.translatable( "notification.highlightitem.color_hovered_activated").formatted(Formatting.GRAY) : Text.translatable("notification.highlightitem.color_hovered_deactivated").formatted(Formatting.DARK_GRAY), player);
         } catch (IOException e) {
-            player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
+            notify(notification, Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), player);
         }
     }
 
-    public void changeMode(ClientPlayerEntity player) {
+    public void changeMode(ClientPlayerEntity player, NotificationType notification) {
         if (Configurator.COMPARATOR.ordinal() == ItemComparator.Comparators.values().length - 1) {
-            HighlightItem.configurator.updateMode(ItemComparator.Comparators.ITEM_ONLY, player);
+            HighlightItem.configurator.updateMode(ItemComparator.Comparators.ITEM_ONLY, player, notification);
         } else {
             for (ItemComparator.Comparators mode : ItemComparator.Comparators.values()) {
                 if (mode.ordinal() == Math.min(Configurator.COMPARATOR.ordinal() + 1, ItemComparator.Comparators.values().length - 1)) {
-                    HighlightItem.configurator.updateMode(mode, player);
+                    HighlightItem.configurator.updateMode(mode, player, notification);
                     break;
                 }
             }
         }
     }
 
-    public void updateMode(ItemComparator.Comparators mode, ClientPlayerEntity player) {
+    public void updateMode(ItemComparator.Comparators mode, ClientPlayerEntity player, NotificationType notification) {
         Configurator.COMPARATOR = mode;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
-            player.sendMessage(Text.translatable("notification.highlightitem.toggle", mode.name()).formatted(Formatting.GRAY));
+            notify(notification, Text.translatable("notification.highlightitem.toggle", mode.name()).formatted(Formatting.GRAY), player);
         } catch (IOException e) {
-            player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
+            notify(notification, Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), player);
         }
     }
 
@@ -186,5 +194,15 @@ public class Configurator {
             if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
         }
 
+    }
+
+    private void notify(NotificationType type, Text text, ClientPlayerEntity player) {
+        switch (type) {
+            case ON_CHAT -> player.sendMessage(text);
+            case ON_SCREEN -> {
+                notification = text;
+                notificationTicks = 40;
+            }
+        }
     }
 }

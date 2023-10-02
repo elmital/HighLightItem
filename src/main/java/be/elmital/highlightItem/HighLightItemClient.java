@@ -42,7 +42,7 @@ public class HighLightItemClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             assert client.player != null;
             if (Configurator.TOGGLE_BIND.wasPressed()) {
-                HighlightItem.configurator.updateToggle(client.player);
+                HighlightItem.configurator.updateToggle(client.player, Configurator.NotificationType.ON_CHAT);
             }
 
             if (Configurator.COLOR_MENU.wasPressed()) {
@@ -50,12 +50,20 @@ public class HighLightItemClient implements ClientModInitializer {
             }
 
             if (Configurator.COLOR_HOVERED_BIND.wasPressed()) {
-                HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, client.player);
+                HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, client.player, Configurator.NotificationType.ON_CHAT);
             }
 
             if (Configurator.COMPARATOR_BIND.wasPressed()) {
-                HighlightItem.configurator.changeMode(client.player);
+                HighlightItem.configurator.changeMode(client.player, Configurator.NotificationType.ON_CHAT);
             }
+
+            // Config notifications sent when a screen is opened
+            if (Configurator.notificationTicks > 0)
+                Configurator.notificationTicks--;
+            else if (Configurator.notificationTicks == 0)
+                Configurator.notification = null;
+            else
+                Configurator.notificationTicks = 0;
         });
     }
 }

@@ -34,4 +34,8 @@ public interface HandledScreenAccessor {
     ScreenHandler getHandler();
     @Accessor("focusedSlot")
     Slot getFocusedSlot();
+    @Accessor("backgroundHeight")
+    int getBackgroundHeight();
+    @Accessor("backgroundWidth")
+    int getBackgroundWidth();
 }
