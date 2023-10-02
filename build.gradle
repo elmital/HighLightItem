@@ -47,10 +47,18 @@ modrinth {
 		return
 	token = System.getenv("MODRINTH_TOKEN")
 	projectId = "d5BXxnVG"
-	versionNumber = version
+	versionNumber = version.toString()
 	versionType = "release"
 	uploadFile = remapJar
+	versionName = "HighLightItem " + version
+	changelog = new File('./changelog.md').getText('UTF-8')
 	dependencies {
 		required.project "fabric-api"
 	}
+	if (debugMode.getOrElse(true) == false)
+		cleanChangelog()
+}
+
+static def cleanChangelog() {
+	new File('./changelog.md').setText("")
 }

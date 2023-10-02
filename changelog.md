@@ -1,0 +1,2 @@
+**Internal**
+- Improve Modrinth publishing
