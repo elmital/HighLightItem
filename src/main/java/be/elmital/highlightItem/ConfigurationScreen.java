@@ -93,7 +93,14 @@ public class ConfigurationScreen extends GameOptionsScreen {
         }, new SimpleOption.ValidatingIntSliderCallbacks(0, 100), (int) this.alpha, (value) -> this.alpha = (float) value));
 
         this.addSelectableChild(this.list);
-        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, (button) -> close()).dimensions(this.width / 2 - 100, this.height - 27, 200, 20).build());
+        this.addDrawableChild(ButtonWidget.builder(Text.translatable("options.highlightitem.color.vanilla"), (button -> {
+            this.red = (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255);
+            this.green = (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255);
+            this.blue = (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255);
+            this.alpha = Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100;
+            this.clearAndInit();
+        })).dimensions(this.width / 2 - 200, this.height - 27, 175, 20).build());
+        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, (button) -> close()).dimensions(this.width / 2 + 25, this.height - 27, 175, 20).build());
     }
 
 

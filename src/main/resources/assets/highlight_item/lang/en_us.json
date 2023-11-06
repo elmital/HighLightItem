@@ -16,6 +16,7 @@
   "options.highlightitem.color.red" : "Red",
   "options.highlightitem.color.green" : "Green",
   "options.highlightitem.color.blue" : "Blue",
+  "options.highlightitem.color.vanilla" : "Use vanilla highlighting color",
   "modmenu.descriptionTranslation.highlight_item" : "Highlights inventory items similar to the one hovered over.",
   "modmenu.summaryTranslation.highlight_item" : "Highlights inventory items similar to the one hovered over."
 }
