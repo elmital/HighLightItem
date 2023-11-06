@@ -1,8 +1,8 @@
 {
   "notification.highlightitem.config.update.fail" : "Le fichier de configuration n'a pas pu être mis à jour!",
   "notification.highlightitem.highlighting.update" : "La surbrillance des items est désormais",
-  "notification.highlightitem.activate" : "activé",
-  "notification.highlightitem.deactivate" : "désactivé",
+  "notification.highlightitem.activate" : "activée",
+  "notification.highlightitem.deactivate" : "désactivée",
   "notification.highlightitem.color_hovered_activated" : "L'item survolé est désormais coloré",
   "notification.highlightitem.color_hovered_deactivated" : "L'item survolé n'est plus coloré",
   "notification.highlightitem.toggle" : "Mode de comparaison modifié en %s",
