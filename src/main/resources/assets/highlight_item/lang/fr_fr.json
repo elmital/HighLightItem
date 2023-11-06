@@ -15,5 +15,7 @@
   "options.highlightitem.color.alpha" : "Transparence",
   "options.highlightitem.color.red" : "Rouge",
   "options.highlightitem.color.green" : "Vert",
-  "options.highlightitem.color.blue" : "Bleu"
+  "options.highlightitem.color.blue" : "Bleu",
+  "modmenu.descriptionTranslation.highlight_item" : "Mets en surbrillance les items dans les inventaires similaires à celui survolé.",
+  "modmenu.summaryTranslation.highlight_item" : "Mets en surbrillance les items similaires à celui survolé."
 }

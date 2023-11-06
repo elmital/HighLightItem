@@ -4,13 +4,14 @@
   "version": "${version}",
 
   "name": "Highlight Item",
-  "description": "Highlight hovered item in inventory",
+  "description": "Highlights inventory items similar to the one hovered over.",
   "authors": [
     "elmital"
   ],
   "contact": {
     "homepage": "https://modrinth.com/mod/highlightitem",
-    "sources": "https://github.com/elmital/HighLightItem"
+    "sources": "https://github.com/elmital/HighLightItem",
+    "issues": "https://github.com/elmital/HighLightItem/issues"
   },
 
   "license": "GPL-3.0",
