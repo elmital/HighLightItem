@@ -31,6 +31,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 
 import java.util.Arrays;
@@ -92,7 +93,12 @@ public class ItemComparator {
         ITEM_AND_NBT(ITEM_ONLY.predicate.and((stack, stack2) -> (stack.getNbt() == null && stack2.getNbt() == null) || (stack.getNbt() != null && stack2.getNbt() != null && stack.getNbt().equals(stack2.getNbt())))),
         ITEM_AND_NBT_AND_AMOUNT(ITEM_AND_AMOUNT.predicate.and((stack, stack2) -> (stack.getNbt() == null && stack2.getNbt() == null) || (stack.getNbt() != null && stack2.getNbt() != null && stack.getNbt().equals(stack2.getNbt())))),
         NAME_ONLY((stack, stack2) -> stack.getName().equals(stack2.getName())),
-        NAME_AND_AMOUNT(((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(NAME_ONLY.predicate));
+        NAME_AND_AMOUNT(((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(NAME_ONLY.predicate)),
+        NAMESPACE((stack, stack2) -> {
+            var key1 = Registries.ITEM.getKey(stack.getItem()).orElse(null);
+            var key2 = Registries.ITEM.getKey(stack2.getItem()).orElse(null);
+            return key1 != null && key2 != null && key1.getValue().getNamespace().equalsIgnoreCase(key2.getValue().getNamespace());
+        });
 
         final BiPredicate<ItemStack, ItemStack> predicate;
 
