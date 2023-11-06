@@ -179,7 +179,7 @@ public class Configurator {
         Configurator.COMPARATOR = mode;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
-            notify(notification, Text.translatable("notification.highlightitem.toggle", mode.name()).formatted(Formatting.GRAY), player);
+            notify(notification, Text.translatable("notification.highlightitem.comparator.change", Text.translatable(mode.translationKey()).append(" (").append(mode.name()).append(")")).formatted(Formatting.GRAY), player);
         } catch (IOException e) {
             notify(notification, Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), player);
         }

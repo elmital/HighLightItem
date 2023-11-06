@@ -100,6 +100,10 @@ public class ItemComparator {
         ITEM_ONLY,
         ITEM_AND_AMOUNT,
         ITEM_AND_NBT,
-        ITEM_AND_NBT_AND_AMOUNT
+        ITEM_AND_NBT_AND_AMOUNT;
+
+        public String translationKey() {
+            return "highlightitem.comparator." + this.name().toLowerCase();
+        }
     }
 }
