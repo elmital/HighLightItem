@@ -39,18 +39,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiPredicate;
 
 public class ItemComparator {
-    public static final BiPredicate<ItemStack, ItemStack> itemOnlyPredicate = (stack, stack2) -> stack.getItem().equals(stack2.getItem());
-    public static final BiPredicate<ItemStack, ItemStack> itemAndAmountPredicate = ((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(itemOnlyPredicate);
-    public static final BiPredicate<ItemStack, ItemStack> itemAndNBTPredicate = itemOnlyPredicate.and((stack, stack2) -> (stack.getNbt() == null && stack2.getNbt() == null) || (stack.getNbt() != null && stack2.getNbt() != null && stack.getNbt().equals(stack2.getNbt())));
-    public static final BiPredicate<ItemStack, ItemStack> equalsPredicate = itemAndAmountPredicate.and((stack, stack2) -> (stack.getNbt() == null && stack2.getNbt() == null) || (stack.getNbt() != null && stack2.getNbt() != null && stack.getNbt().equals(stack2.getNbt())));
-
     public static boolean test(Comparators comparator, ItemStack stack, ItemStack stack2) {
-        return switch (comparator) {
-            case ITEM_ONLY -> itemOnlyPredicate.test(stack, stack2);
-            case ITEM_AND_AMOUNT -> itemAndAmountPredicate.test(stack, stack2);
-            case ITEM_AND_NBT -> itemAndNBTPredicate.test(stack, stack2);
-            case ITEM_AND_NBT_AND_AMOUNT -> equalsPredicate.test(stack, stack2);
-        };
+        return comparator.predicate.test(stack, stack2);
     }
 
     public static class ComparatorArgumentType implements ArgumentType<Comparators> {
@@ -97,10 +87,16 @@ public class ItemComparator {
     }
 
     public enum Comparators {
-        ITEM_ONLY,
-        ITEM_AND_AMOUNT,
-        ITEM_AND_NBT,
-        ITEM_AND_NBT_AND_AMOUNT;
+        ITEM_ONLY((stack, stack2) -> stack.getItem().equals(stack2.getItem())),
+        ITEM_AND_AMOUNT(((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(ITEM_ONLY.predicate)),
+        ITEM_AND_NBT(ITEM_ONLY.predicate.and((stack, stack2) -> (stack.getNbt() == null && stack2.getNbt() == null) || (stack.getNbt() != null && stack2.getNbt() != null && stack.getNbt().equals(stack2.getNbt())))),
+        ITEM_AND_NBT_AND_AMOUNT(ITEM_AND_AMOUNT.predicate.and((stack, stack2) -> (stack.getNbt() == null && stack2.getNbt() == null) || (stack.getNbt() != null && stack2.getNbt() != null && stack.getNbt().equals(stack2.getNbt()))));
+
+        final BiPredicate<ItemStack, ItemStack> predicate;
+
+        Comparators(BiPredicate<ItemStack, ItemStack> predicate) {
+            this.predicate = predicate;
+        }
 
         public String translationKey() {
             return "highlightitem.comparator." + this.name().toLowerCase();
