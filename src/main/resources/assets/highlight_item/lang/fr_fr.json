@@ -18,6 +18,7 @@
   "highlightitem.comparator.item_and_nbt_and_amount" : "Matériel, nbt et quantité",
   "highlightitem.comparator.name_only" : "Nom",
   "highlightitem.comparator.name_and_amount" : "Nom et quantité",
+  "highlightitem.comparator.namespace" : "Espace de noms",
   "options.highlightitem.color.alpha" : "Transparence",
   "options.highlightitem.color.red" : "Rouge",
   "options.highlightitem.color.green" : "Vert",
