@@ -1,3 +1,5 @@
+Add Minecraft 1.20.3 support
+
 **Features**
 - Add more ModMenu mod support
 - Add a button in the ColorPicker to pick the vanilla color highlighting
