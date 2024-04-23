@@ -90,8 +90,8 @@ public class ItemComparator {
     public enum Comparators {
         ITEM_ONLY((stack, stack2) -> stack.getItem().equals(stack2.getItem())),
         ITEM_AND_AMOUNT(((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(ITEM_ONLY.predicate)),
-        ITEM_AND_NBT(ITEM_ONLY.predicate.and((stack, stack2) -> (stack.getNbt() == null && stack2.getNbt() == null) || (stack.getNbt() != null && stack2.getNbt() != null && stack.getNbt().equals(stack2.getNbt())))),
-        ITEM_AND_NBT_AND_AMOUNT(ITEM_AND_AMOUNT.predicate.and((stack, stack2) -> (stack.getNbt() == null && stack2.getNbt() == null) || (stack.getNbt() != null && stack2.getNbt() != null && stack.getNbt().equals(stack2.getNbt())))),
+        ITEM_AND_NBT(ITEM_ONLY.predicate.and((stack, stack2) -> (stack.getComponents() == null && stack2.getComponents() == null) || (stack.getComponents() != null && stack2.getComponents() != null && stack.getComponents().equals(stack2.getComponents())))),
+        ITEM_AND_NBT_AND_AMOUNT(ITEM_AND_AMOUNT.predicate.and((stack, stack2) -> (stack.getComponents() == null &&  stack2.getComponents() == null) || (stack.getComponents() != null && stack2.getComponents() != null && stack.getComponents().equals(stack2.getComponents())))),
         NAME_ONLY((stack, stack2) -> stack.getName().equals(stack2.getName())),
         NAME_AND_AMOUNT(((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(NAME_ONLY.predicate)),
         NAMESPACE((stack, stack2) -> {

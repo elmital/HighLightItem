@@ -60,7 +60,7 @@ public class ConfigurationScreen extends GameOptionsScreen {
 
     @Override
     protected void init() {
-        this.list = new OptionListWidget(this.client, this.width, this.height - 64, 32, 25);
+        this.list = new OptionListWidget(this.client, this.width, this.height - 64, this);
 
         this.list.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.color.red", SimpleOption.emptyTooltip(), (prefix, value) -> {
             if (value < 0 || value > 255) {
@@ -85,7 +85,7 @@ public class ConfigurationScreen extends GameOptionsScreen {
         }, new SimpleOption.ValidatingIntSliderCallbacks(0, 255), this.blue, (value) -> this.blue = value));
 
         this.list.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.color.alpha", SimpleOption.emptyTooltip(), (prefix, value) -> {
-              if (value < 0 || value > 100) {
+            if (value < 0 || value > 100) {
                 return Text.literal("error");
             } else {
                 return GameOptions.getGenericValueText(prefix, Text.of(value + "%"));
@@ -114,6 +114,6 @@ public class ConfigurationScreen extends GameOptionsScreen {
     }
 
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackgroundTexture(context);
+        renderInGameBackground(context);
     }
 }

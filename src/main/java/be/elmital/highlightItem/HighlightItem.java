@@ -73,7 +73,7 @@ public class HighlightItem implements ModInitializer {
 			LOGGER.info("""
      
 					-------------
-     				
+					
 					""");
 		}
 	}
