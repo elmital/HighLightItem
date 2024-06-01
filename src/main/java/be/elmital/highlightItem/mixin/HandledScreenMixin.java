@@ -68,10 +68,10 @@ public class HandledScreenMixin {
 					if (slot.isEnabled() && !slot.getStack().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, focusedSlot.getStack(), slot.getStack())) {
 						Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
 						VertexConsumer vertexConsumer = context.getVertexConsumers().getBuffer(RenderLayer.getGuiOverlay());
-						vertexConsumer.vertex(matrix4f, (float)slot.x, (float)slot.y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
-						vertexConsumer.vertex(matrix4f, (float)slot.x, (float)slot.y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
-						vertexConsumer.vertex(matrix4f, (float)slot.x + 16, (float)slot.y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
-						vertexConsumer.vertex(matrix4f, (float)slot.x + 16, (float)slot.y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						vertexConsumer.vertex(matrix4f, (float)slot.x, (float)slot.y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]);
+						vertexConsumer.vertex(matrix4f, (float)slot.x, (float)slot.y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]);
+						vertexConsumer.vertex(matrix4f, (float)slot.x + 16, (float)slot.y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]);
+						vertexConsumer.vertex(matrix4f, (float)slot.x + 16, (float)slot.y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]);
 						context.draw();
 					}
 				}
