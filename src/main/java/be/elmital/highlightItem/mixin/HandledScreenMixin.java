@@ -27,6 +27,7 @@ import be.elmital.highlightItem.HighlightItem;
 import be.elmital.highlightItem.ItemComparator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.RenderLayer;
@@ -59,21 +60,53 @@ public class HandledScreenMixin {
 			if (focusedSlot != null && focusedSlot.getStack() != null) {
 				ScreenHandler handler = ((HandledScreenAccessor) this).getHandler();
 
+				// Smooth Scrolling compatibility
+				boolean isScissorEnabled = false;
+				int y_offset = 0;
+				int item_count = 0;
+				if (FabricLoader.getInstance().getObjectShare().get("smoothscroll:creative_screen/y_offset") instanceof Integer i) {
+					y_offset = i;
+				}
+				if (FabricLoader.getInstance().getObjectShare().get("smoothscroll:creative_screen/item_count") instanceof Integer i) {
+					item_count = i;
+					if (i > 0) {
+						context.enableScissor(0, context.getScaledWindowHeight() / 2 - 50, context.getScaledWindowWidth(), context.getScaledWindowHeight() / 2 + 38);
+						isScissorEnabled = true;
+					}
+				}
+
 				for (int k = 0; k < handler.slots.size(); ++k) {
 					Slot slot = handler.slots.get(k);
-
+				
 					if (focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
 						continue;
 
+
 					if (slot.isEnabled() && !slot.getStack().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, focusedSlot.getStack(), slot.getStack())) {
+						float x = slot.x;
+						float y = slot.y;
+
+						// Smooth Scrolling compatibility
+						if (item_count > 0)
+							y += y_offset;
+						else if (isScissorEnabled) {
+							context.disableScissor();
+							isScissorEnabled = false;
+						}
+						item_count--;
+						
 						Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
 						VertexConsumer vertexConsumer = context.getVertexConsumers().getBuffer(RenderLayer.getGuiOverlay());
-						vertexConsumer.vertex(matrix4f, (float)slot.x, (float)slot.y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
-						vertexConsumer.vertex(matrix4f, (float)slot.x, (float)slot.y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
-						vertexConsumer.vertex(matrix4f, (float)slot.x + 16, (float)slot.y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
-						vertexConsumer.vertex(matrix4f, (float)slot.x + 16, (float)slot.y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						vertexConsumer.vertex(matrix4f, x, y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						vertexConsumer.vertex(matrix4f, x, y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						vertexConsumer.vertex(matrix4f, x + 16, y + 16, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
+						vertexConsumer.vertex(matrix4f, x + 16, y, (float)0).color(Configurator.COLOR[0], Configurator.COLOR[1], Configurator.COLOR[2], Configurator.COLOR[3]).next();
 						context.draw();
 					}
+				}
+				if (isScissorEnabled) {
+					context.disableScissor();
+					isScissorEnabled = false;
 				}
 			}
 		}
