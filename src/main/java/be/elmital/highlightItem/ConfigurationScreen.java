@@ -44,7 +44,7 @@ public class ConfigurationScreen extends GameOptionsScreen {
     private OptionListWidget list;
 
     public ConfigurationScreen(GameOptions gameOptions) {
-        super(null, gameOptions, Text.translatable("HighLightItem"));
+        super(null, gameOptions, Text.literal("HighLightItem"));
         this.red = (int) (Configurator.COLOR[0] * 255);
         this.green = (int) (Configurator.COLOR[1] * 255);
         this.blue = (int) (Configurator.COLOR[2] * 255);
@@ -60,7 +60,7 @@ public class ConfigurationScreen extends GameOptionsScreen {
 
     @Override
     protected void init() {
-        this.list = new OptionListWidget(this.client, this.width, this.height - 64, this);
+        this.list = new OptionListWidget(this.client, this.width, this);
 
         this.list.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.color.red", SimpleOption.emptyTooltip(), (prefix, value) -> {
             if (value < 0 || value > 255) {
@@ -103,12 +103,17 @@ public class ConfigurationScreen extends GameOptionsScreen {
         this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, (button) -> close()).dimensions(this.width / 2 + 25, this.height - 27, 175, 20).build());
     }
 
+    @Override
+    protected void addOptions() {
+        // NOTHING TO DO
+    }
+
 
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 16777215);
         this.list.render(context, mouseX, mouseY, delta);
-        context.drawTexture(new Identifier("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72);
+        context.drawTexture(Identifier.of("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72);
         context.drawBorder(4, 35 , (this.width / 2) - 163 , this.height - 70, ColorHelper.Argb.getArgb(255, 75, 75, 75));
         context.fill(RenderLayer.getGuiOverlay(), 5, 36 , (this.width / 2) - 160 , this.height - 36, ColorHelper.Argb.getArgb((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
     }

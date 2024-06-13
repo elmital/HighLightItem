@@ -90,7 +90,7 @@ public class HighLightCommands {
     }
 
     public void registerArgumentTypes() {
-        ArgumentTypeRegistry.registerArgumentType(new Identifier("highlightitem:color"), Colors.HighLightColorArgumentType.class, ConstantArgumentSerializer.of(Colors.HighLightColorArgumentType::color));
-        ArgumentTypeRegistry.registerArgumentType(new Identifier("highlightitem:mode"), ItemComparator.ComparatorArgumentType.class, ConstantArgumentSerializer.of(ItemComparator.ComparatorArgumentType::comparator));
+        ArgumentTypeRegistry.registerArgumentType(Identifier.of("highlightitem:color"), Colors.HighLightColorArgumentType.class, ConstantArgumentSerializer.of(Colors.HighLightColorArgumentType::color));
+        ArgumentTypeRegistry.registerArgumentType(Identifier.of("highlightitem:mode"), ItemComparator.ComparatorArgumentType.class, ConstantArgumentSerializer.of(ItemComparator.ComparatorArgumentType::comparator));
     }
 }
