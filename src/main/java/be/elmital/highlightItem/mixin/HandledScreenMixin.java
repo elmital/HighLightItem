@@ -31,7 +31,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.math.ColorHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -85,9 +84,8 @@ public abstract class HandledScreenMixin {
 	@ModifyArgs(method = "drawSlotHighlight", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;fillGradient(Lnet/minecraft/client/render/RenderLayer;IIIIIII)V"))
 	private static void modifyColor(Args args) {
 		if (MOD_HIGHLIGHT_CALL) {
-			int color = ColorHelper.Argb.getArgb((int) (Configurator.COLOR[3] * 255.0F), (int) (Configurator.COLOR[0] * 255.0F), (int) (Configurator.COLOR[1] * 255.0F), (int) (Configurator.COLOR[2] * 255.0F));
-			args.set(5, color);
-			args.set(6, color);
+			args.set(5, Configurator.COLOR);
+			args.set(6, Configurator.COLOR);
 			MOD_HIGHLIGHT_CALL = false;
 		}
 	}

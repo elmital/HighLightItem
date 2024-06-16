@@ -45,10 +45,10 @@ public class ConfigurationScreen extends GameOptionsScreen {
 
     public ConfigurationScreen(GameOptions gameOptions) {
         super(null, gameOptions, Text.literal("HighLightItem"));
-        this.red = (int) (Configurator.COLOR[0] * 255);
-        this.green = (int) (Configurator.COLOR[1] * 255);
-        this.blue = (int) (Configurator.COLOR[2] * 255);
-        this.alpha = Configurator.COLOR[3] * 100;
+        this.red = ColorHelper.Argb.getRed(Configurator.COLOR);
+        this.green = ColorHelper.Argb.getGreen(Configurator.COLOR);
+        this.blue = ColorHelper.Argb.getBlue(Configurator.COLOR);
+        this.alpha = (ColorHelper.Argb.getAlpha(Configurator.COLOR) / 255f) * 100;
     }
 
     @Override
