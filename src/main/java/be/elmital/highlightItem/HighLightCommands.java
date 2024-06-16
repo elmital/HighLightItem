@@ -31,6 +31,7 @@ import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 
 import java.io.IOException;
 
@@ -61,7 +62,9 @@ public class HighLightCommands {
                         .then(argument("color", Colors.HighLightColorArgumentType.color())
                                 .executes(context -> {
                                     var color = Colors.HighLightColorArgumentType.getColor("color", context);
-                                    Configurator.COLOR = color.getShaderColor();
+                                    var colors = color.getShaderColor();
+
+                                    Configurator.COLOR = ColorHelper.Argb.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
                                     try {
                                         HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.json().toString());
                                         context.getSource().getPlayer().sendMessage(Text.of("Color changed!"));

@@ -28,6 +28,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.ColorHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
@@ -41,7 +42,7 @@ public class Configurator {
     public static boolean TOGGLE;
     public static KeyBinding TOGGLE_BIND;
     private final Path currentDirectory;
-    public static float[] COLOR;
+    public static int COLOR;
 
     public static KeyBinding COLOR_MENU;
     public static boolean COLOR_HOVERED;
@@ -105,19 +106,21 @@ public class Configurator {
 
         TOGGLE = Boolean.parseBoolean(properties.getProperty(Config.TOGGLE.getKey(), Config.TOGGLE.getDefault()));
 
+        float[] colors;
         if (properties.containsKey("color")) {
             var jsonColor = JsonParser.parseString(properties.getProperty(Config.COLOR.getKey())).getAsJsonObject();
             if (jsonColor.has("default"))
-                COLOR = Colors.HighLightColor.fromJson(jsonColor).getShaderColor();
+                colors = Colors.HighLightColor.fromJson(jsonColor).getShaderColor();
             else
-                COLOR = Colors.customFromJson(jsonColor);
+                colors = Colors.customFromJson(jsonColor);
         } else {
             var highlightColor = Colors.HighLightColor.valueOf(properties.getProperty("highlight-color", Colors.HighLightColor.DEFAULT.name()));
-            COLOR = highlightColor.getShaderColor();
+            colors = highlightColor.getShaderColor();
             removeFromConfig("highlight-color"); // Color system is changed
             updateConfig(Config.COLOR, highlightColor.json().toString());
         }
 
+        COLOR = ColorHelper.Argb.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
         COLOR_HOVERED = Boolean.parseBoolean(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
         COMPARATOR = ItemComparator.Comparators.valueOf(properties.getProperty(Config.COMPARATOR.getKey(), Config.COMPARATOR.getDefault()));
     }
@@ -186,9 +189,9 @@ public class Configurator {
     }
 
     public void updateColor(float[] rgba, @Nullable ClientPlayerEntity player) {
-        Configurator.COLOR = rgba;
+        Configurator.COLOR = ColorHelper.Argb.getArgb((int) (rgba[3] * 255f), (int) (rgba[0] * 255f), (int) (rgba[1] * 255f), (int) (rgba[2] * 255f));
         try {
-            HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, Colors.customToJson(Configurator.COLOR).toString());
+            HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, Colors.customToJson(rgba).toString());
             if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.color").formatted(Formatting.GRAY));
         } catch (IOException e) {
             if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
