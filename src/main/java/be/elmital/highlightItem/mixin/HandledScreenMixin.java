@@ -22,6 +22,7 @@
 
 package be.elmital.highlightItem.mixin;
 
+import be.elmital.highlightItem.Colors;
 import be.elmital.highlightItem.Configurator;
 import be.elmital.highlightItem.HighlightItem;
 import be.elmital.highlightItem.ItemComparator;
@@ -30,20 +31,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.function.Function;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 
 @Environment(EnvType.CLIENT)
@@ -52,9 +49,6 @@ public abstract class HandledScreenMixin {
 	@Shadow protected abstract void drawSlotHighlightFront(DrawContext context);
 
 	@Shadow @Nullable protected Slot focusedSlot;
-
-	@Unique
-	private static Slot toDrawFromMod = null;
 
 	@Inject(method = "drawSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER))
 	private void drawSlot(DrawContext context, CallbackInfo ci, @Local Slot slot) {
@@ -69,20 +63,25 @@ public abstract class HandledScreenMixin {
 				return;
 
 			if (slot.isEnabled() && !slot.getStack().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, focusedSlot.getStack(), slot.getStack())) {
-				toDrawFromMod = slot;
+				HighlightItem.toDrawFromMod = slot;
 				drawSlotHighlightFront(context);
+				HighlightItem.toDrawFromMod = null;
 			}
 		}
 	}
 
-	@Redirect(method = "drawSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Ljava/util/function/Function;Lnet/minecraft/util/Identifier;IIII)V"))
-	private void colorizeIfMod(DrawContext context, Function<Identifier, RenderLayer> renderLayers, Identifier sprite, int x, int y, int width, int height) {
-		// TODO if using vanilla use texture
-		if (toDrawFromMod != null) {
-			context.fillGradient(RenderLayer.getGuiOverlay(), toDrawFromMod.x, toDrawFromMod.y, toDrawFromMod.x + 16, toDrawFromMod.y + 16, Configurator.COLOR, Configurator.COLOR, 0);
-			toDrawFromMod = null;
-		} else {
-
+	@ModifyArgs(method = "drawSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Ljava/util/function/Function;Lnet/minecraft/util/Identifier;IIII)V"))
+	private void colorizeIfMod(Args args) {
+		if (HighlightItem.toDrawFromMod != null) {
+			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {
+				args.set(2, HighlightItem.toDrawFromMod.x - 4);
+				args.set(3, HighlightItem.toDrawFromMod.y - 4);
+			} else {
+				args.set(2, HighlightItem.toDrawFromMod.x);
+				args.set(3, HighlightItem.toDrawFromMod.y);
+				args.set(4, HighlightItem.toDrawFromMod.x + 16);
+				args.set(5, HighlightItem.toDrawFromMod.y + 16);
+			}
 		}
 	}
 

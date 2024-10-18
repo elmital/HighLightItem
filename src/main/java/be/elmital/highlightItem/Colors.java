@@ -32,6 +32,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.ColorHelper;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,6 +95,10 @@ public class Colors {
                 HighlightItem.LOGGER.error("Can't convert json to HighLightColor don't try to change manually the config file! Actual json is " + json);
                 return DEFAULT;
             }
+        }
+
+        public int colorInteger() {
+            return ColorHelper.getArgb((int) (shaderColor[3] * 255f), (int) (shaderColor[0] * 255f), (int) (shaderColor[1] * 255f), (int) (shaderColor[2] * 255f));
         }
     }
     public static class HighLightColorArgumentType implements ArgumentType<HighLightColor> {
