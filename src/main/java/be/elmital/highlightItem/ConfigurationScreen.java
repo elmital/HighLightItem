@@ -45,10 +45,10 @@ public class ConfigurationScreen extends GameOptionsScreen {
 
     public ConfigurationScreen(GameOptions gameOptions) {
         super(null, gameOptions, Text.literal("HighLightItem"));
-        this.red = ColorHelper.Argb.getRed(Configurator.COLOR);
-        this.green = ColorHelper.Argb.getGreen(Configurator.COLOR);
-        this.blue = ColorHelper.Argb.getBlue(Configurator.COLOR);
-        this.alpha = (ColorHelper.Argb.getAlpha(Configurator.COLOR) / 255f) * 100;
+        this.red = ColorHelper.getRed(Configurator.COLOR);
+        this.green = ColorHelper.getGreen(Configurator.COLOR);
+        this.blue = ColorHelper.getBlue(Configurator.COLOR);
+        this.alpha = (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100;
     }
 
     @Override
@@ -113,9 +113,9 @@ public class ConfigurationScreen extends GameOptionsScreen {
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 16777215);
         this.list.render(context, mouseX, mouseY, delta);
-        context.drawTexture(Identifier.of("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72);
-        context.drawBorder(4, 35 , (this.width / 2) - 163 , this.height - 70, ColorHelper.Argb.getArgb(255, 75, 75, 75));
-        context.fill(RenderLayer.getGuiOverlay(), 5, 36 , (this.width / 2) - 160 , this.height - 36, ColorHelper.Argb.getArgb((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
+        context.drawTexture(RenderLayer::getGuiTexturedOverlay, Identifier.of("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72, 256, 256);
+        context.drawBorder(4, 35 , (this.width / 2) - 163 , this.height - 70, ColorHelper.getArgb(255, 75, 75, 75));
+        context.fill(RenderLayer.getGuiOverlay(), 5, 36 , (this.width / 2) - 160 , this.height - 36, ColorHelper.getArgb((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
     }
 
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
