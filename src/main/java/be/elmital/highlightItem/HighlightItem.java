@@ -25,6 +25,7 @@ package be.elmital.highlightItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.screen.slot.Slot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,6 +37,7 @@ public class HighlightItem implements ModInitializer {
 	public static MinecraftClient CLIENT;
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 	public static Configurator configurator;
+	public static Slot toDrawFromMod = null;
 
 	@Override
 	public void onInitialize() {

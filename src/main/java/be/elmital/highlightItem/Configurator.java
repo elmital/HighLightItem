@@ -120,7 +120,7 @@ public class Configurator {
             updateConfig(Config.COLOR, highlightColor.json().toString());
         }
 
-        COLOR = ColorHelper.Argb.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
+        COLOR = ColorHelper.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
         COLOR_HOVERED = Boolean.parseBoolean(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
         COMPARATOR = ItemComparator.Comparators.valueOf(properties.getProperty(Config.COMPARATOR.getKey(), Config.COMPARATOR.getDefault()));
     }
@@ -182,26 +182,26 @@ public class Configurator {
         Configurator.COMPARATOR = mode;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
-            notify(notification, Text.translatable("notification.highlightitem.comparator.change", Text.translatable(mode.translationKey()).append(" (").append(mode.name()).append(")")).formatted(Formatting.GRAY), player);
+            notify(notification, Text.translatable("notification.highlightitem.comparator.change",  Text.translatable(mode.translationKey()).append(" (").append(mode.name()).append(")")).formatted(Formatting.GRAY), player);
         } catch (IOException e) {
             notify(notification, Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), player);
         }
     }
 
     public void updateColor(float[] rgba, @Nullable ClientPlayerEntity player) {
-        Configurator.COLOR = ColorHelper.Argb.getArgb((int) (rgba[3] * 255f), (int) (rgba[0] * 255f), (int) (rgba[1] * 255f), (int) (rgba[2] * 255f));
+        Configurator.COLOR = ColorHelper.getArgb((int) (rgba[3] * 255f), (int) (rgba[0] * 255f), (int) (rgba[1] * 255f), (int) (rgba[2] * 255f));
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, Colors.customToJson(rgba).toString());
-            if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.color").formatted(Formatting.GRAY));
+            if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.color").formatted(Formatting.GRAY), false);
         } catch (IOException e) {
-            if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
+            if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), false);
         }
 
     }
 
     private void notify(NotificationType type, Text text, ClientPlayerEntity player) {
         switch (type) {
-            case ON_CHAT -> player.sendMessage(text);
+            case ON_CHAT -> player.sendMessage(text, false);
             case ON_SCREEN -> {
                 notification = text;
                 notificationTicks = 40;

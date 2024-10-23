@@ -64,12 +64,12 @@ public class HighLightCommands {
                                     var color = Colors.HighLightColorArgumentType.getColor("color", context);
                                     var colors = color.getShaderColor();
 
-                                    Configurator.COLOR = ColorHelper.Argb.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
+                                    Configurator.COLOR = ColorHelper.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
                                     try {
                                         HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.json().toString());
-                                        context.getSource().getPlayer().sendMessage(Text.of("Color changed!"));
+                                        context.getSource().getPlayer().sendMessage(Text.of("Color changed!"), false);
                                     } catch (IOException e) {
-                                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"));
+                                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"), false);
                                     }
                                     return Command.SINGLE_SUCCESS;
                                 })
