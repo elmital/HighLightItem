@@ -22,6 +22,7 @@
 
 package be.elmital.highlightItem.mixin;
 
+import be.elmital.highlightItem.Colors;
 import be.elmital.highlightItem.Configurator;
 import be.elmital.highlightItem.HighlightItem;
 import be.elmital.highlightItem.ItemComparator;
@@ -31,9 +32,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.slot.Slot;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -45,48 +46,42 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 @Environment(EnvType.CLIENT)
 @Mixin(HandledScreen.class)
 public abstract class HandledScreenMixin {
-	@Shadow protected abstract boolean isPointOverSlot(Slot slot, double pointX, double pointY);
+	@Shadow protected abstract void drawSlotHighlightFront(DrawContext context);
 
-	@Unique
-	private static Slot FOCUSED = null;
-	@Unique
-	private static boolean MOD_HIGHLIGHT_CALL = false;
+	@Shadow @Nullable protected Slot focusedSlot;
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER))
-	private void renderInLoop(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci, @Local Slot slot) {
+	@Inject(method = "drawSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER))
+	private void drawSlot(DrawContext context, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
-			if (FOCUSED == null) {
-				for (Slot slot1 : ((HandledScreenAccessor) this).getHandler().slots) {
-					if (this.isPointOverSlot(slot1, mouseX, mouseY)) {
-						FOCUSED = slot1;
-						break;
-					}
-				}
-			}
+			if (Configurator.notificationTicks > 0 && Configurator.notification != null)
+				context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 2, 0);
 
-			if (FOCUSED == null || (FOCUSED.equals(slot) && !Configurator.COLOR_HOVERED))
+			if (focusedSlot == null)
 				return;
 
-			if (slot.isEnabled() && !slot.getStack().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, FOCUSED.getStack(), slot.getStack())) {
-				MOD_HIGHLIGHT_CALL = true;
-				HandledScreen.drawSlotHighlight(context, slot.x, slot.y, 0);
+			if (focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
+				return;
+
+			if (slot.isEnabled() && !slot.getStack().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, focusedSlot.getStack(), slot.getStack())) {
+				HighlightItem.toDrawFromMod = slot;
+				drawSlotHighlightFront(context);
+				HighlightItem.toDrawFromMod = null;
 			}
 		}
-		if (Configurator.notificationTicks > 0 && Configurator.notification != null)
-			context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 2, 0);
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawForeground(Lnet/minecraft/client/gui/DrawContext;II)V"))
-	private void renderAfterLoop(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		FOCUSED = null;
-	}
-
-	@ModifyArgs(method = "drawSlotHighlight", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;fillGradient(Lnet/minecraft/client/render/RenderLayer;IIIIIII)V"))
-	private static void modifyColor(Args args) {
-		if (MOD_HIGHLIGHT_CALL) {
-			args.set(5, Configurator.COLOR);
-			args.set(6, Configurator.COLOR);
-			MOD_HIGHLIGHT_CALL = false;
+	@ModifyArgs(method = "drawSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Ljava/util/function/Function;Lnet/minecraft/util/Identifier;IIII)V"))
+	private void colorizeIfMod(Args args) {
+		if (HighlightItem.toDrawFromMod != null) {
+			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {
+				args.set(2, HighlightItem.toDrawFromMod.x - 4);
+				args.set(3, HighlightItem.toDrawFromMod.y - 4);
+			} else {
+				args.set(2, HighlightItem.toDrawFromMod.x);
+				args.set(3, HighlightItem.toDrawFromMod.y);
+				args.set(4, HighlightItem.toDrawFromMod.x + 16);
+				args.set(5, HighlightItem.toDrawFromMod.y + 16);
+			}
 		}
 	}
 
@@ -111,5 +106,4 @@ public abstract class HandledScreenMixin {
 			return info.getReturnValue();
 		}
 	}
-
 }
