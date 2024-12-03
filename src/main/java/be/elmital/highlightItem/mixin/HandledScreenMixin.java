@@ -54,7 +54,7 @@ public abstract class HandledScreenMixin {
 	private void drawSlot(DrawContext context, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
 			if (Configurator.notificationTicks > 0 && Configurator.notification != null)
-				context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 2, 0);
+				context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 25, 0);
 
 			if (focusedSlot == null)
 				return;
