@@ -51,9 +51,9 @@ public class HighLightCommands {
                                 .then(argument("red", IntegerArgumentType.integer(0, 255)).then(argument("green", IntegerArgumentType.integer(0, 255)).then(argument("blue", IntegerArgumentType.integer(0, 255)).then(argument("alpha", FloatArgumentType.floatArg(0.0f, 1.0f))
                                         .executes(context -> {
                                             HighlightItem.configurator.updateColor(new float[]{context.getArgument("red", int.class) / 255.0f,
-                                                        context.getArgument("green", int.class) / 255.0f,
-                                                        context.getArgument("blue", int.class) / 255.0f,
-                                                        context.getArgument("alpha", float.class)}, context.getSource().getPlayer());
+                                                    context.getArgument("green", int.class) / 255.0f,
+                                                    context.getArgument("blue", int.class) / 255.0f,
+                                                    context.getArgument("alpha", float.class)}, context.getSource().getPlayer());
 
                                             return Command.SINGLE_SUCCESS;
                                         }))))

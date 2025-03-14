@@ -89,7 +89,7 @@ public abstract class HandledScreenMixin {
 	private boolean keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
 		assert HighlightItem.CLIENT.player != null;
 		if (Configurator.TOGGLE_BIND.matchesKey(keyCode, scanCode)) {
-            HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationType.ON_SCREEN);
+			HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationType.ON_SCREEN);
 			return true;
 		}
 
