@@ -1,6 +1,5 @@
 plugins {
 	id 'fabric-loom' version '1.10.1'
-	id "com.modrinth.minotaur" version "2.+"
 }
 
 version = project.mod_version
@@ -43,25 +42,4 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
 	}
-}
-
-modrinth {
-	if (version.endsWith("SNAPSHOT")) // Not really elegant but will prevent publishing by error
-		return
-	token = System.getenv("MODRINTH_TOKEN")
-	projectId = "d5BXxnVG"
-	versionNumber = version.toString()
-	versionType = "release"
-	uploadFile = remapJar
-	versionName = "HighLightItem " + version
-	changelog = new File('./changelog.md').getText('UTF-8')
-	dependencies {
-		required.project "fabric-api"
-	}
-	if (debugMode.getOrElse(true) == false)
-		cleanChangelog()
-}
-
-static def cleanChangelog() {
-	new File('./changelog.md').setText("")
 }
