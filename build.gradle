@@ -1,10 +1,13 @@
 plugins {
-	id 'fabric-loom' version '1.8-SNAPSHOT'
-	id "com.modrinth.minotaur" version "2.+"
+	id 'fabric-loom' version '1.10.1'
 }
 
 version = project.mod_version
 group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -17,16 +20,12 @@ processResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": inputs.properties.version
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 21
-}
-
-base {
-	archivesName = project.archives_base_name
 }
 
 java {
@@ -40,28 +39,9 @@ java {
 }
 
 jar {
+	inputs.property "archivesName", project.base.archivesName
+
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${inputs.properties.archivesName}"}
 	}
-}
-
-modrinth {
-	if (version.endsWith("SNAPSHOT")) // Not really elegant but will prevent publishing by error
-		return
-	token = System.getenv("MODRINTH_TOKEN")
-	projectId = "d5BXxnVG"
-	versionNumber = version.toString()
-	versionType = "release"
-	uploadFile = remapJar
-	versionName = "HighLightItem " + version
-	changelog = new File('./changelog.md').getText('UTF-8')
-	dependencies {
-		required.project "fabric-api"
-	}
-	if (debugMode.getOrElse(true) == false)
-		cleanChangelog()
-}
-
-static def cleanChangelog() {
-	new File('./changelog.md').setText("")
 }
