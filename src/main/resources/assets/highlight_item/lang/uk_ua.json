@@ -24,6 +24,7 @@
   "options.highlightitem.color.green" : "Зелений",
   "options.highlightitem.color.blue" : "Синій",
   "options.highlightitem.color.vanilla" : "Використовувати ванільний колір виділення",
+  "options.highlightitem.color.reset" : "Reset color values",
   "modmenu.descriptionTranslation.highlight_item" : "Виділяє предмети інвентарю, подібні до того, на який наведено курсор.",
   "modmenu.summaryTranslation.highlight_item" : "Виділяє предмети інвентарю, подібні до того, на який наведено курсор."
 }

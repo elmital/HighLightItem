@@ -42,17 +42,15 @@ public class ConfigurationScreen extends GameOptionsScreen {
     int green;
     int blue;
     float alpha;
+    final static int FOOTER_HEIGHT = 53;
 
     public ConfigurationScreen(GameOptions gameOptions) {
-        super(null, gameOptions, Text.literal("HighLightItem"));
-        this.red = ColorHelper.getRed(Configurator.COLOR);
-        this.green = ColorHelper.getGreen(Configurator.COLOR);
-        this.blue = ColorHelper.getBlue(Configurator.COLOR);
-        this.alpha = (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100;
+        this(gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100);
     }
 
     private ConfigurationScreen(GameOptions gameOptions, int red, int green, int blue, float alpha) {
         super(null, gameOptions, Text.literal("HighLightItem"));
+        this.layout.setFooterHeight(FOOTER_HEIGHT);
         this.red = red;
         this.green = green;
         this.blue = blue;
@@ -79,7 +77,11 @@ public class ConfigurationScreen extends GameOptionsScreen {
             close(false);
             HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100));
         })).build());
-        directionalLayoutWidget2.add(ButtonWidget.builder(ScreenTexts.DONE, button -> close()).build());
+        directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.reset"), button -> {
+            close(false);
+            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options));
+        }).build());
+        directionalLayoutWidget.add(ButtonWidget.builder(ScreenTexts.DONE, button -> close()).build());
     }
 
     @Override
@@ -118,9 +120,9 @@ public class ConfigurationScreen extends GameOptionsScreen {
 
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72, 256, 256);
-        context.drawBorder(4, 35 , (this.width / 2) - 163 , this.height - 70, ColorHelper.getArgb(255, 75, 75, 75));
-        context.fill(RenderPipelines.GUI, 5, 36 , (this.width / 2) - 160 , this.height - 36, ColorHelper.getArgb((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72 - FOOTER_HEIGHT, 256, 256);
+        context.drawBorder(4, 35 , (this.width / 2) - 163 , this.height - 70 - FOOTER_HEIGHT, ColorHelper.getArgb(255, 75, 75, 75));
+        context.fill(RenderPipelines.GUI, 5, 36 , (this.width / 2) - 160 , this.height - 36- FOOTER_HEIGHT, ColorHelper.getArgb((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
     }
 
     @Override
