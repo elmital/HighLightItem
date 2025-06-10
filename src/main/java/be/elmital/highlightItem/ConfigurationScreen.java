@@ -34,6 +34,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
+import org.lwjgl.glfw.GLFW;
 
 
 public class ConfigurationScreen extends GameOptionsScreen {
@@ -50,10 +51,23 @@ public class ConfigurationScreen extends GameOptionsScreen {
         this.alpha = (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100;
     }
 
+    private ConfigurationScreen(GameOptions gameOptions, int red, int green, int blue, float alpha) {
+        super(null, gameOptions, Text.literal("HighLightItem"));
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.alpha = alpha;
+    }
+
     @Override
     public void close() {
+        close(true);
+    }
+
+    private void close(boolean withSaving) {
         super.close();
-        HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, null);
+        if (withSaving)
+            HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, null);
     }
 
     @Override
@@ -61,16 +75,10 @@ public class ConfigurationScreen extends GameOptionsScreen {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(DirectionalLayoutWidget.vertical()).spacing(8);
         directionalLayoutWidget.getMainPositioner().alignHorizontalCenter();
         DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(DirectionalLayoutWidget.horizontal().spacing(8));
-        directionalLayoutWidget2.add(
-            ButtonWidget.builder(Text.translatable("options.highlightitem.color.vanilla"), (button -> {
-                this.red = (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255);
-                this.green = (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255);
-                this.blue = (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255);
-                this.alpha = Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100;
-                this.clearAndInit();
-            }
-            )).build()
-        );
+        directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.vanilla"), (button -> {
+            close(false);
+            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100));
+        })).build());
         directionalLayoutWidget2.add(ButtonWidget.builder(ScreenTexts.DONE, button -> close()).build());
     }
 
@@ -113,5 +121,14 @@ public class ConfigurationScreen extends GameOptionsScreen {
         context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72, 256, 256);
         context.drawBorder(4, 35 , (this.width / 2) - 163 , this.height - 70, ColorHelper.getArgb(255, 75, 75, 75));
         context.fill(RenderPipelines.GUI, 5, 36 , (this.width / 2) - 160 , this.height - 36, ColorHelper.getArgb((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && this.shouldCloseOnEsc()) {
+            this.close(false);
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 }
