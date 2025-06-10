@@ -24,6 +24,7 @@
   "options.highlightitem.color.green" : "Grün",
   "options.highlightitem.color.blue" : "Blau",
   "options.highlightitem.color.vanilla" : "Vanille-Hervorhebungsfarbe verwenden",
+  "options.highlightitem.color.reset" : "Reset color values",
   "modmenu.descriptionTranslation.highlight_item" : "Hebt Inventargegenstände hervor, die dem Gegenstand ähneln, über den der Mauszeiger bewegt wird",
   "modmenu.summaryTranslation.highlight_item" : "Hebt Inventargegenstände hervor, die dem Gegenstand ähneln, über den der Mauszeiger bewegt wird."
 }
