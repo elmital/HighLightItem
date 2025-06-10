@@ -25,6 +25,9 @@
   "options.highlightitem.color.blue" : "Bleu",
   "options.highlightitem.color.vanilla" : "Utiliser la couleur vanilla",
   "options.highlightitem.color.reset" : "Réinitialiser les valeurs de la couleur",
+  "options.highlightitem.color.hovered" : "Item survolé coloré",
+  "options.highlightitem.toggle" : "Activation surbrillance",
+  "options.highlightitem.comparator" : "Mode de comparaison",
   "modmenu.descriptionTranslation.highlight_item" : "Mets en surbrillance les items dans les inventaires similaires à celui survolé.",
   "modmenu.summaryTranslation.highlight_item" : "Mets en surbrillance les items similaires à celui survolé."
 }

@@ -25,6 +25,9 @@
   "options.highlightitem.color.blue" : "Синий",
   "options.highlightitem.color.vanilla" : "Использовать ванильный цвет подсветки",
   "options.highlightitem.color.reset" : "Reset color values",
+  "options.highlightitem.color.hovered" : "Hover item colored",
+  "options.highlightitem.toggle" : "Highlighting activated",
+  "options.highlightitem.comparator" : "Comparator mode",
   "modmenu.descriptionTranslation.highlight_item" : "Выделяет элементы инвентаря, похожие на тот, на который наведено курсор",
   "modmenu.summaryTranslation.highlight_item" : "Выделяет элементы инвентаря, похожие на тот, на который наведена курсор."
 }
