@@ -25,6 +25,9 @@
   "options.highlightitem.color.blue" : "蓝色",
   "options.highlightitem.color.vanilla" : "使用vanilla高亮颜色",
   "options.highlightitem.color.reset" : "Reset color values",
+  "options.highlightitem.color.hovered" : "Hover item colored",
+  "options.highlightitem.toggle" : "Highlighting activated",
+  "options.highlightitem.comparator" : "Comparator mode",
   "modmenu.descriptionTranslation.highlight_item" : "高亮显示与鼠标悬停位置相似的库存物品",
   "modmenu.summaryTranslation.highlight_item" : "高亮显示与鼠标悬停位置相似的库存项目。"
 }

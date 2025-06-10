@@ -1,4 +1,4 @@
-## Configuration menu (Color picker)
+## Configuration menu (Color picker changes)
 
 ###  Bug fixes
 - Fix some bugs that could occur after resizing the minecraft game window with the color picker menu opened :
@@ -12,3 +12,6 @@
 
 ### Features
 - Add a new button to reset the color values
+- Add a new button to change the comparator mode
+- Add a new button to change if the hovered item is highlighted too
+- Add a new button to toggle the highlighting
