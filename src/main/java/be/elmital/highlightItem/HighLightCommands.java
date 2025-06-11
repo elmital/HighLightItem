@@ -46,6 +46,10 @@ public class HighLightCommands {
 
     public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, environment) -> dispatcher.register(literal("highlightitem")
+                .then(literal("menu").executes(context -> {
+                    Scheduler.queue(new Scheduler.Task(() -> HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options)), 1L));
+                    return Command.SINGLE_SUCCESS;
+                }))
                 .then(literal("color")
                         .then(literal("custom")
                                 .then(argument("red", IntegerArgumentType.integer(0, 255)).then(argument("green", IntegerArgumentType.integer(0, 255)).then(argument("blue", IntegerArgumentType.integer(0, 255)).then(argument("alpha", FloatArgumentType.floatArg(0.0f, 1.0f))
@@ -77,16 +81,16 @@ public class HighLightCommands {
                 .then(literal("hoverColor")
                         .then(argument("boolean", BoolArgumentType.bool())
                                 .executes(context -> {
-                                    HighlightItem.configurator.updateColorHovered(BoolArgumentType.getBool(context, "boolean"), context.getSource().getPlayer(), Configurator.NotificationType.ON_CHAT);
+                                    HighlightItem.configurator.updateColorHovered(BoolArgumentType.getBool(context, "boolean"), context.getSource().getPlayer(), Configurator.NotificationContext.SENDING_COMMAND);
                                     return Command.SINGLE_SUCCESS;
                                 })))
                 .then(literal("toggle").executes(context -> {
-                    HighlightItem.configurator.updateToggle(context.getSource().getPlayer(), Configurator.NotificationType.ON_CHAT);
+                    HighlightItem.configurator.updateToggle(context.getSource().getPlayer(), Configurator.NotificationContext.SENDING_COMMAND);
                     return Command.SINGLE_SUCCESS;
                 })).then(literal("mode")
                         .then(argument("mode", ItemComparator.ComparatorArgumentType.comparator())
                                 .executes(context -> {
-                                    HighlightItem.configurator.updateMode(ItemComparator.ComparatorArgumentType.getComparator("mode", context), context.getSource().getPlayer(), Configurator.NotificationType.ON_CHAT);
+                                    HighlightItem.configurator.updateMode(ItemComparator.ComparatorArgumentType.getComparator("mode", context), context.getSource().getPlayer(), Configurator.NotificationContext.SENDING_COMMAND);
                                     return Command.SINGLE_SUCCESS;
                                 })))
         ));

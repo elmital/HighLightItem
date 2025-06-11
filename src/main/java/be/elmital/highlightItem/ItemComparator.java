@@ -33,6 +33,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.util.TranslatableOption;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -87,7 +88,7 @@ public class ItemComparator {
         }
     }
 
-    public enum Comparators {
+    public enum Comparators implements TranslatableOption {
         ITEM_ONLY((stack, stack2) -> stack.getItem().equals(stack2.getItem())),
         ITEM_AND_AMOUNT(((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(ITEM_ONLY.predicate)),
         ITEM_AND_NBT(ITEM_ONLY.predicate.and((stack, stack2) -> (stack.getComponents() == null && stack2.getComponents() == null) || (stack.getComponents() != null && stack2.getComponents() != null && stack.getComponents().equals(stack2.getComponents())))),
@@ -108,6 +109,16 @@ public class ItemComparator {
 
         public String translationKey() {
             return "highlightitem.comparator." + this.name().toLowerCase();
+        }
+
+        @Override
+        public int getId() {
+            return this.ordinal();
+        }
+
+        @Override
+        public String getTranslationKey() {
+            return translationKey();
         }
     }
 }
