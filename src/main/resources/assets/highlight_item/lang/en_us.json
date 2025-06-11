@@ -8,7 +8,7 @@
   "notification.highlightitem.comparator.change" : "Mode changed to : %s",
   "notification.highlightitem.color" : "Color modified!",
   "notification.highlightitem.title" : "Configure color",
-  "key.highlightitem.color_menu" : "Color configuration",
+  "key.highlightitem.color_menu" : "Configuration menu",
   "key.highlightitem.toggle" : "Toggle activation",
   "key.highlightitem.color_hover" : "Color hovered item",
   "key.highlightitem.comparator" : "Switch comparator modes",
