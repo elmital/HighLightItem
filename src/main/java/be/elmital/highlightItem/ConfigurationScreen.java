@@ -32,7 +32,6 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
@@ -101,7 +100,7 @@ public class ConfigurationScreen extends GameOptionsScreen {
             close(false);
             HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, this.colorHovered, this.comparator, this.toggle));
         }).build());
-        directionalLayoutWidget.add(ButtonWidget.builder(ScreenTexts.DONE, button -> close()).build());
+        directionalLayoutWidget.add(ButtonWidget.builder(Text.translatable("options.highlightitem.save.close"), button -> close()).build());
     }
 
     @Override
