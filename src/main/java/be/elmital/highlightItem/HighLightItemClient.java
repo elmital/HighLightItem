@@ -38,6 +38,9 @@ public class HighLightItemClient implements ClientModInitializer {
         Configurator.COLOR_MENU = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.color_menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_B, "HighLightItem"));
         Configurator.COLOR_HOVERED_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.color_hover", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, "HighLightItem"));
         Configurator.COMPARATOR_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.comparator", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V, "HighLightItem"));
+        HighlightItem.LOGGER.info("Registering client scheduler...");
+        Scheduler.register();
+        HighlightItem.LOGGER.info("Scheduler client registered!");
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             assert client.player != null;
