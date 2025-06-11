@@ -15,3 +15,4 @@ The color picker menu is now a full config menu which allow to change configs wh
 - Add a new button to change the comparator mode
 - Add a new button to change if the hovered item is highlighted too
 - Add a new button to toggle the highlighting
+- The config menu can now be opened with the command `/highlightitem menu`
