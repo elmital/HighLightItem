@@ -26,6 +26,8 @@ import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.client.toast.Toast;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.ColorHelper;
@@ -51,8 +53,7 @@ public class Configurator {
     public static KeyBinding COMPARATOR_BIND;
     private final String CONFIG = "HighLightItemConfig";
     private final Properties properties = new Properties();
-    public static @Nullable Text notification;
-    public static int notificationTicks = 0;
+    public static SystemToast activeToastNotification = null;
 
     public static Configurator getInstance() throws IOException, URISyntaxException {
         return new Configurator();
@@ -203,8 +204,12 @@ public class Configurator {
         switch (type) {
             case ON_CHAT -> player.sendMessage(text, false);
             case ON_SCREEN -> {
-                notification = text;
-                notificationTicks = 40;
+                if (activeToastNotification == null || activeToastNotification.getVisibility().equals(Toast.Visibility.HIDE)) {
+                    HighlightItem.CLIENT.getToastManager().add(activeToastNotification = new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION, Text.literal("HighLightItem"), text));
+                } else {
+                    activeToastNotification.setContent(Text.literal("HighLightItem"), text);
+                    activeToastNotification.update(HighlightItem.CLIENT.getToastManager(), 5000L); // System toast is 5000L
+                }
             }
         }
     }

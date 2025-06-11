@@ -63,14 +63,6 @@ public class HighLightItemClient implements ClientModInitializer {
             if (Configurator.COMPARATOR_BIND.wasPressed()) {
                 HighlightItem.configurator.changeMode(client.player, Configurator.NotificationType.ON_CHAT);
             }
-
-            // Config notifications sent when a screen is opened
-            if (Configurator.notificationTicks > 0)
-                Configurator.notificationTicks--;
-            else if (Configurator.notificationTicks == 0)
-                Configurator.notification = null;
-            else
-                Configurator.notificationTicks = 0;
         });
         HighlightItem.LOGGER.info("Client side initialization done!");
     }
