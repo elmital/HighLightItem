@@ -8,7 +8,7 @@
   "notification.highlightitem.comparator.change" : "Режим змінено на: %s",
   "notification.highlightitem.color" : "Колір змінено!",
   "notification.highlightitem.title" : "Налаштувати колір",
-  "key.highlightitem.color_menu" : "Налаштування кольору",
+  "key.highlightitem.color_menu" : "Configuration menu",
   "key.highlightitem.toggle" : "Перемикання активації",
   "key.highlightitem.color_hover" : "Колір наведеного елемента",
   "key.highlightitem.comparator" : "Перемикати режими компаратора",

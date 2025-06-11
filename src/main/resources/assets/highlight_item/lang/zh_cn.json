@@ -8,7 +8,7 @@
   "notification.highlightitem.comparator.change" : "模式更改为 %s",
   "notification.highlightitem.color" : "颜色已修改！",
   "notification.highlightitem.title" : "配置颜色",
-  "key.highlightitem.color_menu" : "颜色配置",
+  "key.highlightitem.color_menu" : "Configuration menu",
   "key.highlightitem.toggle" : "切换激活",
   "key.highlightitem.color_hover" : "颜色悬停项",
   "key.highlightitem.comparator" : "切换比较器模式",
