@@ -49,7 +49,7 @@ public class HighLightItemClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             assert client.player != null;
             if (Configurator.TOGGLE_BIND.wasPressed()) {
-                HighlightItem.configurator.updateToggle(client.player, Configurator.NotificationType.ON_CHAT);
+                HighlightItem.configurator.updateToggle(client.player, Configurator.NotificationContext.IN_GAME);
             }
 
             if (Configurator.COLOR_MENU.wasPressed()) {
@@ -57,11 +57,11 @@ public class HighLightItemClient implements ClientModInitializer {
             }
 
             if (Configurator.COLOR_HOVERED_BIND.wasPressed()) {
-                HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, client.player, Configurator.NotificationType.ON_CHAT);
+                HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, client.player, Configurator.NotificationContext.IN_GAME);
             }
 
             if (Configurator.COMPARATOR_BIND.wasPressed()) {
-                HighlightItem.configurator.changeMode(client.player, Configurator.NotificationType.ON_CHAT);
+                HighlightItem.configurator.changeMode(client.player, Configurator.NotificationContext.IN_GAME);
             }
         });
         HighlightItem.LOGGER.info("Client side initialization done!");

@@ -29,6 +29,11 @@
   "options.highlightitem.toggle" : "Activation surbrillance",
   "options.highlightitem.comparator" : "Mode de comparaison",
   "options.highlightitem.save.close" : "Appliquer et fermer",
+  "options.highlightitem.notif" : "Préférence de notification",
+  "options.highlightitem.notif.none" : "Par défaut",
+  "options.highlightitem.notif.toast" : "Toast",
+  "options.highlightitem.notif.chat" : "Tchat",
+  "options.highlightitem.notif.overlay" : "Overlay",
   "modmenu.descriptionTranslation.highlight_item" : "Mets en surbrillance les items dans les inventaires similaires à celui survolé.",
   "modmenu.summaryTranslation.highlight_item" : "Mets en surbrillance les items similaires à celui survolé."
 }
