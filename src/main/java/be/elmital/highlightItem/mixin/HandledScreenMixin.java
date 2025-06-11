@@ -53,9 +53,6 @@ public abstract class HandledScreenMixin {
 	@Inject(method = "drawSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER))
 	private void drawSlot(DrawContext context, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
-			if (Configurator.notificationTicks > 0 && Configurator.notification != null)
-				context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 25, net.minecraft.util.Colors.WHITE);
-
 			if (focusedSlot == null)
 				return;
 

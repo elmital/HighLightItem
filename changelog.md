@@ -17,5 +17,10 @@ The color picker menu is now a full config menu which allow to change configs wh
 ### Changes
 - Before, changing the color with the slides or with the "use the vanilla color" button always update the configured values even when you use the escape key to close the menu. Now the changes will only be applied by pressing the "Apply and close" button which replace the old "done" button.
 
-## Other features
+## Other changes
+
+### Features
 - Improve logging during the Client initialization phase
+
+### Changes
+- Notifications sent when you change a config while using a key bind with an opened inventory are now sent in a "minecraft toast notification"
