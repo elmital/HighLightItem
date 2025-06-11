@@ -29,6 +29,11 @@
   "options.highlightitem.toggle" : "Highlighting activated",
   "options.highlightitem.comparator" : "Comparator mode",
   "options.highlightitem.save.close" : "Apply and close",
+  "options.highlightitem.notif" : "Notification preference",
+  "options.highlightitem.notif.none" : "Default",
+  "options.highlightitem.notif.toast" : "Toast",
+  "options.highlightitem.notif.chat" : "Chat",
+  "options.highlightitem.notif.overlay" : "Overlay",
   "modmenu.descriptionTranslation.highlight_item" : "高亮显示与鼠标悬停位置相似的库存物品",
   "modmenu.summaryTranslation.highlight_item" : "高亮显示与鼠标悬停位置相似的库存项目。"
 }

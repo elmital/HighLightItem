@@ -24,3 +24,10 @@ The color picker menu is now a full config menu which allow to change configs wh
 
 ### Changes
 - Notifications sent when you change a config while using a key bind with an opened inventory are now sent in a "minecraft toast notification"
+- You can choose a preferred mod notification sending mode when you have no inventory opened :
+  - Default : It depends on the context. 
+    - If you are using the command to make a change the notif will be sent in the chat. 
+    - If you pressed a key bind outside an opened inventory it will be sent in the minecraft overlay zone (above life, level and hunger).
+  - Chat : It will be sent in the chat
+  - Overlay : It will be sent in the minecraft overlay zone (above life, level and hunger).
+  - Toast : It will always be sent in a "minecraft toast notification"

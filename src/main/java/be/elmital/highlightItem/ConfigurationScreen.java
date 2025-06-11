@@ -47,13 +47,14 @@ public class ConfigurationScreen extends GameOptionsScreen {
     float alpha;
     boolean colorHovered, toggle;
     ItemComparator.Comparators comparator;
+    Configurator.NotificationPreference notif;
     final static int FOOTER_HEIGHT = 53;
 
     public ConfigurationScreen(GameOptions gameOptions) {
-        this(gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.TOGGLE);
+        this(gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.NOTIFICATION_PREFERENCE, Configurator.TOGGLE);
     }
 
-    private ConfigurationScreen(GameOptions gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, boolean toggle) {
+    private ConfigurationScreen(GameOptions gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
         super(null, gameOptions, Text.literal("HighLightItem"));
         this.layout.setFooterHeight(FOOTER_HEIGHT);
         this.red = red;
@@ -63,10 +64,11 @@ public class ConfigurationScreen extends GameOptionsScreen {
         this.colorHovered = colorHovered;
         this.toggle = toggle;
         this.comparator = comparator;
+        this.notif = notif;
     }
 
-    private ConfigurationScreen(GameOptions gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, boolean toggle) {
-        this(gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, toggle);
+    private ConfigurationScreen(GameOptions gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
+        this(gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, notif, toggle);
     }
 
     @Override
@@ -79,11 +81,13 @@ public class ConfigurationScreen extends GameOptionsScreen {
         if (withSaving) {
             HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, null);
             if (this.colorHovered != Configurator.COLOR_HOVERED)
-                HighlightItem.configurator.updateColorHovered(this.colorHovered, HighlightItem.CLIENT.player, Configurator.NotificationType.NONE);
+                HighlightItem.configurator.updateColorHovered(this.colorHovered, HighlightItem.CLIENT.player, Configurator.NotificationContext.NONE);
             if (this.comparator != Configurator.COMPARATOR)
-                HighlightItem.configurator.updateMode(this.comparator, HighlightItem.CLIENT.player, Configurator.NotificationType.NONE);
+                HighlightItem.configurator.updateMode(this.comparator, HighlightItem.CLIENT.player, Configurator.NotificationContext.NONE);
+            if (this.notif != Configurator.NOTIFICATION_PREFERENCE)
+                HighlightItem.configurator.updateNotificationPreference(this.notif);
             if (this.toggle != Configurator.TOGGLE)
-                HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationType.NONE);
+                HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationContext.NONE);
         }
     }
 
@@ -94,11 +98,11 @@ public class ConfigurationScreen extends GameOptionsScreen {
         DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(DirectionalLayoutWidget.horizontal().spacing(8));
         directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.vanilla"), (button -> {
             close(false);
-            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, toggle));
+            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
         })).build());
         directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.reset"), button -> {
             close(false);
-            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, this.colorHovered, this.comparator, this.toggle));
+            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, this.colorHovered, this.comparator, this.notif, this.toggle));
         }).build());
         directionalLayoutWidget.add(ButtonWidget.builder(Text.translatable("options.highlightitem.save.close"), button -> close()).build());
     }
@@ -141,6 +145,12 @@ public class ConfigurationScreen extends GameOptionsScreen {
                 , new SimpleOption.PotentialValuesBasedCallbacks<>(Arrays.asList(ItemComparator.Comparators.values()), Codec.INT.xmap(compId -> ItemComparator.Comparators.values()[compId], ItemComparator.Comparators::getId))
                 , this.comparator
                 , value -> this.comparator = value)
+        );
+
+        this.body.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.notif", value -> Tooltip.of(Text.translatable(value.getTranslationKey())), SimpleOption.enumValueText()
+                , new SimpleOption.PotentialValuesBasedCallbacks<>(Arrays.asList(Configurator.NotificationPreference.values()), Codec.INT.xmap(id -> Configurator.NotificationPreference.values()[id], Configurator.NotificationPreference::getId))
+                , Configurator.NOTIFICATION_PREFERENCE
+                , value -> this.notif = value)
         );
 
         this.body.addSingleOptionEntry(SimpleOption.ofBoolean("options.highlightitem.toggle", this.toggle, value -> this.toggle = value));

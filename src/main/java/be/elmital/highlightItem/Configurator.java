@@ -30,6 +30,7 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.toast.Toast;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.TranslatableOption;
 import net.minecraft.util.math.ColorHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +52,7 @@ public class Configurator {
     public static KeyBinding COLOR_HOVERED_BIND;
     public static ItemComparator.Comparators COMPARATOR;
     public static KeyBinding COMPARATOR_BIND;
+    public static NotificationPreference NOTIFICATION_PREFERENCE;
     private final String CONFIG = "HighLightItemConfig";
     private final Properties properties = new Properties();
     public static SystemToast activeToastNotification = null;
@@ -64,17 +66,36 @@ public class Configurator {
         loadOrGenerateConfig();
     }
 
-    public enum NotificationType {
+    public enum NotificationContext {
         NONE,
         ON_SCREEN,
-        ON_CHAT
+        SENDING_COMMAND,
+        IN_GAME
+    }
+
+    public enum NotificationPreference implements TranslatableOption {
+        NONE,
+        TOAST,
+        CHAT,
+        OVERLAY;
+
+        @Override
+        public int getId() {
+            return ordinal();
+        }
+
+        @Override
+        public String getTranslationKey() {
+            return "options.highlightitem.notif." + name().toLowerCase();
+        }
     }
 
     public enum Config {
         COLOR("color", Colors.HighLightColor.DEFAULT.json().toString()),
         COLOR_HOVERED("color-hovered", "false"),
         TOGGLE("toggle", "true"),
-        COMPARATOR("comparator", ItemComparator.Comparators.ITEM_ONLY.name());
+        COMPARATOR("comparator", ItemComparator.Comparators.ITEM_ONLY.name()),
+        NOTIFICATION_PREFERENCE("notif-preference", NotificationPreference.NONE.name());
 
         private final String key;
         private final String def;
@@ -124,6 +145,7 @@ public class Configurator {
         COLOR = ColorHelper.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
         COLOR_HOVERED = Boolean.parseBoolean(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
         COMPARATOR = ItemComparator.Comparators.valueOf(properties.getProperty(Config.COMPARATOR.getKey(), Config.COMPARATOR.getDefault()));
+        NOTIFICATION_PREFERENCE = NotificationPreference.valueOf(properties.getProperty(Config.NOTIFICATION_PREFERENCE.getKey(), Config.NOTIFICATION_PREFERENCE.getDefault()));
     }
 
     public Path getConfigDirectoryPath() {
@@ -146,7 +168,7 @@ public class Configurator {
         properties.store(stream, null);
     }
 
-    public void updateToggle(ClientPlayerEntity player, NotificationType notification) {
+    public void updateToggle(ClientPlayerEntity player, NotificationContext notification) {
         Configurator.TOGGLE = !Configurator.TOGGLE;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE);
@@ -156,7 +178,7 @@ public class Configurator {
         }
     }
 
-    public void updateColorHovered(boolean hovered, ClientPlayerEntity player, NotificationType notification) {
+    public void updateColorHovered(boolean hovered, ClientPlayerEntity player, NotificationContext notification) {
         Configurator.COLOR_HOVERED = hovered;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED);
@@ -166,7 +188,7 @@ public class Configurator {
         }
     }
 
-    public void changeMode(ClientPlayerEntity player, NotificationType notification) {
+    public void changeMode(ClientPlayerEntity player, NotificationContext notification) {
         if (Configurator.COMPARATOR.ordinal() == ItemComparator.Comparators.values().length - 1) {
             HighlightItem.configurator.updateMode(ItemComparator.Comparators.ITEM_ONLY, player, notification);
         } else {
@@ -179,7 +201,7 @@ public class Configurator {
         }
     }
 
-    public void updateMode(ItemComparator.Comparators mode, ClientPlayerEntity player, NotificationType notification) {
+    public void updateMode(ItemComparator.Comparators mode, ClientPlayerEntity player, NotificationContext notification) {
         Configurator.COMPARATOR = mode;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
@@ -200,17 +222,44 @@ public class Configurator {
 
     }
 
-    private void notify(NotificationType type, Text text, ClientPlayerEntity player) {
+    public void updateNotificationPreference(NotificationPreference notificationPreference) {
+        Configurator.NOTIFICATION_PREFERENCE = notificationPreference;
+        try {
+            HighlightItem.configurator.updateConfig(Config.NOTIFICATION_PREFERENCE, notificationPreference.name());
+        } catch (IOException e) {
+            notifyToast(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
+        }
+    }
+
+    private void notify(NotificationContext type, Text text, ClientPlayerEntity player) {
+        if (type.equals(NotificationContext.ON_SCREEN) || NOTIFICATION_PREFERENCE.equals(NotificationPreference.TOAST)) {
+            notifyToast(text);
+            return;
+        }
+
+        if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.CHAT)) {
+            player.sendMessage(text, false);
+            return;
+        } else if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.OVERLAY)) {
+            player.sendMessage(text, true);
+            return;
+        }
         switch (type) {
-            case ON_CHAT -> player.sendMessage(text, false);
-            case ON_SCREEN -> {
-                if (activeToastNotification == null || activeToastNotification.getVisibility().equals(Toast.Visibility.HIDE)) {
-                    HighlightItem.CLIENT.getToastManager().add(activeToastNotification = new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION, Text.literal("HighLightItem"), text));
-                } else {
-                    activeToastNotification.setContent(Text.literal("HighLightItem"), text);
-                    activeToastNotification.update(HighlightItem.CLIENT.getToastManager(), 5000L); // System toast is 5000L
-                }
-            }
+            case SENDING_COMMAND -> player.sendMessage(text, false);
+            case IN_GAME -> player.sendMessage(text, true);
+        }
+    }
+
+    private void notifyToast(Text text) {
+        notifyToast(Text.literal("HighLightItem"), text);
+    }
+
+    private void notifyToast(Text text, Text desc) {
+        if (activeToastNotification == null || activeToastNotification.getVisibility().equals(Toast.Visibility.HIDE)) {
+            HighlightItem.CLIENT.getToastManager().add(activeToastNotification = new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION, text, desc));
+        } else {
+            activeToastNotification.setContent(text, desc);
+            activeToastNotification.update(HighlightItem.CLIENT.getToastManager(), 5000L); // System toast is 5000L
         }
     }
 }

@@ -29,6 +29,11 @@
   "options.highlightitem.toggle" : "Highlighting activated",
   "options.highlightitem.comparator" : "Comparator mode",
   "options.highlightitem.save.close" : "Apply and close",
+  "options.highlightitem.notif" : "Notification preference",
+  "options.highlightitem.notif.none" : "Default",
+  "options.highlightitem.notif.toast" : "Toast",
+  "options.highlightitem.notif.chat" : "Chat",
+  "options.highlightitem.notif.overlay" : "Overlay",
   "modmenu.descriptionTranslation.highlight_item" : "Выделяет элементы инвентаря, похожие на тот, на который наведено курсор",
   "modmenu.summaryTranslation.highlight_item" : "Выделяет элементы инвентаря, похожие на тот, на который наведена курсор."
 }
