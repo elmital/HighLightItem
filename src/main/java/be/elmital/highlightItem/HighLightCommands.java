@@ -46,6 +46,10 @@ public class HighLightCommands {
 
     public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, environment) -> dispatcher.register(literal("highlightitem")
+                .then(literal("menu").executes(context -> {
+                    Scheduler.queue(new Scheduler.Task(() -> HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options)), 1L));
+                    return Command.SINGLE_SUCCESS;
+                }))
                 .then(literal("color")
                         .then(literal("custom")
                                 .then(argument("red", IntegerArgumentType.integer(0, 255)).then(argument("green", IntegerArgumentType.integer(0, 255)).then(argument("blue", IntegerArgumentType.integer(0, 255)).then(argument("alpha", FloatArgumentType.floatArg(0.0f, 1.0f))
