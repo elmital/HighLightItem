@@ -28,6 +28,7 @@
   "options.highlightitem.color.hovered" : "Hover item colored",
   "options.highlightitem.toggle" : "Highlighting activated",
   "options.highlightitem.comparator" : "Comparator mode",
+  "options.highlightitem.save.close" : "Apply and close",
   "modmenu.descriptionTranslation.highlight_item" : "高亮显示与鼠标悬停位置相似的库存物品",
   "modmenu.summaryTranslation.highlight_item" : "高亮显示与鼠标悬停位置相似的库存项目。"
 }
