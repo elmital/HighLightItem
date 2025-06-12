@@ -26,6 +26,7 @@ package be.elmital.highlightItem;
 import com.mojang.serialization.Codec;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -35,6 +36,7 @@ import net.minecraft.client.option.SimpleOption;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
@@ -51,11 +53,15 @@ public class ConfigurationScreen extends GameOptionsScreen {
     final static int FOOTER_HEIGHT = 53;
 
     public ConfigurationScreen(GameOptions gameOptions) {
-        this(gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.NOTIFICATION_PREFERENCE, Configurator.TOGGLE);
+        this(null, gameOptions);
     }
 
-    private ConfigurationScreen(GameOptions gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
-        super(null, gameOptions, Text.literal("HighLightItem"));
+    public ConfigurationScreen(@Nullable Screen parent, GameOptions gameOptions) {
+        this(parent, gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.NOTIFICATION_PREFERENCE, Configurator.TOGGLE);
+    }
+
+    private ConfigurationScreen(@Nullable Screen parent, GameOptions gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
+        super(parent, gameOptions, Text.literal("HighLightItem"));
         this.layout.setFooterHeight(FOOTER_HEIGHT);
         this.red = red;
         this.green = green;
@@ -67,8 +73,8 @@ public class ConfigurationScreen extends GameOptionsScreen {
         this.notif = notif;
     }
 
-    private ConfigurationScreen(GameOptions gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
-        this(gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, notif, toggle);
+    private ConfigurationScreen(@Nullable Screen parent, GameOptions gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
+        this(parent, gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, notif, toggle);
     }
 
     @Override
@@ -98,11 +104,11 @@ public class ConfigurationScreen extends GameOptionsScreen {
         DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(DirectionalLayoutWidget.horizontal().spacing(8));
         directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.vanilla"), (button -> {
             close(false);
-            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
+            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(this.parent, HighlightItem.CLIENT.options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
         })).build());
         directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.reset"), button -> {
             close(false);
-            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options, this.colorHovered, this.comparator, this.notif, this.toggle));
+            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(this.parent, HighlightItem.CLIENT.options, this.colorHovered, this.comparator, this.notif, this.toggle));
         }).build());
         directionalLayoutWidget.add(ButtonWidget.builder(Text.translatable("options.highlightitem.save.close"), button -> close()).build());
     }
