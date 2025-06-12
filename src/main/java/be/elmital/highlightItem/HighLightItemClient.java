@@ -34,15 +34,22 @@ public class HighLightItemClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        HighlightItem.LOGGER.info("Client side initialization start");
+        HighlightItem.LOGGER.info("Registering key binds");
         Configurator.TOGGLE_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_H, "HighLightItem"));
         Configurator.COLOR_MENU = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.color_menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_B, "HighLightItem"));
         Configurator.COLOR_HOVERED_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.color_hover", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, "HighLightItem"));
         Configurator.COMPARATOR_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.comparator", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V, "HighLightItem"));
+        HighlightItem.LOGGER.info("Key binds registered!");
+        HighlightItem.LOGGER.info("Registering client scheduler...");
+        Scheduler.register();
+        HighlightItem.LOGGER.info("Scheduler client registered!");
 
+        HighlightItem.LOGGER.info("Registering key bind and notification tracking");
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             assert client.player != null;
             if (Configurator.TOGGLE_BIND.wasPressed()) {
-                HighlightItem.configurator.updateToggle(client.player, Configurator.NotificationType.ON_CHAT);
+                HighlightItem.configurator.updateToggle(client.player, Configurator.NotificationContext.IN_GAME);
             }
 
             if (Configurator.COLOR_MENU.wasPressed()) {
@@ -50,20 +57,13 @@ public class HighLightItemClient implements ClientModInitializer {
             }
 
             if (Configurator.COLOR_HOVERED_BIND.wasPressed()) {
-                HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, client.player, Configurator.NotificationType.ON_CHAT);
+                HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, client.player, Configurator.NotificationContext.IN_GAME);
             }
 
             if (Configurator.COMPARATOR_BIND.wasPressed()) {
-                HighlightItem.configurator.changeMode(client.player, Configurator.NotificationType.ON_CHAT);
+                HighlightItem.configurator.changeMode(client.player, Configurator.NotificationContext.IN_GAME);
             }
-
-            // Config notifications sent when a screen is opened
-            if (Configurator.notificationTicks > 0)
-                Configurator.notificationTicks--;
-            else if (Configurator.notificationTicks == 0)
-                Configurator.notification = null;
-            else
-                Configurator.notificationTicks = 0;
         });
+        HighlightItem.LOGGER.info("Client side initialization done!");
     }
 }

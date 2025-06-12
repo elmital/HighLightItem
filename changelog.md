@@ -1,0 +1,33 @@
+## Configuration menu (Color picker changes)
+
+### Features
+The color picker menu is now a full config menu which allow to change configs which was previously only changed with key binds or commands.
+- Add a new button to reset the color values
+- Add a new button to change the comparator mode
+- Add a new button to change if the hovered item is highlighted too
+- Add a new button to toggle the highlighting
+- The config menu can now be opened with the command `/highlightitem menu`
+
+###  Bug fixes
+- Fix some bugs that could occur after resizing the minecraft game window with the config menu opened :
+  - Buttons and some elements that are not resized
+  - Accessibility linked problems when you use the tab key to navigate
+  - Narrator issues
+
+### Changes
+- Before, changing the color with the slides or with the "use the vanilla color" button always update the configured values even when you use the escape key to close the menu. Now the changes will only be applied by pressing the "Apply and close" button which replace the old "done" button.
+
+## Other changes
+
+### Features
+- Improve logging during the Client initialization phase
+
+### Changes
+- Notifications sent when you change a config while using a key bind with an opened inventory are now sent in a "minecraft toast notification"
+- You can choose a preferred mod notification sending mode when you have no inventory opened :
+  - Default : It depends on the context. 
+    - If you are using the command to make a change the notif will be sent in the chat. 
+    - If you pressed a key bind outside an opened inventory it will be sent in the minecraft overlay zone (above life, level and hunger).
+  - Chat : It will be sent in the chat
+  - Overlay : It will be sent in the minecraft overlay zone (above life, level and hunger).
+  - Toast : It will always be sent in a "minecraft toast notification"
