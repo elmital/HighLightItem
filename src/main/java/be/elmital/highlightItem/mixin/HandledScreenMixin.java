@@ -53,9 +53,6 @@ public abstract class HandledScreenMixin {
 	@Inject(method = "drawSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER))
 	private void drawSlot(DrawContext context, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
-			if (Configurator.notificationTicks > 0 && Configurator.notification != null)
-				context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 25, net.minecraft.util.Colors.WHITE);
-
 			if (focusedSlot == null)
 				return;
 
@@ -89,7 +86,7 @@ public abstract class HandledScreenMixin {
 	private boolean keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
 		assert HighlightItem.CLIENT.player != null;
 		if (Configurator.TOGGLE_BIND.matchesKey(keyCode, scanCode)) {
-			HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationType.ON_SCREEN);
+			HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		}
 
@@ -97,10 +94,10 @@ public abstract class HandledScreenMixin {
 			return info.getReturnValue();
 
 		if (Configurator.COLOR_HOVERED_BIND.matchesKey(keyCode, scanCode)) {
-			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, HighlightItem.CLIENT.player, Configurator.NotificationType.ON_SCREEN);
+			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, HighlightItem.CLIENT.player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		} else if (Configurator.COMPARATOR_BIND.matchesKey(keyCode, scanCode)) {
-			HighlightItem.configurator.changeMode(HighlightItem.CLIENT.player, Configurator.NotificationType.ON_SCREEN);
+			HighlightItem.configurator.changeMode(HighlightItem.CLIENT.player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		} else {
 			return info.getReturnValue();

@@ -72,11 +72,7 @@ public class HighlightItem implements ModInitializer {
 			LOGGER.error("Can't setup mod properly !");
 			LOGGER.throwing(e);
 		} finally {
-			LOGGER.info("""
-     
-					-------------
-					
-					""");
+			LOGGER.info("First initialization phase ended!");
 		}
 	}
 }
