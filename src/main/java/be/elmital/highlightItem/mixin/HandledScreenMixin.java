@@ -54,7 +54,7 @@ public abstract class HandledScreenMixin {
 	private void drawSlot(DrawContext context, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
 			if (Configurator.notificationTicks > 0 && Configurator.notification != null)
-				context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 25, 0);
+				context.drawCenteredTextWithShadow(HighlightItem.CLIENT.textRenderer, Configurator.notification, ((HandledScreenAccessor) this).getBackgroundWidth() / 2, ((HandledScreenAccessor) this).getBackgroundHeight() + 25, net.minecraft.util.Colors.WHITE);
 
 			if (focusedSlot == null)
 				return;
@@ -70,7 +70,7 @@ public abstract class HandledScreenMixin {
 		}
 	}
 
-	@ModifyArgs(method = "drawSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Ljava/util/function/Function;Lnet/minecraft/util/Identifier;IIII)V"))
+	@ModifyArgs(method = "drawSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/util/Identifier;IIII)V"))
 	private void colorizeIfMod(Args args) {
 		if (HighlightItem.toDrawFromMod != null) {
 			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {
