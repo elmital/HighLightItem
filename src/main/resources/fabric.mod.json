@@ -17,14 +17,15 @@
   "license": "GPL-3.0",
   "icon": "assets/highlight_item/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "be.elmital.highlightItem.HighlightItem"
     ],
     "client": [
       "be.elmital.highlightItem.HighLightItemClient"
-    ]
+    ],
+    "modmenu": [ "be.elmital.highlightItem.libs.ModMenuAPIIntegration" ]
   },
   "mixins": [
     "highlight_item.mixins.json"

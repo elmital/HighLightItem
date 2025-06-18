@@ -24,6 +24,7 @@ package be.elmital.highlightItem;
 
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.toast.SystemToast;
@@ -231,11 +232,14 @@ public class Configurator {
         }
     }
 
-    private void notify(NotificationContext type, Text text, ClientPlayerEntity player) {
+    private void notify(NotificationContext type, Text text, @Nullable ClientPlayerEntity player) {
         if (type.equals(NotificationContext.ON_SCREEN) || NOTIFICATION_PREFERENCE.equals(NotificationPreference.TOAST)) {
             notifyToast(text);
             return;
         }
+
+        if (player == null)
+            return;
 
         if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.CHAT)) {
             player.sendMessage(text, false);
@@ -256,10 +260,10 @@ public class Configurator {
 
     private void notifyToast(Text text, Text desc) {
         if (activeToastNotification == null || activeToastNotification.getVisibility().equals(Toast.Visibility.HIDE)) {
-            HighlightItem.CLIENT.getToastManager().add(activeToastNotification = new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION, text, desc));
+            MinecraftClient.getInstance().getToastManager().add(activeToastNotification = new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION, text, desc));
         } else {
             activeToastNotification.setContent(text, desc);
-            activeToastNotification.update(HighlightItem.CLIENT.getToastManager(), 5000L); // System toast is 5000L
+            activeToastNotification.update(MinecraftClient.getInstance().getToastManager(), 5000L); // System toast is 5000L
         }
     }
 }

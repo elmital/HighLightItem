@@ -29,6 +29,7 @@ import be.elmital.highlightItem.ItemComparator;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.slot.Slot;
@@ -84,9 +85,8 @@ public abstract class HandledScreenMixin {
 
 	@Inject(method = "keyPressed(III)Z", at = @At("RETURN"))
 	private boolean keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
-		assert HighlightItem.CLIENT.player != null;
 		if (Configurator.TOGGLE_BIND.matchesKey(keyCode, scanCode)) {
-			HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationContext.ON_SCREEN);
+			HighlightItem.configurator.updateToggle(MinecraftClient.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		}
 
@@ -94,10 +94,10 @@ public abstract class HandledScreenMixin {
 			return info.getReturnValue();
 
 		if (Configurator.COLOR_HOVERED_BIND.matchesKey(keyCode, scanCode)) {
-			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, HighlightItem.CLIENT.player, Configurator.NotificationContext.ON_SCREEN);
+			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, MinecraftClient.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		} else if (Configurator.COMPARATOR_BIND.matchesKey(keyCode, scanCode)) {
-			HighlightItem.configurator.changeMode(HighlightItem.CLIENT.player, Configurator.NotificationContext.ON_SCREEN);
+			HighlightItem.configurator.changeMode(MinecraftClient.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		} else {
 			return info.getReturnValue();
