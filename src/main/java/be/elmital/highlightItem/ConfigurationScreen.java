@@ -24,6 +24,7 @@ package be.elmital.highlightItem;
 
 
 import com.mojang.serialization.Codec;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -87,13 +88,13 @@ public class ConfigurationScreen extends GameOptionsScreen {
         if (withSaving) {
             HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, null);
             if (this.colorHovered != Configurator.COLOR_HOVERED)
-                HighlightItem.configurator.updateColorHovered(this.colorHovered, HighlightItem.CLIENT.player, Configurator.NotificationContext.NONE);
+                HighlightItem.configurator.updateColorHovered(this.colorHovered, MinecraftClient.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.comparator != Configurator.COMPARATOR)
-                HighlightItem.configurator.updateMode(this.comparator, HighlightItem.CLIENT.player, Configurator.NotificationContext.NONE);
+                HighlightItem.configurator.updateMode(this.comparator, MinecraftClient.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.notif != Configurator.NOTIFICATION_PREFERENCE)
                 HighlightItem.configurator.updateNotificationPreference(this.notif);
             if (this.toggle != Configurator.TOGGLE)
-                HighlightItem.configurator.updateToggle(HighlightItem.CLIENT.player, Configurator.NotificationContext.NONE);
+                HighlightItem.configurator.updateToggle(MinecraftClient.getInstance().player, Configurator.NotificationContext.NONE);
         }
     }
 
@@ -104,11 +105,11 @@ public class ConfigurationScreen extends GameOptionsScreen {
         DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(DirectionalLayoutWidget.horizontal().spacing(8));
         directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.vanilla"), (button -> {
             close(false);
-            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(this.parent, HighlightItem.CLIENT.options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
+            MinecraftClient.getInstance().setScreen(new ConfigurationScreen(this.parent, MinecraftClient.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
         })).build());
         directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.reset"), button -> {
             close(false);
-            HighlightItem.CLIENT.setScreen(new ConfigurationScreen(this.parent, HighlightItem.CLIENT.options, this.colorHovered, this.comparator, this.notif, this.toggle));
+            MinecraftClient.getInstance().setScreen(new ConfigurationScreen(this.parent, MinecraftClient.getInstance().options, this.colorHovered, this.comparator, this.notif, this.toggle));
         }).build());
         directionalLayoutWidget.add(ButtonWidget.builder(Text.translatable("options.highlightitem.save.close"), button -> close()).build());
     }

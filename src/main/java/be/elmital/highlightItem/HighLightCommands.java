@@ -28,6 +28,7 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -47,7 +48,7 @@ public class HighLightCommands {
     public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, environment) -> dispatcher.register(literal("highlightitem")
                 .then(literal("menu").executes(context -> {
-                    Scheduler.queue(new Scheduler.Task(() -> HighlightItem.CLIENT.setScreen(new ConfigurationScreen(HighlightItem.CLIENT.options)), 1L));
+                    Scheduler.queue(new Scheduler.Task(() -> MinecraftClient.getInstance().setScreen(new ConfigurationScreen(MinecraftClient.getInstance().options)), 1L));
                     return Command.SINGLE_SUCCESS;
                 }))
                 .then(literal("color")
