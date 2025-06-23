@@ -27,13 +27,25 @@ You can add keybinds to toggle the highlighting, changing mode comparaison, colo
 **Language :**
 The mod is available in English, French, German, Russian, Ukrainian and Chinese Simplified. And will automatically use the language(beetween these three or EN_US by default) you use for Minecraft
 
+**Config menu (v2.0.0+):**
+The old color picker is now a true configuration menu where you can change all the configs directly. To open it you can use the command `/highlightitem menu` or the keybind or if you use ModMenu directly from the Mods button.
+
+**Notifications (v2.0.0+):**
+You can choose a preferred mod notification sending mode when you have no inventory opened : 
+- Default : It depends on the context. 
+  - If you are using the command to make a change the notif will be sent in the chat.
+  - If you pressed a key bind it will be sent in the minecraft overlay zone (above life, levels and hunger). 
+- Chat : It will be sent in the chat  
+- Overlay : It will be sent in the minecraft overlay zone (above life, levels and hunger).
+- Toast : It will always be sent in a "minecraft toast notification"
+
 # Commands 
 
 If you prefer commands than keybinds and the menu there are three commands available to manage the mod :
 
 ```/highlightitem toggle``` -> activate/deactivate the mod 
 
-```/highlightitem menu``` -> open the config menu (only for v1.4.0+)
+```/highlightitem menu``` -> open the config menu (only for v2.0.0+)
 
 ```/highlightitem colorHover <true/false>```-> when set to true the slot of the item you are pointing with your cursor will be colored too when set to false it still will be highlight but with the vanilla highlighting
 
