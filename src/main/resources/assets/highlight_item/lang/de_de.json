@@ -8,6 +8,7 @@
   "notification.highlightitem.comparator.change" : "Modus geändert auf : %s",
   "notification.highlightitem.color" : "Farbe geändert!",
   "notification.highlightitem.title" : "Farbe konfigurieren",
+  "key.category.highlight_item.global" : "HighLightItem",
   "key.highlightitem.color_menu" : "Configuration menu",
   "key.highlightitem.toggle" : "Aktivierung umschalten",
   "key.highlightitem.color_hover" : "Farbe des schwebenden Elements",

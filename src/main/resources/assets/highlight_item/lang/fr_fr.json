@@ -8,6 +8,7 @@
   "notification.highlightitem.comparator.change" : "Mode de comparaison modifié en : %s",
   "notification.highlightitem.color" : "Couleur modifiée!",
   "notification.highlightitem.title" : "Configuration couleur",
+  "key.category.highlight_item.global" : "HighLightItem",
   "key.highlightitem.color_menu" : "Menu de configuration",
   "key.highlightitem.toggle" : "Activer/Désactiver",
   "key.highlightitem.color_hover" : "Colorer l'item survolé",

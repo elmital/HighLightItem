@@ -8,6 +8,7 @@
   "notification.highlightitem.comparator.change" : "Режим изменился на: %s",
   "notification.highlightitem.color" : "Цвет изменен!",
   "notification.highlightitem.title" : "Настроить цвет",
+  "key.category.highlight_item.global" : "HighLightItem",
   "key.highlightitem.color_menu" : "Configuration menu",
   "key.highlightitem.toggle" : "Активация переключения",
   "key.highlightitem.color_hover" : "Цвет наведенного элемента",
