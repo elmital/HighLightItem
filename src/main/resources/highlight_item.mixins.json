@@ -8,7 +8,8 @@
   ],
   "client": [
     "DrawContextMixin",
-    "HandledScreenMixin"
+    "HandledScreenMixin",
+    "SystemToastAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -22,6 +22,7 @@
 
 package be.elmital.highlightItem;
 
+import be.elmital.highlightItem.mixin.SystemToastAccessor;
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -263,6 +264,9 @@ public class Configurator {
             MinecraftClient.getInstance().getToastManager().add(activeToastNotification = new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION, text, desc));
         } else {
             activeToastNotification.setContent(text, desc);
+            // We need to recalculate the width manually following the way it's done in the SystemToast class
+            ((SystemToastAccessor) activeToastNotification).setWidth(Math.max(200, MinecraftClient.getInstance().textRenderer.wrapLines(desc, 200)
+                    .stream().mapToInt(value -> MinecraftClient.getInstance().textRenderer.getWidth(desc)).max().orElse(200)) + 30);
             activeToastNotification.update(MinecraftClient.getInstance().getToastManager(), 5000L); // System toast is 5000L
         }
     }
