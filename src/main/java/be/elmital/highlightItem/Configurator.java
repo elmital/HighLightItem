@@ -25,15 +25,15 @@ package be.elmital.highlightItem;
 import be.elmital.highlightItem.mixin.SystemToastAccessor;
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.client.toast.Toast;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.TranslatableOption;
-import net.minecraft.util.math.ColorHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.components.toasts.Toast;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.OptionEnum;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
@@ -45,15 +45,15 @@ import java.util.Properties;
 
 public class Configurator {
     public static boolean TOGGLE;
-    public static KeyBinding TOGGLE_BIND;
+    public static KeyMapping TOGGLE_BIND;
     private final Path currentDirectory;
     public static int COLOR;
 
-    public static KeyBinding COLOR_MENU;
+    public static KeyMapping COLOR_MENU;
     public static boolean COLOR_HOVERED;
-    public static KeyBinding COLOR_HOVERED_BIND;
+    public static KeyMapping COLOR_HOVERED_BIND;
     public static ItemComparator.Comparators COMPARATOR;
-    public static KeyBinding COMPARATOR_BIND;
+    public static KeyMapping COMPARATOR_BIND;
     public static NotificationPreference NOTIFICATION_PREFERENCE;
     private final String CONFIG = "HighLightItemConfig";
     private final Properties properties = new Properties();
@@ -75,7 +75,7 @@ public class Configurator {
         IN_GAME
     }
 
-    public enum NotificationPreference implements TranslatableOption {
+    public enum NotificationPreference implements OptionEnum {
         NONE,
         TOAST,
         CHAT,
@@ -87,7 +87,7 @@ public class Configurator {
         }
 
         @Override
-        public String getTranslationKey() {
+        public String getKey() {
             return "options.highlightitem.notif." + name().toLowerCase();
         }
     }
@@ -144,7 +144,7 @@ public class Configurator {
             updateConfig(Config.COLOR, highlightColor.json().toString());
         }
 
-        COLOR = ColorHelper.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
+        COLOR = ARGB.color((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
         COLOR_HOVERED = Boolean.parseBoolean(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
         COMPARATOR = ItemComparator.Comparators.valueOf(properties.getProperty(Config.COMPARATOR.getKey(), Config.COMPARATOR.getDefault()));
         NOTIFICATION_PREFERENCE = NotificationPreference.valueOf(properties.getProperty(Config.NOTIFICATION_PREFERENCE.getKey(), Config.NOTIFICATION_PREFERENCE.getDefault()));
@@ -170,27 +170,27 @@ public class Configurator {
         properties.store(stream, null);
     }
 
-    public void updateToggle(ClientPlayerEntity player, NotificationContext notification) {
+    public void updateToggle(LocalPlayer player, NotificationContext notification) {
         Configurator.TOGGLE = !Configurator.TOGGLE;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE);
-            notify(notification, Configurator.TOGGLE ? Text.translatable( "notification.highlightitem.highlighting.update").append(Text.literal(" ")).append(Text.translatable("notification.highlightitem.activate")).formatted(Formatting.GRAY) : Text.translatable( "notification.highlightitem.highlighting.update").append(Text.literal(" ")).append(Text.translatable("notification.highlightitem.deactivate")).formatted(Formatting.DARK_GRAY), player);
+            notify(notification, Configurator.TOGGLE ? Component.translatable( "notification.highlightitem.highlighting.update").append(Component.literal(" ")).append(Component.translatable("notification.highlightitem.activate")).withStyle(ChatFormatting.GRAY) : Component.translatable( "notification.highlightitem.highlighting.update").append(Component.literal(" ")).append(Component.translatable("notification.highlightitem.deactivate")).withStyle(ChatFormatting.DARK_GRAY), player);
         } catch (IOException e) {
-            notify(notification, Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), player);
+            notify(notification, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
         }
     }
 
-    public void updateColorHovered(boolean hovered, ClientPlayerEntity player, NotificationContext notification) {
+    public void updateColorHovered(boolean hovered, LocalPlayer player, NotificationContext notification) {
         Configurator.COLOR_HOVERED = hovered;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED);
-            notify(notification, Configurator.COLOR_HOVERED ? Text.translatable( "notification.highlightitem.color_hovered_activated").formatted(Formatting.GRAY) : Text.translatable("notification.highlightitem.color_hovered_deactivated").formatted(Formatting.DARK_GRAY), player);
+            notify(notification, Configurator.COLOR_HOVERED ? Component.translatable( "notification.highlightitem.color_hovered_activated").withStyle(ChatFormatting.GRAY) : Component.translatable("notification.highlightitem.color_hovered_deactivated").withStyle(ChatFormatting.DARK_GRAY), player);
         } catch (IOException e) {
-            notify(notification, Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), player);
+            notify(notification, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
         }
     }
 
-    public void changeMode(ClientPlayerEntity player, NotificationContext notification) {
+    public void changeMode(LocalPlayer player, NotificationContext notification) {
         if (Configurator.COMPARATOR.ordinal() == ItemComparator.Comparators.values().length - 1) {
             HighlightItem.configurator.updateMode(ItemComparator.Comparators.ITEM_ONLY, player, notification);
         } else {
@@ -203,23 +203,23 @@ public class Configurator {
         }
     }
 
-    public void updateMode(ItemComparator.Comparators mode, ClientPlayerEntity player, NotificationContext notification) {
+    public void updateMode(ItemComparator.Comparators mode, LocalPlayer player, NotificationContext notification) {
         Configurator.COMPARATOR = mode;
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
-            notify(notification, Text.translatable("notification.highlightitem.comparator.change",  Text.translatable(mode.translationKey()).append(" (").append(mode.name()).append(")")).formatted(Formatting.GRAY), player);
+            notify(notification, Component.translatable("notification.highlightitem.comparator.change",  Component.translatable(mode.translationKey()).append(" (").append(mode.name()).append(")")).withStyle(ChatFormatting.GRAY), player);
         } catch (IOException e) {
-            notify(notification, Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), player);
+            notify(notification, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
         }
     }
 
-    public void updateColor(float[] rgba, @Nullable ClientPlayerEntity player) {
-        Configurator.COLOR = ColorHelper.getArgb((int) (rgba[3] * 255f), (int) (rgba[0] * 255f), (int) (rgba[1] * 255f), (int) (rgba[2] * 255f));
+    public void updateColor(float[] rgba, @Nullable LocalPlayer player) {
+        Configurator.COLOR = ARGB.color((int) (rgba[3] * 255f), (int) (rgba[0] * 255f), (int) (rgba[1] * 255f), (int) (rgba[2] * 255f));
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, Colors.customToJson(rgba).toString());
-            if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.color").formatted(Formatting.GRAY), false);
+            if (player != null) player.displayClientMessage(Component.translatable("notification.highlightitem.color").withStyle(ChatFormatting.GRAY), false);
         } catch (IOException e) {
-            if (player != null) player.sendMessage(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED), false);
+            if (player != null) player.displayClientMessage(Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), false);
         }
 
     }
@@ -229,11 +229,11 @@ public class Configurator {
         try {
             HighlightItem.configurator.updateConfig(Config.NOTIFICATION_PREFERENCE, notificationPreference.name());
         } catch (IOException e) {
-            notifyToast(Text.translatable("notification.highlightitem.config.update.fail").formatted(Formatting.RED));
+            notifyToast(Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED));
         }
     }
 
-    private void notify(NotificationContext type, Text text, @Nullable ClientPlayerEntity player) {
+    private void notify(NotificationContext type, Component text, @Nullable LocalPlayer player) {
         if (type.equals(NotificationContext.ON_SCREEN) || NOTIFICATION_PREFERENCE.equals(NotificationPreference.TOAST)) {
             notifyToast(text);
             return;
@@ -243,31 +243,31 @@ public class Configurator {
             return;
 
         if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.CHAT)) {
-            player.sendMessage(text, false);
+            player.displayClientMessage(text, false);
             return;
         } else if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.OVERLAY)) {
-            player.sendMessage(text, true);
+            player.displayClientMessage(text, true);
             return;
         }
         switch (type) {
-            case SENDING_COMMAND -> player.sendMessage(text, false);
-            case IN_GAME -> player.sendMessage(text, true);
+            case SENDING_COMMAND -> player.displayClientMessage(text, false);
+            case IN_GAME -> player.displayClientMessage(text, true);
         }
     }
 
-    private void notifyToast(Text text) {
-        notifyToast(Text.literal("HighLightItem"), text);
+    private void notifyToast(Component text) {
+        notifyToast(Component.literal("HighLightItem"), text);
     }
 
-    private void notifyToast(Text text, Text desc) {
-        if (activeToastNotification == null || activeToastNotification.getVisibility().equals(Toast.Visibility.HIDE)) {
-            MinecraftClient.getInstance().getToastManager().add(activeToastNotification = new SystemToast(SystemToast.Type.PERIODIC_NOTIFICATION, text, desc));
+    private void notifyToast(Component text, Component desc) {
+        if (activeToastNotification == null || activeToastNotification.getWantedVisibility().equals(Toast.Visibility.HIDE)) {
+            Minecraft.getInstance().getToastManager().addToast(activeToastNotification = new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, text, desc));
         } else {
-            activeToastNotification.setContent(text, desc);
+            activeToastNotification.reset(text, desc);
             // We need to recalculate the width manually following the way it's done in the SystemToast class
-            ((SystemToastAccessor) activeToastNotification).setWidth(Math.max(200, MinecraftClient.getInstance().textRenderer.wrapLines(desc, 200)
-                    .stream().mapToInt(value -> MinecraftClient.getInstance().textRenderer.getWidth(desc)).max().orElse(200)) + 30);
-            activeToastNotification.update(MinecraftClient.getInstance().getToastManager(), 5000L); // System toast is 5000L
+            ((SystemToastAccessor) activeToastNotification).setWidth(Math.max(200, Minecraft.getInstance().font.split(desc, 200)
+                    .stream().mapToInt(value -> Minecraft.getInstance().font.width(desc)).max().orElse(200)) + 30);
+            activeToastNotification.update(Minecraft.getInstance().getToastManager(), 5000L); // System toast is 5000L
         }
     }
 }

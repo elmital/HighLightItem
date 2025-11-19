@@ -29,16 +29,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.TranslatableOption;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiPredicate;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.OptionEnum;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemComparator {
     public static boolean test(Comparators comparator, ItemStack stack, ItemStack stack2) {
@@ -69,7 +68,7 @@ public class ItemComparator {
             try {
                 return Comparators.valueOf(mode.toUpperCase());
             } catch (IllegalArgumentException iae) {
-                throw new SimpleCommandExceptionType(Text.of(iae.getMessage())).createWithContext(reader);
+                throw new SimpleCommandExceptionType(Component.nullToEmpty(iae.getMessage())).createWithContext(reader);
             }
         }
 
@@ -84,21 +83,21 @@ public class ItemComparator {
 
         @Override
         public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-            return CommandSource.suggestMatching(EXAMPLES, builder);
+            return SharedSuggestionProvider.suggest(EXAMPLES, builder);
         }
     }
 
-    public enum Comparators implements TranslatableOption {
+    public enum Comparators implements OptionEnum {
         ITEM_ONLY((stack, stack2) -> stack.getItem().equals(stack2.getItem())),
         ITEM_AND_AMOUNT(((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(ITEM_ONLY.predicate)),
         ITEM_AND_NBT(ITEM_ONLY.predicate.and((stack, stack2) -> (stack.getComponents() == null && stack2.getComponents() == null) || (stack.getComponents() != null && stack2.getComponents() != null && stack.getComponents().equals(stack2.getComponents())))),
         ITEM_AND_NBT_AND_AMOUNT(ITEM_AND_AMOUNT.predicate.and((stack, stack2) -> (stack.getComponents() == null &&  stack2.getComponents() == null) || (stack.getComponents() != null && stack2.getComponents() != null && stack.getComponents().equals(stack2.getComponents())))),
-        NAME_ONLY((stack, stack2) -> stack.getName().equals(stack2.getName())),
+        NAME_ONLY((stack, stack2) -> stack.getHoverName().equals(stack2.getHoverName())),
         NAME_AND_AMOUNT(((BiPredicate<ItemStack, ItemStack>) (stack, stack2) -> stack.getCount() == stack2.getCount()).and(NAME_ONLY.predicate)),
         NAMESPACE((stack, stack2) -> {
-            var key1 = Registries.ITEM.getKey(stack.getItem()).orElse(null);
-            var key2 = Registries.ITEM.getKey(stack2.getItem()).orElse(null);
-            return key1 != null && key2 != null && key1.getValue().getNamespace().equalsIgnoreCase(key2.getValue().getNamespace());
+            var key1 = BuiltInRegistries.ITEM.getResourceKey(stack.getItem()).orElse(null);
+            var key2 = BuiltInRegistries.ITEM.getResourceKey(stack2.getItem()).orElse(null);
+            return key1 != null && key2 != null && key1.location().getNamespace().equalsIgnoreCase(key2.location().getNamespace());
         });
 
         final BiPredicate<ItemStack, ItemStack> predicate;
@@ -117,7 +116,7 @@ public class ItemComparator {
         }
 
         @Override
-        public String getTranslationKey() {
+        public String getKey() {
             return translationKey();
         }
     }

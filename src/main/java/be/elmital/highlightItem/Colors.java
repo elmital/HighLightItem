@@ -30,13 +30,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.ColorHelper;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 
 public class Colors {
     public static float[] customFromJson(JsonObject json) {
@@ -98,7 +97,7 @@ public class Colors {
         }
 
         public int colorInteger() {
-            return ColorHelper.getArgb((int) (shaderColor[3] * 255f), (int) (shaderColor[0] * 255f), (int) (shaderColor[1] * 255f), (int) (shaderColor[2] * 255f));
+            return ARGB.color((int) (shaderColor[3] * 255f), (int) (shaderColor[0] * 255f), (int) (shaderColor[1] * 255f), (int) (shaderColor[2] * 255f));
         }
     }
     public static class HighLightColorArgumentType implements ArgumentType<HighLightColor> {
@@ -125,7 +124,7 @@ public class Colors {
             try {
                 return HighLightColor.valueOf(colorString.toUpperCase());
             } catch (IllegalArgumentException iae) {
-                throw new SimpleCommandExceptionType(Text.of(iae.getMessage())).createWithContext(reader);
+                throw new SimpleCommandExceptionType(Component.nullToEmpty(iae.getMessage())).createWithContext(reader);
             }
         }
 
@@ -140,7 +139,7 @@ public class Colors {
 
         @Override
         public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-            return CommandSource.suggestMatching(EXAMPLES, builder);
+            return SharedSuggestionProvider.suggest(EXAMPLES, builder);
         }
     }
 }

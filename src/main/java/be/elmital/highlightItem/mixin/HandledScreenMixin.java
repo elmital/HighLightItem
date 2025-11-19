@@ -29,11 +29,11 @@ import be.elmital.highlightItem.ItemComparator;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -46,30 +46,30 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 
 @Environment(EnvType.CLIENT)
-@Mixin(HandledScreen.class)
+@Mixin(AbstractContainerScreen.class)
 public abstract class HandledScreenMixin {
-	@Shadow protected abstract void drawSlotHighlightFront(DrawContext context);
+	@Shadow protected abstract void renderSlotHighlightFront(GuiGraphics context);
 
-	@Shadow @Nullable protected Slot focusedSlot;
+	@Shadow @Nullable protected Slot hoveredSlot;
 
-	@Inject(method = "drawSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER))
-	private void drawSlot(DrawContext context, CallbackInfo ci, @Local Slot slot) {
+	@Inject(method = "renderSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V", shift = At.Shift.AFTER))
+	private void drawSlot(GuiGraphics context, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
-			if (focusedSlot == null)
+			if (hoveredSlot == null)
 				return;
 
-			if (focusedSlot.equals(slot) && !Configurator.COLOR_HOVERED)
+			if (hoveredSlot.equals(slot) && !Configurator.COLOR_HOVERED)
 				return;
 
-			if (slot.isEnabled() && !slot.getStack().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, focusedSlot.getStack(), slot.getStack())) {
+			if (slot.isActive() && !slot.getItem().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, hoveredSlot.getItem(), slot.getItem())) {
 				HighlightItem.toDrawFromMod = slot;
-				drawSlotHighlightFront(context);
+				renderSlotHighlightFront(context);
 				HighlightItem.toDrawFromMod = null;
 			}
 		}
 	}
 
-	@ModifyArgs(method = "drawSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/util/Identifier;IIII)V"))
+	@ModifyArgs(method = "renderSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V"))
 	private void colorizeIfMod(Args args) {
 		if (HighlightItem.toDrawFromMod != null) {
 			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {
@@ -85,20 +85,20 @@ public abstract class HandledScreenMixin {
 	}
 
 	@Inject(method = "keyPressed", at = @At("RETURN"))
-	private boolean keyPressed(KeyInput input, CallbackInfoReturnable<Boolean> info) {
-		if (Configurator.TOGGLE_BIND.matchesKey(input)) {
-			HighlightItem.configurator.updateToggle(MinecraftClient.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
+	private boolean keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> info) {
+		if (Configurator.TOGGLE_BIND.matches(input)) {
+			HighlightItem.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		}
 
 		if (!Configurator.TOGGLE)
 			return info.getReturnValue();
 
-		if (Configurator.COLOR_HOVERED_BIND.matchesKey(input)) {
-			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, MinecraftClient.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
+		if (Configurator.COLOR_HOVERED_BIND.matches(input)) {
+			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
-		} else if (Configurator.COMPARATOR_BIND.matchesKey(input)) {
-			HighlightItem.configurator.changeMode(MinecraftClient.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
+		} else if (Configurator.COMPARATOR_BIND.matches(input)) {
+			HighlightItem.configurator.changeMode(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		} else {
 			return info.getReturnValue();

@@ -28,12 +28,11 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ColorHelper;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import java.io.IOException;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
@@ -48,7 +47,7 @@ public class HighLightCommands {
     public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, environment) -> dispatcher.register(literal("highlightitem")
                 .then(literal("menu").executes(context -> {
-                    Scheduler.queue(new Scheduler.Task(() -> MinecraftClient.getInstance().setScreen(new ConfigurationScreen(MinecraftClient.getInstance().options)), 1L));
+                    Scheduler.queue(new Scheduler.Task(() -> Minecraft.getInstance().setScreen(new ConfigurationScreen(Minecraft.getInstance().options)), 1L));
                     return Command.SINGLE_SUCCESS;
                 }))
                 .then(literal("color")
@@ -69,12 +68,12 @@ public class HighLightCommands {
                                     var color = Colors.HighLightColorArgumentType.getColor("color", context);
                                     var colors = color.getShaderColor();
 
-                                    Configurator.COLOR = ColorHelper.getArgb((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
+                                    Configurator.COLOR = ARGB.color((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
                                     try {
                                         HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.json().toString());
-                                        context.getSource().getPlayer().sendMessage(Text.of("Color changed!"), false);
+                                        context.getSource().getPlayer().displayClientMessage(Component.nullToEmpty("Color changed!"), false);
                                     } catch (IOException e) {
-                                        context.getSource().getPlayer().sendMessage(Text.of("The config file can't be updated!"), false);
+                                        context.getSource().getPlayer().displayClientMessage(Component.nullToEmpty("The config file can't be updated!"), false);
                                     }
                                     return Command.SINGLE_SUCCESS;
                                 })
@@ -98,7 +97,7 @@ public class HighLightCommands {
     }
 
     public void registerArgumentTypes() {
-        ArgumentTypeRegistry.registerArgumentType(Identifier.of("highlightitem:color"), Colors.HighLightColorArgumentType.class, ConstantArgumentSerializer.of(Colors.HighLightColorArgumentType::color));
-        ArgumentTypeRegistry.registerArgumentType(Identifier.of("highlightitem:mode"), ItemComparator.ComparatorArgumentType.class, ConstantArgumentSerializer.of(ItemComparator.ComparatorArgumentType::comparator));
+        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.parse("highlightitem:color"), Colors.HighLightColorArgumentType.class, SingletonArgumentInfo.contextFree(Colors.HighLightColorArgumentType::color));
+        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.parse("highlightitem:mode"), ItemComparator.ComparatorArgumentType.class, SingletonArgumentInfo.contextFree(ItemComparator.ComparatorArgumentType::comparator));
     }
 }

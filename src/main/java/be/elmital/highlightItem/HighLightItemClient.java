@@ -22,12 +22,12 @@
 
 package be.elmital.highlightItem;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 public class HighLightItemClient implements ClientModInitializer {
@@ -37,11 +37,11 @@ public class HighLightItemClient implements ClientModInitializer {
     public void onInitializeClient() {
         HighlightItem.LOGGER.info("Client side initialization start");
         HighlightItem.LOGGER.info("Registering key binds");
-        KeyBinding.Category cat = KeyBinding.Category.create(Identifier.of(HighlightItem.MOD_ID, "global"));
-        Configurator.TOGGLE_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_H, cat));
-        Configurator.COLOR_MENU = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.color_menu", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_B, cat));
-        Configurator.COLOR_HOVERED_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.color_hover", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, cat));
-        Configurator.COMPARATOR_BIND = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.highlightitem.comparator", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_V, cat));
+        KeyMapping.Category cat = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath(HighlightItem.MOD_ID, "global"));
+        Configurator.TOGGLE_BIND = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, cat));
+        Configurator.COLOR_MENU = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, cat));
+        Configurator.COLOR_HOVERED_BIND = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, cat));
+        Configurator.COMPARATOR_BIND = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, cat));
         HighlightItem.LOGGER.info("Key binds registered!");
         HighlightItem.LOGGER.info("Registering client scheduler...");
         Scheduler.register();
@@ -50,19 +50,19 @@ public class HighLightItemClient implements ClientModInitializer {
         HighlightItem.LOGGER.info("Registering key bind and notification tracking");
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             assert client.player != null;
-            if (Configurator.TOGGLE_BIND.wasPressed()) {
+            if (Configurator.TOGGLE_BIND.consumeClick()) {
                 HighlightItem.configurator.updateToggle(client.player, Configurator.NotificationContext.IN_GAME);
             }
 
-            if (Configurator.COLOR_MENU.wasPressed()) {
+            if (Configurator.COLOR_MENU.consumeClick()) {
                 client.setScreen(new ConfigurationScreen(client.options));
             }
 
-            if (Configurator.COLOR_HOVERED_BIND.wasPressed()) {
+            if (Configurator.COLOR_HOVERED_BIND.consumeClick()) {
                 HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, client.player, Configurator.NotificationContext.IN_GAME);
             }
 
-            if (Configurator.COMPARATOR_BIND.wasPressed()) {
+            if (Configurator.COMPARATOR_BIND.consumeClick()) {
                 HighlightItem.configurator.changeMode(client.player, Configurator.NotificationContext.IN_GAME);
             }
         });

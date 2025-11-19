@@ -23,7 +23,7 @@
 package be.elmital.highlightItem;
 
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.inventory.Slot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
