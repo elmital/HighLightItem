@@ -24,27 +24,27 @@ package be.elmital.highlightItem;
 
 
 import com.mojang.serialization.Codec;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.SimpleOption;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ColorHelper;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 
 
-public class ConfigurationScreen extends GameOptionsScreen {
+public class ConfigurationScreen extends OptionsSubScreen {
     int red;
     int green;
     int blue;
@@ -54,16 +54,16 @@ public class ConfigurationScreen extends GameOptionsScreen {
     Configurator.NotificationPreference notif;
     final static int FOOTER_HEIGHT = 53;
 
-    public ConfigurationScreen(GameOptions gameOptions) {
+    public ConfigurationScreen(Options gameOptions) {
         this(null, gameOptions);
     }
 
-    public ConfigurationScreen(@Nullable Screen parent, GameOptions gameOptions) {
-        this(parent, gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.NOTIFICATION_PREFERENCE, Configurator.TOGGLE);
+    public ConfigurationScreen(@Nullable Screen parent, Options gameOptions) {
+        this(parent, gameOptions, ARGB.red(Configurator.COLOR), ARGB.green(Configurator.COLOR), ARGB.blue(Configurator.COLOR), (ARGB.alpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.NOTIFICATION_PREFERENCE, Configurator.TOGGLE);
     }
 
-    private ConfigurationScreen(@Nullable Screen parent, GameOptions gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
-        super(parent, gameOptions, Text.literal("HighLightItem"));
+    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
+        super(parent, gameOptions, Component.literal("HighLightItem"));
         this.layout.setFooterHeight(FOOTER_HEIGHT);
         this.red = red;
         this.green = green;
@@ -75,106 +75,106 @@ public class ConfigurationScreen extends GameOptionsScreen {
         this.notif = notif;
     }
 
-    private ConfigurationScreen(@Nullable Screen parent, GameOptions gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
-        this(parent, gameOptions, ColorHelper.getRed(Configurator.COLOR), ColorHelper.getGreen(Configurator.COLOR), ColorHelper.getBlue(Configurator.COLOR), (ColorHelper.getAlpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, notif, toggle);
+    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
+        this(parent, gameOptions, ARGB.red(Configurator.COLOR), ARGB.green(Configurator.COLOR), ARGB.blue(Configurator.COLOR), (ARGB.alpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, notif, toggle);
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         close(true);
     }
 
     private void close(boolean withSaving) {
-        super.close();
+        super.onClose();
         if (withSaving) {
             HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, null);
             if (this.colorHovered != Configurator.COLOR_HOVERED)
-                HighlightItem.configurator.updateColorHovered(this.colorHovered, MinecraftClient.getInstance().player, Configurator.NotificationContext.NONE);
+                HighlightItem.configurator.updateColorHovered(this.colorHovered, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.comparator != Configurator.COMPARATOR)
-                HighlightItem.configurator.updateMode(this.comparator, MinecraftClient.getInstance().player, Configurator.NotificationContext.NONE);
+                HighlightItem.configurator.updateMode(this.comparator, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.notif != Configurator.NOTIFICATION_PREFERENCE)
                 HighlightItem.configurator.updateNotificationPreference(this.notif);
             if (this.toggle != Configurator.TOGGLE)
-                HighlightItem.configurator.updateToggle(MinecraftClient.getInstance().player, Configurator.NotificationContext.NONE);
+                HighlightItem.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
         }
     }
 
     @Override
-    protected void initFooter() {
-        DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(DirectionalLayoutWidget.vertical()).spacing(8);
-        directionalLayoutWidget.getMainPositioner().alignHorizontalCenter();
-        DirectionalLayoutWidget directionalLayoutWidget2 = directionalLayoutWidget.add(DirectionalLayoutWidget.horizontal().spacing(8));
-        directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.vanilla"), (button -> {
+    protected void addFooter() {
+        LinearLayout directionalLayoutWidget = this.layout.addToFooter(LinearLayout.vertical()).spacing(8);
+        directionalLayoutWidget.defaultCellSetting().alignHorizontallyCenter();
+        LinearLayout directionalLayoutWidget2 = directionalLayoutWidget.addChild(LinearLayout.horizontal().spacing(8));
+        directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (button -> {
             close(false);
-            MinecraftClient.getInstance().setScreen(new ConfigurationScreen(this.parent, MinecraftClient.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
+            Minecraft.getInstance().setScreen(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
         })).build());
-        directionalLayoutWidget2.add(ButtonWidget.builder(Text.translatable("options.highlightitem.color.reset"), button -> {
+        directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.color.reset"), button -> {
             close(false);
-            MinecraftClient.getInstance().setScreen(new ConfigurationScreen(this.parent, MinecraftClient.getInstance().options, this.colorHovered, this.comparator, this.notif, this.toggle));
+            Minecraft.getInstance().setScreen(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.toggle));
         }).build());
-        directionalLayoutWidget.add(ButtonWidget.builder(Text.translatable("options.highlightitem.save.close"), button -> close()).build());
+        directionalLayoutWidget.addChild(Button.builder(Component.translatable("options.highlightitem.save.close"), button -> onClose()).build());
     }
 
     @Override
     protected void addOptions() {
-        this.body.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.color.red", SimpleOption.emptyTooltip(), (prefix, value) -> {
+        this.list.addBig(new OptionInstance<>("options.highlightitem.color.red", OptionInstance.noTooltip(), (prefix, value) -> {
             if (value < 0 || value > 255) {
-                return Text.literal("error");
+                return Component.literal("error");
             } else {
-                return GameOptions.getGenericValueText(prefix, value);
+                return Options.genericValueLabel(prefix, value);
             }
-        }, new SimpleOption.ValidatingIntSliderCallbacks(0, 255), this.red, (value) -> this.red = value));
-        this.body.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.color.green", SimpleOption.emptyTooltip(), (prefix, value) -> {
+        }, new OptionInstance.IntRange(0, 255), this.red, (value) -> this.red = value));
+        this.list.addBig(new OptionInstance<>("options.highlightitem.color.green", OptionInstance.noTooltip(), (prefix, value) -> {
             if (value < 0 || value > 255) {
-                return Text.literal("error");
+                return Component.literal("error");
             } else {
-                return GameOptions.getGenericValueText(prefix, value);
+                return Options.genericValueLabel(prefix, value);
             }
-        }, new SimpleOption.ValidatingIntSliderCallbacks(0, 255), this.green, (value) -> this.green = value));
-        this.body.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.color.blue", SimpleOption.emptyTooltip(), (prefix, value) -> {
+        }, new OptionInstance.IntRange(0, 255), this.green, (value) -> this.green = value));
+        this.list.addBig(new OptionInstance<>("options.highlightitem.color.blue", OptionInstance.noTooltip(), (prefix, value) -> {
             if (value < 0 || value > 255) {
-                return Text.literal("error");
+                return Component.literal("error");
             } else {
-                return GameOptions.getGenericValueText(prefix, value);
+                return Options.genericValueLabel(prefix, value);
             }
-        }, new SimpleOption.ValidatingIntSliderCallbacks(0, 255), this.blue, (value) -> this.blue = value));
+        }, new OptionInstance.IntRange(0, 255), this.blue, (value) -> this.blue = value));
 
-        this.body.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.color.alpha", SimpleOption.emptyTooltip(), (prefix, value) -> {
+        this.list.addBig(new OptionInstance<>("options.highlightitem.color.alpha", OptionInstance.noTooltip(), (prefix, value) -> {
             if (value < 0 || value > 100) {
-                return Text.literal("error");
+                return Component.literal("error");
             } else {
-                return GameOptions.getGenericValueText(prefix, Text.of(value + "%"));
+                return Options.genericValueLabel(prefix, Component.nullToEmpty(value + "%"));
             }
-        }, new SimpleOption.ValidatingIntSliderCallbacks(0, 100), (int) this.alpha, (value) -> this.alpha = (float) value));
+        }, new OptionInstance.IntRange(0, 100), (int) this.alpha, (value) -> this.alpha = (float) value));
 
-        this.body.addSingleOptionEntry(SimpleOption.ofBoolean("options.highlightitem.color.hovered", this.colorHovered, value -> this.colorHovered = value));
+        this.list.addBig(OptionInstance.createBoolean("options.highlightitem.color.hovered", this.colorHovered, value -> this.colorHovered = value));
 
-        this.body.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.comparator", value -> Tooltip.of(Text.translatable(value.translationKey())), SimpleOption.enumValueText()
-                , new SimpleOption.PotentialValuesBasedCallbacks<>(Arrays.asList(ItemComparator.Comparators.values()), Codec.INT.xmap(compId -> ItemComparator.Comparators.values()[compId], ItemComparator.Comparators::getId))
+        this.list.addBig(new OptionInstance<>("options.highlightitem.comparator", value -> Tooltip.create(Component.translatable(value.translationKey())), OptionInstance.forOptionEnum()
+                , new OptionInstance.Enum<>(Arrays.asList(ItemComparator.Comparators.values()), Codec.INT.xmap(compId -> ItemComparator.Comparators.values()[compId], ItemComparator.Comparators::getId))
                 , this.comparator
                 , value -> this.comparator = value)
         );
 
-        this.body.addSingleOptionEntry(new SimpleOption<>("options.highlightitem.notif", value -> Tooltip.of(Text.translatable(value.getTranslationKey())), SimpleOption.enumValueText()
-                , new SimpleOption.PotentialValuesBasedCallbacks<>(Arrays.asList(Configurator.NotificationPreference.values()), Codec.INT.xmap(id -> Configurator.NotificationPreference.values()[id], Configurator.NotificationPreference::getId))
+        this.list.addBig(new OptionInstance<>("options.highlightitem.notif", value -> Tooltip.create(Component.translatable(value.getKey())), OptionInstance.forOptionEnum()
+                , new OptionInstance.Enum<>(Arrays.asList(Configurator.NotificationPreference.values()), Codec.INT.xmap(id -> Configurator.NotificationPreference.values()[id], Configurator.NotificationPreference::getId))
                 , Configurator.NOTIFICATION_PREFERENCE
                 , value -> this.notif = value)
         );
 
-        this.body.addSingleOptionEntry(SimpleOption.ofBoolean("options.highlightitem.toggle", this.toggle, value -> this.toggle = value));
+        this.list.addBig(OptionInstance.createBoolean("options.highlightitem.toggle", this.toggle, value -> this.toggle = value));
     }
 
 
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72 - FOOTER_HEIGHT, 256, 256);
-        context.drawStrokedRectangle(4, 35 , (this.width / 2) - 163 , this.height - 70 - FOOTER_HEIGHT, ColorHelper.getArgb(255, 75, 75, 75));
-        context.fill(RenderPipelines.GUI, 5, 36 , (this.width / 2) - 160 , this.height - 36- FOOTER_HEIGHT, ColorHelper.getArgb((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
+        context.blit(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72 - FOOTER_HEIGHT, 256, 256);
+        context.submitOutline(4, 35 , (this.width / 2) - 163 , this.height - 70 - FOOTER_HEIGHT, ARGB.color(255, 75, 75, 75));
+        context.fill(RenderPipelines.GUI, 5, 36 , (this.width / 2) - 160 , this.height - 36- FOOTER_HEIGHT, ARGB.color((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
-        if (input.getKeycode() == GLFW.GLFW_KEY_ESCAPE && this.shouldCloseOnEsc()) {
+    public boolean keyPressed(KeyEvent input) {
+        if (input.input() == GLFW.GLFW_KEY_ESCAPE && this.shouldCloseOnEsc()) {
             this.close(false);
             return true;
         }

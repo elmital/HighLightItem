@@ -1,8 +1,7 @@
 package be.elmital.highlightItem;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-
+import net.minecraft.client.Minecraft;
 import java.util.ArrayList;
 
 public class Scheduler implements ClientTickEvents.EndTick {
@@ -10,7 +9,7 @@ public class Scheduler implements ClientTickEvents.EndTick {
     private final ArrayList<Task> tasks = new ArrayList<>();
 
     @Override
-    public void onEndTick(MinecraftClient client) {
+    public void onEndTick(Minecraft client) {
         ArrayList<Task> toRemove = new ArrayList<>();
         synchronized (this.tasks) {
             for (Task task : tasks) {
