@@ -27,7 +27,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class HighLightItemClient implements ClientModInitializer {
@@ -37,7 +37,7 @@ public class HighLightItemClient implements ClientModInitializer {
     public void onInitializeClient() {
         HighlightItem.LOGGER.info("Client side initialization start");
         HighlightItem.LOGGER.info("Registering key binds");
-        KeyMapping.Category cat = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath(HighlightItem.MOD_ID, "global"));
+        KeyMapping.Category cat = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(HighlightItem.MOD_ID, "global"));
         Configurator.TOGGLE_BIND = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, cat));
         Configurator.COLOR_MENU = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, cat));
         Configurator.COLOR_HOVERED_BIND = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, cat));
