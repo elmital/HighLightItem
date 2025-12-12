@@ -33,7 +33,6 @@ import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.OptionEnum;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;

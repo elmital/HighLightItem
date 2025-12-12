@@ -52,8 +52,8 @@ public abstract class HandledScreenMixin {
 
 	@Shadow @Nullable protected Slot hoveredSlot;
 
-	@Inject(method = "renderSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V", shift = At.Shift.AFTER))
-	private void drawSlot(GuiGraphics context, CallbackInfo ci, @Local Slot slot) {
+	@Inject(method = "renderSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;II)V", shift = At.Shift.AFTER))
+	private void drawSlot(GuiGraphics guiGraphics, int i, int j, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
 			if (hoveredSlot == null)
 				return;
@@ -63,13 +63,13 @@ public abstract class HandledScreenMixin {
 
 			if (slot.isActive() && !slot.getItem().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, hoveredSlot.getItem(), slot.getItem())) {
 				HighlightItem.toDrawFromMod = slot;
-				renderSlotHighlightFront(context);
+				renderSlotHighlightFront(guiGraphics);
 				HighlightItem.toDrawFromMod = null;
 			}
 		}
 	}
 
-	@ModifyArgs(method = "renderSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V"))
+	@ModifyArgs(method = "renderSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
 	private void colorizeIfMod(Args args) {
 		if (HighlightItem.toDrawFromMod != null) {
 			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {

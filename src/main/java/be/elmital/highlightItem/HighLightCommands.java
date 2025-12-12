@@ -31,7 +31,7 @@ import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import java.io.IOException;
 
@@ -97,7 +97,7 @@ public class HighLightCommands {
     }
 
     public void registerArgumentTypes() {
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.parse("highlightitem:color"), Colors.HighLightColorArgumentType.class, SingletonArgumentInfo.contextFree(Colors.HighLightColorArgumentType::color));
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.parse("highlightitem:mode"), ItemComparator.ComparatorArgumentType.class, SingletonArgumentInfo.contextFree(ItemComparator.ComparatorArgumentType::comparator));
+        ArgumentTypeRegistry.registerArgumentType(Identifier.parse("highlightitem:color"), Colors.HighLightColorArgumentType.class, SingletonArgumentInfo.contextFree(Colors.HighLightColorArgumentType::color));
+        ArgumentTypeRegistry.registerArgumentType(Identifier.parse("highlightitem:mode"), ItemComparator.ComparatorArgumentType.class, SingletonArgumentInfo.contextFree(ItemComparator.ComparatorArgumentType::comparator));
     }
 }

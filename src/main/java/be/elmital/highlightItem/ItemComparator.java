@@ -36,7 +36,6 @@ import java.util.function.BiPredicate;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.OptionEnum;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemComparator {
@@ -97,7 +96,7 @@ public class ItemComparator {
         NAMESPACE((stack, stack2) -> {
             var key1 = BuiltInRegistries.ITEM.getResourceKey(stack.getItem()).orElse(null);
             var key2 = BuiltInRegistries.ITEM.getResourceKey(stack2.getItem()).orElse(null);
-            return key1 != null && key2 != null && key1.location().getNamespace().equalsIgnoreCase(key2.location().getNamespace());
+            return key1 != null && key2 != null && key1.identifier().getNamespace().equalsIgnoreCase(key2.identifier().getNamespace());
         });
 
         final BiPredicate<ItemStack, ItemStack> predicate;
