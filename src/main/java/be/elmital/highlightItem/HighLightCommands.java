@@ -35,8 +35,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import java.io.IOException;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 
 public class HighLightCommands {
@@ -71,9 +71,9 @@ public class HighLightCommands {
                                     Configurator.COLOR = ARGB.color((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
                                     try {
                                         HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.json().toString());
-                                        context.getSource().getPlayer().displayClientMessage(Component.nullToEmpty("Color changed!"), false);
+                                        context.getSource().getPlayer().sendSystemMessage(Component.nullToEmpty("Color changed!"));
                                     } catch (IOException e) {
-                                        context.getSource().getPlayer().displayClientMessage(Component.nullToEmpty("The config file can't be updated!"), false);
+                                        context.getSource().getPlayer().sendSystemMessage(Component.nullToEmpty("The config file can't be updated!"));
                                     }
                                     return Command.SINGLE_SUCCESS;
                                 })

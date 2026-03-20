@@ -30,7 +30,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.world.inventory.Slot;
@@ -47,13 +47,13 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Environment(EnvType.CLIENT)
 @Mixin(AbstractContainerScreen.class)
-public abstract class HandledScreenMixin {
-	@Shadow protected abstract void renderSlotHighlightFront(GuiGraphics context);
+public abstract class AbstractContainerScreenMixin {
+	@Shadow protected abstract void extractSlotHighlightFront(GuiGraphicsExtractor context);
 
 	@Shadow @Nullable protected Slot hoveredSlot;
 
-	@Inject(method = "renderSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;II)V", shift = At.Shift.AFTER))
-	private void drawSlot(GuiGraphics guiGraphics, int i, int j, CallbackInfo ci, @Local Slot slot) {
+	@Inject(method = "extractSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;extractSlot(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/inventory/Slot;II)V", shift = At.Shift.AFTER))
+	private void drawSlot(GuiGraphicsExtractor guiGraphics, int i, int j, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
 			if (hoveredSlot == null)
 				return;
@@ -63,13 +63,13 @@ public abstract class HandledScreenMixin {
 
 			if (slot.isActive() && !slot.getItem().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, hoveredSlot.getItem(), slot.getItem())) {
 				HighlightItem.toDrawFromMod = slot;
-				renderSlotHighlightFront(guiGraphics);
+				extractSlotHighlightFront(guiGraphics);
 				HighlightItem.toDrawFromMod = null;
 			}
 		}
 	}
 
-	@ModifyArgs(method = "renderSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
+	@ModifyArgs(method = "extractSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
 	private void colorizeIfMod(Args args) {
 		if (HighlightItem.toDrawFromMod != null) {
 			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {
