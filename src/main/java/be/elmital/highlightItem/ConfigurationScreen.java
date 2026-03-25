@@ -31,7 +31,7 @@ import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -167,10 +167,10 @@ public class ConfigurationScreen extends OptionsSubScreen {
     }
 
 
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
         context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72 - FOOTER_HEIGHT, 256, 256);
-        context.renderOutline(4, 35 , (this.width / 2) - 163 , this.height - 70 - FOOTER_HEIGHT, ARGB.color(255, 75, 75, 75));
+        context.outline(4, 35 , (this.width / 2) - 163 , this.height - 70 - FOOTER_HEIGHT, ARGB.color(255, 75, 75, 75));
         context.fill(RenderPipelines.GUI, 5, 36 , (this.width / 2) - 160 , this.height - 36- FOOTER_HEIGHT, ARGB.color((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
     }
 

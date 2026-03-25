@@ -216,9 +216,9 @@ public class Configurator {
         Configurator.COLOR = ARGB.color((int) (rgba[3] * 255f), (int) (rgba[0] * 255f), (int) (rgba[1] * 255f), (int) (rgba[2] * 255f));
         try {
             HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, Colors.customToJson(rgba).toString());
-            if (player != null) player.displayClientMessage(Component.translatable("notification.highlightitem.color").withStyle(ChatFormatting.GRAY), false);
+            if (player != null) player.sendSystemMessage(Component.translatable("notification.highlightitem.color").withStyle(ChatFormatting.GRAY));
         } catch (IOException e) {
-            if (player != null) player.displayClientMessage(Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), false);
+            if (player != null) player.sendSystemMessage(Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED));
         }
 
     }
@@ -242,15 +242,15 @@ public class Configurator {
             return;
 
         if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.CHAT)) {
-            player.displayClientMessage(text, false);
+            player.sendSystemMessage(text);
             return;
         } else if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.OVERLAY)) {
-            player.displayClientMessage(text, true);
+            player.sendOverlayMessage(text);
             return;
         }
         switch (type) {
-            case SENDING_COMMAND -> player.displayClientMessage(text, false);
-            case IN_GAME -> player.displayClientMessage(text, true);
+            case SENDING_COMMAND -> player.sendSystemMessage(text);
+            case IN_GAME -> player.sendOverlayMessage(text);
         }
     }
 
