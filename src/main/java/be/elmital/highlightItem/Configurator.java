@@ -260,13 +260,14 @@ public class Configurator {
 
     private void notifyToast(Component text, Component desc) {
         if (activeToastNotification == null || activeToastNotification.getWantedVisibility().equals(Toast.Visibility.HIDE)) {
-            Minecraft.getInstance().getToastManager().addToast(activeToastNotification = new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, text, desc));
+
+            Minecraft.getInstance().gui.toastManager().addToast(activeToastNotification = new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, text, desc));
         } else {
             activeToastNotification.reset(text, desc);
             // We need to recalculate the width manually following the way it's done in the SystemToast class
             ((SystemToastAccessor) activeToastNotification).setWidth(Math.max(200, Minecraft.getInstance().font.split(desc, 200)
                     .stream().mapToInt(value -> Minecraft.getInstance().font.width(desc)).max().orElse(200)) + 30);
-            activeToastNotification.update(Minecraft.getInstance().getToastManager(), 5000L); // System toast is 5000L
+            activeToastNotification.update(Minecraft.getInstance().gui.toastManager(), 5000L); // System toast is 5000L
         }
     }
 }

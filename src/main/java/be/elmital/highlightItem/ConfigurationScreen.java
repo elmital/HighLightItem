@@ -106,11 +106,11 @@ public class ConfigurationScreen extends OptionsSubScreen {
         LinearLayout directionalLayoutWidget2 = directionalLayoutWidget.addChild(LinearLayout.horizontal().spacing(8));
         directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (button -> {
             close(false);
-            Minecraft.getInstance().setScreen(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
+            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
         })).build());
         directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.color.reset"), button -> {
             close(false);
-            Minecraft.getInstance().setScreen(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.toggle));
+            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.toggle));
         }).build());
         directionalLayoutWidget.addChild(Button.builder(Component.translatable("options.highlightitem.save.close"), button -> onClose()).build());
     }
