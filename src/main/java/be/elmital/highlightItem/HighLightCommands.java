@@ -47,7 +47,7 @@ public class HighLightCommands {
     public void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, environment) -> dispatcher.register(literal("highlightitem")
                 .then(literal("menu").executes(context -> {
-                    Scheduler.queue(new Scheduler.Task(() -> Minecraft.getInstance().setScreen(new ConfigurationScreen(Minecraft.getInstance().options)), 1L));
+                    Scheduler.queue(new Scheduler.Task(() -> Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(Minecraft.getInstance().options)), 1L));
                     return Command.SINGLE_SUCCESS;
                 }))
                 .then(literal("color")

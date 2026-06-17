@@ -55,7 +55,7 @@ public class HighLightItemClient implements ClientModInitializer {
             }
 
             if (Configurator.COLOR_MENU.consumeClick()) {
-                client.setScreen(new ConfigurationScreen(client.options));
+                client.setScreenAndShow(new ConfigurationScreen(client.options));
             }
 
             if (Configurator.COLOR_HOVERED_BIND.consumeClick()) {
