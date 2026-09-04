@@ -69,7 +69,7 @@ public abstract class AbstractContainerScreenMixin {
 		}
 	}
 
-	@ModifyArgs(method = "extractSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
+	@ModifyArgs(method = "extractSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
 	private void colorizeIfMod(Args args) {
 		if (HighlightItem.toDrawFromMod != null) {
 			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {
@@ -84,24 +84,23 @@ public abstract class AbstractContainerScreenMixin {
 		}
 	}
 
-	@Inject(method = "keyPressed", at = @At("RETURN"))
-	private boolean keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> info) {
+	@Inject(method = "keyPressed", at = @At("RETURN"), cancellable = true)
+	private void keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> info) {
 		if (Configurator.TOGGLE_BIND.matches(input)) {
 			HighlightItem.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
-			return true;
+			info.setReturnValue(true);
+			return;
 		}
 
 		if (!Configurator.TOGGLE)
-			return info.getReturnValue();
+			return;
 
 		if (Configurator.COLOR_HOVERED_BIND.matches(input)) {
 			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
-			return true;
+			info.setReturnValue(true);
 		} else if (Configurator.COMPARATOR_BIND.matches(input)) {
 			HighlightItem.configurator.changeMode(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
-			return true;
-		} else {
-			return info.getReturnValue();
+			info.setReturnValue(true);
 		}
 	}
 }
