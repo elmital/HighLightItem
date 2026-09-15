@@ -32,6 +32,7 @@ import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.Nullable;
 
@@ -163,6 +164,15 @@ public class Configurator {
         properties.store(stream, null);
     }
 
+    private void updateConfigAndNotify(Config config, String value, NotificationContext notificationContext, MutableComponent onSuccess, @Nullable LocalPlayer player) {
+        try {
+            updateConfig(config, value);
+            notify(notificationContext, onSuccess, player);
+        } catch (IOException _) {
+            notify(notificationContext, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
+        }
+    }
+
     public void removeFromConfig(String key) throws IOException {
         var stream = new FileOutputStream(getConfigPath().toString());
         properties.remove(key);
@@ -171,22 +181,26 @@ public class Configurator {
 
     public void updateToggle(LocalPlayer player, NotificationContext notification) {
         Configurator.TOGGLE = !Configurator.TOGGLE;
-        try {
-            HighlightItem.configurator.updateConfig(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE);
-            notify(notification, Configurator.TOGGLE ? Component.translatable( "notification.highlightitem.highlighting.update").append(Component.literal(" ")).append(Component.translatable("notification.highlightitem.activate")).withStyle(ChatFormatting.GRAY) : Component.translatable( "notification.highlightitem.highlighting.update").append(Component.literal(" ")).append(Component.translatable("notification.highlightitem.deactivate")).withStyle(ChatFormatting.DARK_GRAY), player);
-        } catch (IOException e) {
-            notify(notification, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
-        }
+        updateConfigAndNotify(Configurator.Config.TOGGLE, "" + Configurator.TOGGLE, notification,
+                Configurator.TOGGLE
+                        ? Component.translatable( "notification.highlightitem.highlighting.update")
+                            .append(Component.literal(" "))
+                            .append(Component.translatable("notification.highlightitem.activate"))
+                            .withStyle(ChatFormatting.GRAY)
+                        : Component.translatable( "notification.highlightitem.highlighting.update")
+                            .append(Component.literal(" "))
+                            .append(Component.translatable("notification.highlightitem.deactivate"))
+                            .withStyle(ChatFormatting.DARK_GRAY)
+                , player);
     }
 
     public void updateColorHovered(boolean hovered, LocalPlayer player, NotificationContext notification) {
         Configurator.COLOR_HOVERED = hovered;
-        try {
-            HighlightItem.configurator.updateConfig(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED);
-            notify(notification, Configurator.COLOR_HOVERED ? Component.translatable( "notification.highlightitem.color_hovered_activated").withStyle(ChatFormatting.GRAY) : Component.translatable("notification.highlightitem.color_hovered_deactivated").withStyle(ChatFormatting.DARK_GRAY), player);
-        } catch (IOException e) {
-            notify(notification, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
-        }
+        updateConfigAndNotify(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED, notification
+                , Configurator.COLOR_HOVERED
+                        ? Component.translatable( "notification.highlightitem.color_hovered_activated").withStyle(ChatFormatting.GRAY)
+                        : Component.translatable("notification.highlightitem.color_hovered_deactivated").withStyle(ChatFormatting.DARK_GRAY)
+                , player);
     }
 
     public void changeMode(LocalPlayer player, NotificationContext notification) {
@@ -204,32 +218,24 @@ public class Configurator {
 
     public void updateMode(ItemComparator.Comparators mode, LocalPlayer player, NotificationContext notification) {
         Configurator.COMPARATOR = mode;
-        try {
-            HighlightItem.configurator.updateConfig(Configurator.Config.COMPARATOR, mode.name());
-            notify(notification, Component.translatable("notification.highlightitem.comparator.change",  Component.translatable(mode.translationKey()).append(" (").append(mode.name()).append(")")).withStyle(ChatFormatting.GRAY), player);
-        } catch (IOException e) {
-            notify(notification, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
-        }
+        updateConfigAndNotify(Configurator.Config.COMPARATOR, mode.name(), notification
+                , Component.translatable("notification.highlightitem.comparator.change",
+                        Component.translatable(mode.translationKey())
+                                .append(" (")
+                                .append(mode.name())
+                                .append(")"))
+                        .withStyle(ChatFormatting.GRAY), player);
     }
 
-    public void updateColor(float[] rgba, @Nullable LocalPlayer player) {
+    public void updateColor(float[] rgba, @Nullable Colors.HighLightColor highLightColor, LocalPlayer player, NotificationContext notification) {
         Configurator.COLOR = ARGB.color((int) (rgba[3] * 255f), (int) (rgba[0] * 255f), (int) (rgba[1] * 255f), (int) (rgba[2] * 255f));
-        try {
-            HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, Colors.customToJson(rgba).toString());
-            if (player != null) player.sendSystemMessage(Component.translatable("notification.highlightitem.color").withStyle(ChatFormatting.GRAY));
-        } catch (IOException e) {
-            if (player != null) player.sendSystemMessage(Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED));
-        }
-
+        updateConfigAndNotify(Configurator.Config.COLOR, highLightColor != null ? highLightColor.json().toString() : Colors.customToJson(rgba).toString(), notification
+                , Component.translatable("notification.highlightitem.color").withStyle(ChatFormatting.GRAY), player);
     }
 
-    public void updateNotificationPreference(NotificationPreference notificationPreference) {
+    public void updateNotificationPreference(NotificationPreference notificationPreference, LocalPlayer localPlayer, NotificationContext notification) {
         Configurator.NOTIFICATION_PREFERENCE = notificationPreference;
-        try {
-            HighlightItem.configurator.updateConfig(Config.NOTIFICATION_PREFERENCE, notificationPreference.name());
-        } catch (IOException e) {
-            notifyToast(Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED));
-        }
+        updateConfigAndNotify(Config.NOTIFICATION_PREFERENCE, notificationPreference.name(), notification,Component.translatable("notification.highlightitem.notif.preferences").withStyle(ChatFormatting.GRAY), localPlayer);
     }
 
     private void notify(NotificationContext type, Component text, @Nullable LocalPlayer player) {

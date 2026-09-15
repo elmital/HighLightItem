@@ -30,10 +30,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
-import java.io.IOException;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
@@ -57,8 +54,7 @@ public class HighLightCommands {
                                             HighlightItem.configurator.updateColor(new float[]{context.getArgument("red", int.class) / 255.0f,
                                                     context.getArgument("green", int.class) / 255.0f,
                                                     context.getArgument("blue", int.class) / 255.0f,
-                                                    context.getArgument("alpha", float.class)}, context.getSource().getPlayer());
-
+                                                    context.getArgument("alpha", float.class)}, null, context.getSource().getPlayer(), Configurator.NotificationContext.SENDING_COMMAND);
                                             return Command.SINGLE_SUCCESS;
                                         }))))
                                 )
@@ -66,15 +62,7 @@ public class HighLightCommands {
                         .then(argument("color", Colors.HighLightColorArgumentType.color())
                                 .executes(context -> {
                                     var color = Colors.HighLightColorArgumentType.getColor("color", context);
-                                    var colors = color.getShaderColor();
-
-                                    Configurator.COLOR = ARGB.color((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
-                                    try {
-                                        HighlightItem.configurator.updateConfig(Configurator.Config.COLOR, color.json().toString());
-                                        context.getSource().getPlayer().sendSystemMessage(Component.nullToEmpty("Color changed!"));
-                                    } catch (IOException e) {
-                                        context.getSource().getPlayer().sendSystemMessage(Component.nullToEmpty("The config file can't be updated!"));
-                                    }
+                                    HighlightItem.configurator.updateColor(color.getShaderColor(), color, context.getSource().getPlayer(), Configurator.NotificationContext.SENDING_COMMAND);
                                     return Command.SINGLE_SUCCESS;
                                 })
                         ))

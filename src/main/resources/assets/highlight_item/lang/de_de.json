@@ -8,6 +8,7 @@
   "notification.highlightitem.comparator.change" : "Modus geändert auf : %s",
   "notification.highlightitem.color" : "Farbe geändert!",
   "notification.highlightitem.title" : "Farbe konfigurieren",
+  "notification.highlightitem.notif.preferences": "Notification preferences updated!",
   "key.category.highlight_item.global" : "HighLightItem",
   "key.highlightitem.color_menu" : "Konfigurationsmenü",
   "key.highlightitem.toggle" : "Aktivierung umschalten",

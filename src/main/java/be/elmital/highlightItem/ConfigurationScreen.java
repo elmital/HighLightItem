@@ -87,13 +87,15 @@ public class ConfigurationScreen extends OptionsSubScreen {
     private void close(boolean withSaving) {
         super.onClose();
         if (withSaving) {
-            HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, null);
+            int newColor = ARGB.color((int) ((this.alpha / 100.0f) * 255f), this.red, this.green, this.blue);
+            if (Configurator.COLOR != newColor)
+                HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, Colors.HighLightColor.DEFAULT.colorInteger() == newColor ? Colors.HighLightColor.DEFAULT : null, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.colorHovered != Configurator.COLOR_HOVERED)
                 HighlightItem.configurator.updateColorHovered(this.colorHovered, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.comparator != Configurator.COMPARATOR)
                 HighlightItem.configurator.updateMode(this.comparator, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.notif != Configurator.NOTIFICATION_PREFERENCE)
-                HighlightItem.configurator.updateNotificationPreference(this.notif);
+                HighlightItem.configurator.updateNotificationPreference(this.notif, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.toggle != Configurator.TOGGLE)
                 HighlightItem.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
         }
