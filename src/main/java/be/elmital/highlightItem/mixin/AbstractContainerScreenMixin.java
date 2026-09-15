@@ -26,13 +26,16 @@ import be.elmital.highlightItem.Colors;
 import be.elmital.highlightItem.Configurator;
 import be.elmital.highlightItem.HighlightItem;
 import be.elmital.highlightItem.ItemComparator;
+import be.elmital.highlightItem.Utils;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -61,7 +64,19 @@ public abstract class AbstractContainerScreenMixin {
 			if (hoveredSlot.equals(slot) && !Configurator.COLOR_HOVERED)
 				return;
 
-			if (slot.isActive() && !slot.getItem().isEmpty() && ItemComparator.test(Configurator.COMPARATOR, hoveredSlot.getItem(), slot.getItem())) {
+			if (!slot.isActive() || slot.getItem().isEmpty())
+				return;
+
+			if (Configurator.SCREEN_CONTEXT.excludeCreativeScreen() && CreativeModeInventoryScreen.class.isInstance(this))
+				return;
+
+			if (Configurator.SCREEN_CONTEXT.inContainer() && Utils.isInPlayerInventory(slot, (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this))
+				return;
+
+			if (Configurator.SCREEN_CONTEXT.inPlayerInventoryPart() && !Utils.isInPlayerInventory(slot, (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this))
+				return;
+
+			if (ItemComparator.test(Configurator.COMPARATOR, hoveredSlot.getItem(), slot.getItem())) {
 				HighlightItem.toDrawFromMod = slot;
 				extractSlotHighlightFront(guiGraphics);
 				HighlightItem.toDrawFromMod = null;

@@ -55,6 +55,7 @@ public class Configurator {
     public static ItemComparator.Comparators COMPARATOR;
     public static KeyMapping COMPARATOR_BIND;
     public static NotificationPreference NOTIFICATION_PREFERENCE;
+    public static ScreenContext SCREEN_CONTEXT;
     private final String CONFIG = "HighLightItemConfig";
     private final Properties properties = new Properties();
     public static SystemToast activeToastNotification = null;
@@ -92,12 +93,44 @@ public class Configurator {
         }
     }
 
+    public enum ScreenContext implements OptionEnum {
+        EVERYWHERE,
+        EXCLUDE_CREATIVE,
+        PLAYER_INVENTORY,
+        PLAYER_INVENTORY_AND_EXCLUDE_CREATIVE,
+        STORAGE_ONLY;
+
+        public boolean excludeCreativeScreen() {
+            return this.equals(EXCLUDE_CREATIVE) || this.equals(PLAYER_INVENTORY_AND_EXCLUDE_CREATIVE);
+        }
+
+        public boolean inPlayerInventoryPart() {
+            return this.equals(EVERYWHERE) || this.equals(EXCLUDE_CREATIVE) || this.equals(PLAYER_INVENTORY) || this.equals(PLAYER_INVENTORY_AND_EXCLUDE_CREATIVE);
+        }
+
+        public boolean inContainer() {
+            return this.equals(STORAGE_ONLY);
+        }
+
+        @Override
+        public int getId() {
+            return ordinal();
+        }
+
+        @Override
+        public String getKey() {
+            // TODO translations
+            return "options.highlightitem.screen.context." + name().toLowerCase();
+        }
+    }
+
     public enum Config {
         COLOR("color", Colors.HighLightColor.DEFAULT.json().toString()),
         COLOR_HOVERED("color-hovered", "false"),
         TOGGLE("toggle", "true"),
         COMPARATOR("comparator", ItemComparator.Comparators.ITEM_ONLY.name()),
-        NOTIFICATION_PREFERENCE("notif-preference", NotificationPreference.NONE.name());
+        NOTIFICATION_PREFERENCE("notif-preference", NotificationPreference.NONE.name()),
+        SCREEN_CONTEXT("screen-context", ScreenContext.EXCLUDE_CREATIVE.name());
 
         private final String key;
         private final String def;
@@ -148,6 +181,7 @@ public class Configurator {
         COLOR_HOVERED = Boolean.parseBoolean(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
         COMPARATOR = ItemComparator.Comparators.valueOf(properties.getProperty(Config.COMPARATOR.getKey(), Config.COMPARATOR.getDefault()));
         NOTIFICATION_PREFERENCE = NotificationPreference.valueOf(properties.getProperty(Config.NOTIFICATION_PREFERENCE.getKey(), Config.NOTIFICATION_PREFERENCE.getDefault()));
+        SCREEN_CONTEXT = ScreenContext.valueOf(properties.getProperty(Config.SCREEN_CONTEXT.getKey(), Config.SCREEN_CONTEXT.getDefault()));
     }
 
     public Path getConfigDirectoryPath() {
@@ -235,7 +269,13 @@ public class Configurator {
 
     public void updateNotificationPreference(NotificationPreference notificationPreference, LocalPlayer localPlayer, NotificationContext notification) {
         Configurator.NOTIFICATION_PREFERENCE = notificationPreference;
-        updateConfigAndNotify(Config.NOTIFICATION_PREFERENCE, notificationPreference.name(), notification,Component.translatable("notification.highlightitem.notif.preferences").withStyle(ChatFormatting.GRAY), localPlayer);
+        updateConfigAndNotify(Config.NOTIFICATION_PREFERENCE, notificationPreference.name(), notification, Component.translatable("notification.highlightitem.notif.preferences").withStyle(ChatFormatting.GRAY), localPlayer);
+    }
+
+    public void updateScreenContext(ScreenContext screenContext, LocalPlayer localPlayer, NotificationContext notification) {
+        Configurator.SCREEN_CONTEXT = screenContext;
+        // TODO translations
+        updateConfigAndNotify(Config.SCREEN_CONTEXT, screenContext.name(), notification, Component.translatable("notification.highlightitem.screen.context").withStyle(ChatFormatting.GRAY), localPlayer);
     }
 
     private void notify(NotificationContext type, Component text, @Nullable LocalPlayer player) {

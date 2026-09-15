@@ -7,8 +7,9 @@
     "HandledScreenAccessor"
   ],
   "client": [
-    "GuiGraphicsExtractorMixin",
     "AbstractContainerScreenMixin",
+    "AbstractMountInventoryScreenAccessor",
+    "GuiGraphicsExtractorMixin",
     "SystemToastAccessor"
   ],
   "injectors": {

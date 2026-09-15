@@ -52,6 +52,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
     boolean colorHovered, toggle;
     ItemComparator.Comparators comparator;
     Configurator.NotificationPreference notif;
+    Configurator.ScreenContext screenContext;
     final static int FOOTER_HEIGHT = 53;
 
     public ConfigurationScreen(Options gameOptions) {
@@ -59,10 +60,10 @@ public class ConfigurationScreen extends OptionsSubScreen {
     }
 
     public ConfigurationScreen(@Nullable Screen parent, Options gameOptions) {
-        this(parent, gameOptions, ARGB.red(Configurator.COLOR), ARGB.green(Configurator.COLOR), ARGB.blue(Configurator.COLOR), (ARGB.alpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.NOTIFICATION_PREFERENCE, Configurator.TOGGLE);
+        this(parent, gameOptions, ARGB.red(Configurator.COLOR), ARGB.green(Configurator.COLOR), ARGB.blue(Configurator.COLOR), (ARGB.alpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.NOTIFICATION_PREFERENCE, Configurator.SCREEN_CONTEXT, Configurator.TOGGLE);
     }
 
-    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
+    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, Configurator.ScreenContext screenContext, boolean toggle) {
         super(parent, gameOptions, Component.literal("HighLightItem"));
         this.layout.setFooterHeight(FOOTER_HEIGHT);
         this.red = red;
@@ -73,10 +74,11 @@ public class ConfigurationScreen extends OptionsSubScreen {
         this.toggle = toggle;
         this.comparator = comparator;
         this.notif = notif;
+        this.screenContext = screenContext;
     }
 
-    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, boolean toggle) {
-        this(parent, gameOptions, ARGB.red(Configurator.COLOR), ARGB.green(Configurator.COLOR), ARGB.blue(Configurator.COLOR), (ARGB.alpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, notif, toggle);
+    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, Configurator.ScreenContext screenContext, boolean toggle) {
+        this(parent, gameOptions, ARGB.red(Configurator.COLOR), ARGB.green(Configurator.COLOR), ARGB.blue(Configurator.COLOR), (ARGB.alpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, notif, screenContext, toggle);
     }
 
     @Override
@@ -96,6 +98,8 @@ public class ConfigurationScreen extends OptionsSubScreen {
                 HighlightItem.configurator.updateMode(this.comparator, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.notif != Configurator.NOTIFICATION_PREFERENCE)
                 HighlightItem.configurator.updateNotificationPreference(this.notif, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
+            if (this.screenContext != Configurator.SCREEN_CONTEXT)
+                HighlightItem.configurator.updateScreenContext(this.screenContext, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.toggle != Configurator.TOGGLE)
                 HighlightItem.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
         }
@@ -108,11 +112,11 @@ public class ConfigurationScreen extends OptionsSubScreen {
         LinearLayout directionalLayoutWidget2 = directionalLayoutWidget.addChild(LinearLayout.horizontal().spacing(8));
         directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (button -> {
             close(false);
-            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif, toggle));
+            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif,  this.screenContext, toggle));
         })).build());
         directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.color.reset"), button -> {
             close(false);
-            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.toggle));
+            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.screenContext, this.toggle));
         }).build());
         directionalLayoutWidget.addChild(Button.builder(Component.translatable("options.highlightitem.save.close"), button -> onClose()).build());
     }
@@ -161,8 +165,16 @@ public class ConfigurationScreen extends OptionsSubScreen {
         this.list.addBig(new OptionInstance<>("options.highlightitem.notif", value -> Tooltip.create(Component.translatable(value.getKey()))
                 , (prefix,value) -> Component.translatable(value.getKey())
                 , new OptionInstance.Enum<>(Arrays.asList(Configurator.NotificationPreference.values()), Codec.INT.xmap(id -> Configurator.NotificationPreference.values()[id], Configurator.NotificationPreference::getId))
-                , Configurator.NOTIFICATION_PREFERENCE
+                , this.notif
                 , value -> this.notif = value)
+        );
+
+        // TODO translations
+        this.list.addBig(new OptionInstance<>("options.highlightitem.screen.context", value -> Tooltip.create(Component.translatable(value.getKey()))
+                , (prefix,value) -> Component.translatable(value.getKey())
+                , new OptionInstance.Enum<>(Arrays.asList(Configurator.ScreenContext.values()), Codec.INT.xmap(id -> Configurator.ScreenContext.values()[id], Configurator.ScreenContext::getId))
+                , this.screenContext
+                , value -> this.screenContext = value)
         );
 
         this.list.addBig(OptionInstance.createBoolean("options.highlightitem.toggle", this.toggle, value -> this.toggle = value));
