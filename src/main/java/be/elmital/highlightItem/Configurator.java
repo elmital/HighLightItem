@@ -101,7 +101,7 @@ public class Configurator {
         STORAGE_ONLY;
 
         public boolean excludeCreativeScreen() {
-            return this.equals(EXCLUDE_CREATIVE) || this.equals(PLAYER_INVENTORY_AND_EXCLUDE_CREATIVE);
+            return this.equals(EXCLUDE_CREATIVE) || this.equals(PLAYER_INVENTORY_AND_EXCLUDE_CREATIVE) || this.equals(STORAGE_ONLY);
         }
 
         public boolean inPlayerInventoryPart() {

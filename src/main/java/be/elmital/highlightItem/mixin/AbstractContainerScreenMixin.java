@@ -40,6 +40,7 @@ import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -67,13 +68,7 @@ public abstract class AbstractContainerScreenMixin {
 			if (!slot.isActive() || slot.getItem().isEmpty())
 				return;
 
-			if (Configurator.SCREEN_CONTEXT.excludeCreativeScreen() && CreativeModeInventoryScreen.class.isInstance(this))
-				return;
-
-			if (Configurator.SCREEN_CONTEXT.inContainer() && Utils.isInPlayerInventory(slot, (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this))
-				return;
-
-			if (Configurator.SCREEN_CONTEXT.inPlayerInventoryPart() && !Utils.isInPlayerInventory(slot, (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this))
+			if (shouldSkip(slot))
 				return;
 
 			if (ItemComparator.test(Configurator.COMPARATOR, hoveredSlot.getItem(), slot.getItem())) {
@@ -82,6 +77,16 @@ public abstract class AbstractContainerScreenMixin {
 				HighlightItem.toDrawFromMod = null;
 			}
 		}
+	}
+
+	@Unique
+    @SuppressWarnings("ConstantConditions")
+	private boolean shouldSkip(Slot slot) {
+		if (Configurator.SCREEN_CONTEXT.excludeCreativeScreen() && CreativeModeInventoryScreen.class.isInstance(this))
+			return true;
+		else if (Configurator.SCREEN_CONTEXT.inContainer() && Utils.isInPlayerInventory(slot, (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this))
+			return true;
+		else return Configurator.SCREEN_CONTEXT.inPlayerInventoryPart() && !Utils.isInPlayerInventory(slot, (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this);
 	}
 
 	@ModifyArgs(method = "extractSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
