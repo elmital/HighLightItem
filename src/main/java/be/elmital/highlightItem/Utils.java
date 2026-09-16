@@ -28,10 +28,10 @@ import net.minecraft.world.inventory.Slot;
 
 public class Utils {
     // https://minecraft.wiki/w/Java_Edition_protocol/Inventory
-    public static <T extends AbstractContainerMenu> boolean isInPlayerInventory(Slot slot, AbstractContainerScreen<T> screen) {
+    public static <T extends AbstractContainerMenu> boolean isInPlayerInventory(Slot slot, AbstractContainerScreen<T> screen) throws UnsupportedOperationException {
         if (screen instanceof InventoryScreen)
             return true;
-        if (screen instanceof CreativeModeInventoryScreen creativeModeInventoryScreen)
+        if (screen instanceof CreativeModeInventoryScreen)
             return slot.index > 44;
         if (screen instanceof AbstractMountInventoryScreen abstractMountInventoryScreen) {
             // If there is columns it means the mount has a chest where we can store items, each column contains 3 slots
@@ -71,6 +71,8 @@ public class Utils {
         if (screen instanceof StonecutterScreen)
             return slot.index > 1;
 
-        throw new RuntimeException("Missing class for inventory indexes checks '" + screen.getClass().getName() + "', please report the issue in the HighLightItem issue tracker!");
+        if (screen.getClass().getName().startsWith("net.minecraft"))
+            throw new UnsupportedMinecraftClassOperationException("Missing class for inventory indexes checks '" + screen.getClass().getName() + "', please report the issue in the HighLightItem issue tracker!");
+        throw new UnsupportedOperationException("A mod is implementing the Screen interface " + screen.getClass().getName() + " and the mod doesn't support it this could cause issue with Screen limitations option!");
     }
 }
