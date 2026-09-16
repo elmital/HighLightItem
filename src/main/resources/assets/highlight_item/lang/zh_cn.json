@@ -9,6 +9,7 @@
   "notification.highlightitem.color" : "颜色已修改！",
   "notification.highlightitem.title" : "配置颜色",
   "notification.highlightitem.notif.preferences": "Notification preferences updated!",
+  "notification.highlightitem.screen.context" : "Screen limitation updated!",
   "key.category.highlight_item.global" : "HighLightItem",
   "key.highlightitem.color_menu" : "配置菜单",
   "key.highlightitem.toggle" : "切换激活",
@@ -36,6 +37,12 @@
   "options.highlightitem.notif.toast" : "Toast",
   "options.highlightitem.notif.chat" : "聊天",
   "options.highlightitem.notif.overlay" : "叠加层",
+  "options.highlightitem.screen.context" : "Screen limitations",
+  "options.highlightitem.screen.context.everywhere" : "None",
+  "options.highlightitem.screen.context.exclude_creative" : "Exclude creative screen",
+  "options.highlightitem.screen.context.player_inventory" : "In player inventory",
+  "options.highlightitem.screen.context.player_inventory_and_exclude_creative" : "In player inventory and exclude creative screen",
+  "options.highlightitem.screen.context.storage_only" : "In containers",
   "modmenu.descriptionTranslation.highlight_item" : "高亮显示与鼠标悬停位置相似的库存物品",
   "modmenu.summaryTranslation.highlight_item" : "高亮显示与鼠标悬停位置相似的库存项目。"
 }

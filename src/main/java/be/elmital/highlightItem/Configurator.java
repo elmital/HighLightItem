@@ -119,7 +119,6 @@ public class Configurator {
 
         @Override
         public String getKey() {
-            // TODO translations
             return "options.highlightitem.screen.context." + name().toLowerCase();
         }
     }
@@ -274,7 +273,6 @@ public class Configurator {
 
     public void updateScreenContext(ScreenContext screenContext, LocalPlayer localPlayer, NotificationContext notification) {
         Configurator.SCREEN_CONTEXT = screenContext;
-        // TODO translations
         updateConfigAndNotify(Config.SCREEN_CONTEXT, screenContext.name(), notification, Component.translatable("notification.highlightitem.screen.context").withStyle(ChatFormatting.GRAY), localPlayer);
     }
 

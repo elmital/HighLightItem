@@ -169,7 +169,6 @@ public class ConfigurationScreen extends OptionsSubScreen {
                 , value -> this.notif = value)
         );
 
-        // TODO translations
         this.list.addBig(new OptionInstance<>("options.highlightitem.screen.context", value -> Tooltip.create(Component.translatable(value.getKey()))
                 , (prefix,value) -> Component.translatable(value.getKey())
                 , new OptionInstance.Enum<>(Arrays.asList(Configurator.ScreenContext.values()), Codec.INT.xmap(id -> Configurator.ScreenContext.values()[id], Configurator.ScreenContext::getId))

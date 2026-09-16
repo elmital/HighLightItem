@@ -9,6 +9,7 @@
   "notification.highlightitem.color" : "Couleur modifiée!",
   "notification.highlightitem.title" : "Configuration couleur",
   "notification.highlightitem.notif.preferences": "Préférences des notifications modifiées!",
+  "notification.highlightitem.screen.context" : "Limitations d'application de surbrillance modifiées!",
   "key.category.highlight_item.global" : "HighLightItem",
   "key.highlightitem.color_menu" : "Menu de configuration",
   "key.highlightitem.toggle" : "Activer/Désactiver",
@@ -36,6 +37,12 @@
   "options.highlightitem.notif.toast" : "Toast",
   "options.highlightitem.notif.chat" : "Tchat",
   "options.highlightitem.notif.overlay" : "Overlay",
+  "options.highlightitem.screen.context" : "Limitations d'application de surbrillance",
+  "options.highlightitem.screen.context.everywhere" : "Aucune",
+  "options.highlightitem.screen.context.exclude_creative" : "En dehors de l'inventaire créatif",
+  "options.highlightitem.screen.context.player_inventory" : "Dans l'inventaire joueur",
+  "options.highlightitem.screen.context.player_inventory_and_exclude_creative" : "Dans l'inventaire joueur et en dehors de l'inventaire créa",
+  "options.highlightitem.screen.context.storage_only" : "Dans les conteneurs",
   "modmenu.descriptionTranslation.highlight_item" : "Mets en surbrillance les items dans les inventaires similaires à celui survolé.",
   "modmenu.summaryTranslation.highlight_item" : "Mets en surbrillance les items similaires à celui survolé."
 }
