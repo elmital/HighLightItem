@@ -62,10 +62,10 @@ public abstract class AbstractContainerScreenMixin {
 	@Unique private boolean highlightItemCompatible;
 
 	@Inject(method = "<init>(Lnet/minecraft/world/inventory/AbstractContainerMenu;Lnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/network/chat/Component;II)V", at	= @At(value = "TAIL"))
-	private void construct(CallbackInfo ci) {
+	private void construct(CallbackInfo ci, @Local(argsOnly = true) AbstractContainerMenu menu) {
 		// Check possible incompatibility
 		try {
-			Utils.isInPlayerInventory(null, (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this);
+			Utils.isInPlayerInventory(menu.getSlot(0), (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this);
 			this.highlightItemCompatible = true;
 		} catch (UnsupportedMinecraftClassOperationException e) {
 			this.highlightItemCompatible = false;
@@ -79,8 +79,6 @@ public abstract class AbstractContainerScreenMixin {
 
 			this.highlightItemCompatible = false;
 			HighlightItem.LOGGER.error(e);
-		} catch (NullPointerException _) {
-			this.highlightItemCompatible = true;
 		}
 	}
 
