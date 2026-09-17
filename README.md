@@ -39,7 +39,7 @@ You can choose a preferred mod notification sending mode when you have no invent
 - Overlay : It will be sent in the minecraft overlay zone (above life, levels and hunger).
 - Toast : It will always be sent in a "minecraft toast notification"
 
-**Highlighting limitations (v2.5.0+)**
+**Highlighting limitations (v3.0.0+)**
 You can limit the Highlighting in some areas of the screens if you want there are 5 types :
 - Everywhere : It's like the mod worked before, it highlights all the slots when they match the hovered one regardless their positions
 - Exclude Creative (Default) : No slot in the Creative Screen will be highlighted even if they match the hovered one
