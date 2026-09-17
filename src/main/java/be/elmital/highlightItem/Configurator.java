@@ -276,7 +276,7 @@ public class Configurator {
         updateConfigAndNotify(Config.SCREEN_CONTEXT, screenContext.name(), notification, Component.translatable("notification.highlightitem.screen.context").withStyle(ChatFormatting.GRAY), localPlayer);
     }
 
-    private void notify(NotificationContext type, Component text, @Nullable LocalPlayer player) {
+    void notify(NotificationContext type, Component text, @Nullable LocalPlayer player) {
         if (type.equals(NotificationContext.ON_SCREEN) || NOTIFICATION_PREFERENCE.equals(NotificationPreference.TOAST)) {
             notifyToast(text);
             return;

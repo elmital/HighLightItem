@@ -110,9 +110,10 @@ public class ConfigurationScreen extends OptionsSubScreen {
         // Toggle
         LinearLayout directionalLayoutWidget = this.layout.addToFooter(LinearLayout.vertical()).spacing(8);
         directionalLayoutWidget.defaultCellSetting().alignHorizontallyCenter();
-        directionalLayoutWidget.addChild(Button.builder(Component.translatable("options.highlightitem.toggle"), button -> {
-            close(false);
-            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.screenContext, this.toggle));
+        directionalLayoutWidget.addChild(Button.builder(Component.translatable(this.toggle ? "options.highlightitem.toggle.deactivation" : "options.highlightitem.toggle.activation"), button -> {
+            this.toggle = !this.toggle;
+            close(true);
+            HighlightItem.configurator.notify(Configurator.NotificationContext.ON_SCREEN, Component.translatable(!this.toggle ? "notification.highlightitem.deactivate" : "notification.highlightitem.activate"), Minecraft.getInstance().player);
         }).build());
 
         // Reset | Apply
