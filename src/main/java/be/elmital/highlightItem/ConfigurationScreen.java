@@ -160,10 +160,15 @@ public class ConfigurationScreen extends OptionsSubScreen {
                 }, new OptionInstance.IntRange(0, 100), (int) this.alpha, (value) -> this.alpha = (float) value)
         );
 
-        this.list.addBig(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (_ -> {
-            close(false);
-            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif,  this.screenContext, toggle));
-        })).build());
+        this.list.addSmall(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (_ -> {
+                    close(false);
+                    Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif,  this.screenContext, toggle));
+                })).build()
+                , Button.builder(Component.translatable("options.highlightitem.color.reset"), (_ -> {
+                    close(false);
+                    Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.screenContext, this.toggle));
+                })).build()
+        );
         this.list.addBig(OptionInstance.createBoolean("options.highlightitem.color.hovered", this.colorHovered, value -> this.colorHovered = value));
 
 

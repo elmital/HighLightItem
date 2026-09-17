@@ -21,6 +21,7 @@ The menu have been fully rearranged :
   - Color section : contain cursor for RGBA values, the button to use the vanilla highlighting, the button to color the hovered item
   - Application logic section : contain the Comparator mode button and the new Screen limitation feature button
   - Other : contain the notification preferences button
+- Add a new button to reset the colors only (in the Color section) 
 
 ### Fix
 
