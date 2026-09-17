@@ -9,6 +9,7 @@
   "notification.highlightitem.color" : "Колір змінено!",
   "notification.highlightitem.title" : "Налаштувати колір",
   "notification.highlightitem.notif.preferences": "Notification preferences updated!",
+  "notification.highlightitem.screen.context" : "Screen limitation updated!",
   "key.category.highlight_item.global" : "HighLightItem",
   "key.highlightitem.color_menu" : "Меню конфігурації",
   "key.highlightitem.toggle" : "Перемикання активації",
@@ -36,6 +37,12 @@
   "options.highlightitem.notif.toast" : "Toast",
   "options.highlightitem.notif.chat" : "Чат",
   "options.highlightitem.notif.overlay" : "Накладення",
+  "options.highlightitem.screen.context" : "Screen limitations",
+  "options.highlightitem.screen.context.everywhere" : "None",
+  "options.highlightitem.screen.context.exclude_creative" : "Exclude creative screen",
+  "options.highlightitem.screen.context.player_inventory" : "In player inventory",
+  "options.highlightitem.screen.context.player_inventory_and_exclude_creative" : "In player inventory and exclude creative screen",
+  "options.highlightitem.screen.context.storage_only" : "In containers",
   "modmenu.descriptionTranslation.highlight_item" : "Виділяє предмети інвентарю, подібні до того, на який наведено курсор.",
   "modmenu.summaryTranslation.highlight_item" : "Виділяє предмети інвентарю, подібні до того, на який наведено курсор."
 }

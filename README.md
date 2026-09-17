@@ -39,6 +39,14 @@ You can choose a preferred mod notification sending mode when you have no invent
 - Overlay : It will be sent in the minecraft overlay zone (above life, levels and hunger).
 - Toast : It will always be sent in a "minecraft toast notification"
 
+**Highlighting limitations (v3.0.0+)**
+You can limit the Highlighting in some areas of the screens if you want there are 5 types :
+- Everywhere : It's like the mod worked before, it highlights all the slots when they match the hovered one regardless their positions
+- Exclude Creative (Default) : No slot in the Creative Screen will be highlighted even if they match the hovered one
+- Player inventory : Only highlight the slots that are in the player inventory if they match the hovered one
+- Player inventory and exclude Creative : In the Creative screen it only highlights the slots in the hotbar (if they match the hovered one) else it only highlights the slots that are in the player inventory (if they match the hovered one)
+- Container only : Only highlight the slots that are in the containers (if they match the hovered one), like in chests or shulkerboxes for example
+
 # Commands 
 
 If you prefer commands than keybinds and the menu there are three commands available to manage the mod :
