@@ -11,3 +11,17 @@
     - Player inventory : only highlight the slots that are in the player inventory
     - Player inventory and exclude Creative : if it's in the Creative screen it only highlights the slots in the hotbar when in creative screen else it only highlights the slots that are in the player inventory
     - Container only : only highlight the slots that are in the containers, in a chest or a shulker for example
+
+## Mod configuration menu enhancement
+
+### Feature
+
+The menu have been fully rearranged :
+- All previous options buttons are now split between sections :
+  - Color section : contain cursor for RGBA values, the button to use the vanilla highlighting, the button to color the hovered item
+  - Application logic section : contain the Comparator mode button and the new Screen limitation feature button
+  - Other : contain the notification preferences button
+
+### Fix
+
+- The button to reset the values said it reset only the colors while it reset all the values

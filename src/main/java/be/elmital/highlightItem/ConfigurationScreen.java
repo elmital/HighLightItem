@@ -107,76 +107,88 @@ public class ConfigurationScreen extends OptionsSubScreen {
 
     @Override
     protected void addFooter() {
+        // Toggle
         LinearLayout directionalLayoutWidget = this.layout.addToFooter(LinearLayout.vertical()).spacing(8);
         directionalLayoutWidget.defaultCellSetting().alignHorizontallyCenter();
-        LinearLayout directionalLayoutWidget2 = directionalLayoutWidget.addChild(LinearLayout.horizontal().spacing(8));
-        directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (button -> {
-            close(false);
-            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif,  this.screenContext, toggle));
-        })).build());
-        directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.color.reset"), button -> {
+        directionalLayoutWidget.addChild(Button.builder(Component.translatable("options.highlightitem.toggle"), button -> {
             close(false);
             Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.screenContext, this.toggle));
         }).build());
-        directionalLayoutWidget.addChild(Button.builder(Component.translatable("options.highlightitem.save.close"), button -> onClose()).build());
+
+        // Reset | Apply
+        LinearLayout directionalLayoutWidget2 = directionalLayoutWidget.addChild(LinearLayout.horizontal().spacing(8));
+        directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.reset"), button -> {
+            close(false);
+            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options));
+        }).build());
+        directionalLayoutWidget2.addChild(Button.builder(Component.translatable("options.highlightitem.save.close"), button -> onClose()).build());
     }
 
     @Override
     protected void addOptions() {
-        this.list.addBig(new OptionInstance<>("options.highlightitem.color.red", OptionInstance.noTooltip(), (prefix, value) -> {
-            if (value < 0 || value > 255) {
-                return Component.literal("error");
-            } else {
-                return Options.genericValueLabel(prefix, value);
-            }
-        }, new OptionInstance.IntRange(0, 255), this.red, (value) -> this.red = value));
-        this.list.addBig(new OptionInstance<>("options.highlightitem.color.green", OptionInstance.noTooltip(), (prefix, value) -> {
-            if (value < 0 || value > 255) {
-                return Component.literal("error");
-            } else {
-                return Options.genericValueLabel(prefix, value);
-            }
-        }, new OptionInstance.IntRange(0, 255), this.green, (value) -> this.green = value));
-        this.list.addBig(new OptionInstance<>("options.highlightitem.color.blue", OptionInstance.noTooltip(), (prefix, value) -> {
-            if (value < 0 || value > 255) {
-                return Component.literal("error");
-            } else {
-                return Options.genericValueLabel(prefix, value);
-            }
-        }, new OptionInstance.IntRange(0, 255), this.blue, (value) -> this.blue = value));
+        // Colors
+        this.list.addHeader(Component.translatable("notification.highlightitem.title"));
+        this.list.addSmall(
+                new OptionInstance<>("options.highlightitem.color.red", OptionInstance.noTooltip(), (prefix, value) -> {
+                    if (value < 0 || value > 255) {
+                        return Component.literal("error");
+                    } else {
+                        return Options.genericValueLabel(prefix, value);
+                    }
+                }, new OptionInstance.IntRange(0, 255), this.red, (value) -> this.red = value),
+                new OptionInstance<>("options.highlightitem.color.green", OptionInstance.noTooltip(), (prefix, value) -> {
+                    if (value < 0 || value > 255) {
+                        return Component.literal("error");
+                    } else {
+                        return Options.genericValueLabel(prefix, value);
+                    }
+                }, new OptionInstance.IntRange(0, 255), this.green, (value) -> this.green = value)
+                , new OptionInstance<>("options.highlightitem.color.blue", OptionInstance.noTooltip(), (prefix, value) -> {
+                    if (value < 0 || value > 255) {
+                        return Component.literal("error");
+                    } else {
+                        return Options.genericValueLabel(prefix, value);
+                    }
+                }, new OptionInstance.IntRange(0, 255), this.blue, (value) -> this.blue = value)
+                , new OptionInstance<>("options.highlightitem.color.alpha", OptionInstance.noTooltip(), (prefix, value) -> {
+                    if (value < 0 || value > 100) {
+                        return Component.literal("error");
+                    } else {
+                        return Options.genericValueLabel(prefix, Component.nullToEmpty(value + "%"));
+                    }
+                }, new OptionInstance.IntRange(0, 100), (int) this.alpha, (value) -> this.alpha = (float) value)
+        );
 
-        this.list.addBig(new OptionInstance<>("options.highlightitem.color.alpha", OptionInstance.noTooltip(), (prefix, value) -> {
-            if (value < 0 || value > 100) {
-                return Component.literal("error");
-            } else {
-                return Options.genericValueLabel(prefix, Component.nullToEmpty(value + "%"));
-            }
-        }, new OptionInstance.IntRange(0, 100), (int) this.alpha, (value) -> this.alpha = (float) value));
-
+        this.list.addBig(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (_ -> {
+            close(false);
+            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif,  this.screenContext, toggle));
+        })).build());
         this.list.addBig(OptionInstance.createBoolean("options.highlightitem.color.hovered", this.colorHovered, value -> this.colorHovered = value));
 
+
+        // Modes
+        this.list.addHeader(Component.translatable("options.highlightitem.logical.application"));
         this.list.addBig(new OptionInstance<>("options.highlightitem.comparator", value -> Tooltip.create(Component.translatable(value.translationKey()))
-                , (prefix,value) -> Component.translatable(value.getKey())
+                , (_, value) -> Component.translatable(value.getKey())
                 , new OptionInstance.Enum<>(Arrays.asList(ItemComparator.Comparators.values()), Codec.INT.xmap(compId -> ItemComparator.Comparators.values()[compId], ItemComparator.Comparators::getId))
                 , this.comparator
                 , value -> this.comparator = value)
         );
-
-        this.list.addBig(new OptionInstance<>("options.highlightitem.notif", value -> Tooltip.create(Component.translatable(value.getKey()))
-                , (prefix,value) -> Component.translatable(value.getKey())
-                , new OptionInstance.Enum<>(Arrays.asList(Configurator.NotificationPreference.values()), Codec.INT.xmap(id -> Configurator.NotificationPreference.values()[id], Configurator.NotificationPreference::getId))
-                , this.notif
-                , value -> this.notif = value)
-        );
-
         this.list.addBig(new OptionInstance<>("options.highlightitem.screen.context", value -> Tooltip.create(Component.translatable(value.getKey()))
-                , (prefix,value) -> Component.translatable(value.getKey())
+                , (_, value) -> Component.translatable(value.getKey())
                 , new OptionInstance.Enum<>(Arrays.asList(Configurator.ScreenContext.values()), Codec.INT.xmap(id -> Configurator.ScreenContext.values()[id], Configurator.ScreenContext::getId))
                 , this.screenContext
                 , value -> this.screenContext = value)
         );
 
-        this.list.addBig(OptionInstance.createBoolean("options.highlightitem.toggle", this.toggle, value -> this.toggle = value));
+        // Others
+        this.list.addHeader(Component.translatable("options.highlightitem.others"));
+        this.list.addBig(new OptionInstance<>("options.highlightitem.notif", value -> Tooltip.create(Component.translatable(value.getKey()))
+                , (_, value) -> Component.translatable(value.getKey())
+                , new OptionInstance.Enum<>(Arrays.asList(Configurator.NotificationPreference.values()), Codec.INT.xmap(id -> Configurator.NotificationPreference.values()[id], Configurator.NotificationPreference::getId))
+                , this.notif
+                , value -> this.notif = value)
+        );
     }
 
 
