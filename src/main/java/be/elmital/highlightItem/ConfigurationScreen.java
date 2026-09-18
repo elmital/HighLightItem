@@ -24,9 +24,12 @@ package be.elmital.highlightItem;
 
 
 import com.mojang.serialization.Codec;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.Color;
 import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
@@ -54,6 +57,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
     Configurator.NotificationPreference notif;
     Configurator.ScreenContext screenContext;
     final static int FOOTER_HEIGHT = 53;
+    int highlightTick = 0;
 
     public ConfigurationScreen(Options gameOptions) {
         this(null, gameOptions);
@@ -89,9 +93,9 @@ public class ConfigurationScreen extends OptionsSubScreen {
     private void close(boolean withSaving) {
         super.onClose();
         if (withSaving) {
-            int newColor = ARGB.color((int) ((this.alpha / 100.0f) * 255f), this.red, this.green, this.blue);
+            int newColor = getColor(this.red, this.green, this.blue, this.alpha);
             if (Configurator.COLOR != newColor)
-                HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, Colors.HighLightColor.DEFAULT.colorInteger() == newColor ? Colors.HighLightColor.DEFAULT : null, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
+                HighlightItem.configurator.updateColor(new float[]{this.red / 255.0f, this.green / 255.0f, this.blue / 255.0f, this.alpha / 100.0f}, useDefaultHighLight(newColor) ? Colors.HighLightColor.DEFAULT : null, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.colorHovered != Configurator.COLOR_HOVERED)
                 HighlightItem.configurator.updateColorHovered(this.colorHovered, Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
             if (this.comparator != Configurator.COMPARATOR)
@@ -103,6 +107,14 @@ public class ConfigurationScreen extends OptionsSubScreen {
             if (this.toggle != Configurator.TOGGLE)
                 HighlightItem.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.NONE);
         }
+    }
+
+    private int getColor(int red, int green, int blue, float alpha) {
+        return ARGB.color((int) ((alpha / 100.0f) * 255f), red, green, blue);
+    }
+
+    private boolean useDefaultHighLight(int color) {
+        return Colors.HighLightColor.DEFAULT.colorInteger() == color;
     }
 
     @Override
@@ -171,7 +183,6 @@ public class ConfigurationScreen extends OptionsSubScreen {
         );
         this.list.addBig(OptionInstance.createBoolean("options.highlightitem.color.hovered", this.colorHovered, value -> this.colorHovered = value));
 
-
         // Modes
         this.list.addHeader(Component.translatable("options.highlightitem.logical.application"));
         this.list.addBig(new OptionInstance<>("options.highlightitem.comparator", value -> Tooltip.create(Component.translatable(value.translationKey()))
@@ -199,10 +210,44 @@ public class ConfigurationScreen extends OptionsSubScreen {
 
 
     public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-        super.extractRenderState(context, mouseX, mouseY, delta);
-        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath("highlight_item", "textures/empty-color.png"), 5, 36 , 0, 0, (this.width / 2) - 164 , this.height - 72 - FOOTER_HEIGHT, 256, 256);
-        context.outline(4, 35 , (this.width / 2) - 163 , this.height - 70 - FOOTER_HEIGHT, ARGB.color(255, 75, 75, 75));
-        context.fill(RenderPipelines.GUI, 5, 36 , (this.width / 2) - 160 , this.height - 36- FOOTER_HEIGHT, ARGB.color((int) (this.alpha * 2.55F), this.red, this.green, this.blue));
+        super.extractRenderState(context, mouseX, mouseY, delta);// 133 53
+        final int width = 38;
+        final int height = 38;
+
+        final int x = 5;
+        final int y = ((this.height - this.layout.getHeaderHeight()) / 2) - (height / 2);
+        final int itemOffSet = 18;
+
+        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/gui/container/inventory.png"), x, y, 96F, 16F, width, height, 256, 256);
+        context.outline(x - 1, y - 1, width + 1, height + 1, new Color(71, 71, 71).getRGB());
+        context.fakeItem(new ItemStack(Blocks.WOOL.red(), 1), x + 2, y + 2); // 1
+        context.fakeItem(new ItemStack(Blocks.WOOL.green(), 1), x + 2 + itemOffSet, y + 2);
+        context.fakeItem(new ItemStack(Blocks.WOOL.blue(), 1), x + 2, y + 2 + itemOffSet);
+        context.fakeItem(new ItemStack(Blocks.WOOL.lightGray(), 1), x + 2 + itemOffSet, y + 2 + itemOffSet);
+
+        // Highlight
+        if (this.highlightTick <= 60) {
+            drawFakeHighLight(context, x + 2, y + 2);
+        } else if (this.highlightTick <= 120) {
+            drawFakeHighLight(context, x + 2 + itemOffSet, y + 2);
+        } else if (this.highlightTick <= 180) {
+            drawFakeHighLight(context, x + 2 + itemOffSet, y + 2 + itemOffSet);
+        } else if (this.highlightTick <= 240) {
+            drawFakeHighLight(context, x + 2, y + 2 + itemOffSet);
+        } else {
+            this.highlightTick = -1; // Reset
+        }
+
+        this.highlightTick++;
+    }
+
+    private void drawFakeHighLight(GuiGraphicsExtractor context, int x, int y) {
+        final int color = getColor(this.red, this.green, this.blue, this.alpha);
+        if (useDefaultHighLight(color)) {
+            context.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("container/slot_highlight_front"), x - 4, y - 4, 24, 24);
+        } else {
+            context.fill(x, y, x + 16, y + 16, color);
+        }
     }
 
     @Override

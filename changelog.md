@@ -22,6 +22,7 @@ The menu have been fully rearranged :
   - Application logic section : contain the Comparator mode button and the new Screen limitation feature button
   - Other : contain the notification preferences button
 - Add a new button to reset the colors only (in the Color section) 
+- The color viewer have been totally replaced by a fake little inventory containing 4 slots fill with wool itemstack that will be highlighted with the color you pick
 
 ### Fix
 
