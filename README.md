@@ -34,10 +34,10 @@ The old color picker is now a true configuration menu where you can change all t
 You can choose a preferred mod notification sending mode when you have no inventory opened : 
 - Default : It depends on the context. 
   - If you are using the command to make a change the notif will be sent in the chat.
-  - If you pressed a key bind it will be sent in the minecraft overlay zone (above life, levels and hunger). 
+  - If you pressed a key bind it will be sent in the Minecraft overlay zone (above life, levels and hunger). 
 - Chat : It will be sent in the chat  
-- Overlay : It will be sent in the minecraft overlay zone (above life, levels and hunger).
-- Toast : It will always be sent in a "minecraft toast notification"
+- Overlay : It will be sent in the Minecraft overlay zone (above life, levels and hunger).
+- Toast : It will always be sent in a "Minecraft toast notification"
 
 **Highlighting limitations (v3.0.0+)**
 You can limit the Highlighting in some areas of the screens if you want there are 5 types :
@@ -46,6 +46,14 @@ You can limit the Highlighting in some areas of the screens if you want there ar
 - Player inventory : Only highlight the slots that are in the player inventory if they match the hovered one
 - Player inventory and exclude Creative : In the Creative screen it only highlights the slots in the hotbar (if they match the hovered one) else it only highlights the slots that are in the player inventory (if they match the hovered one)
 - Container only : Only highlight the slots that are in the containers (if they match the hovered one), like in chests or shulkerboxes for example
+
+**Hovered Item colored (v3.0.0+)**
+You can choose to color the hovered slot with the Minecraft vanilla highlighting or even highlight it even if it is empty rather than just choose to color or not. You have 5 modes to color or not the hovered slot :
+- Not colored : the hovered slot will not be highlighted at all
+- Colored : the hovered slot will be colored with the color you chose in the menu
+- Colored when not empty : the hovered slot will be colored with the color you chose in the menu if there is an item in it
+- Vanilla highlighting : the hovered item will be with the vanilla highlighting, the others items matching will be colored with the color you chose in the menu
+- Vanilla highlighting when not empty: the hovered item will be with the vanilla highlighting if there is an item in it, the others items matching will be colored with the color you chose in the menu
 
 # Commands 
 

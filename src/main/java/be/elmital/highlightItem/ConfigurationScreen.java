@@ -52,7 +52,8 @@ public class ConfigurationScreen extends OptionsSubScreen {
     int green;
     int blue;
     float alpha;
-    boolean colorHovered, toggle;
+    boolean toggle;
+    Configurator.ColorHoveredOptions colorHovered;
     ItemComparator.Comparators comparator;
     Configurator.NotificationPreference notif;
     Configurator.ScreenContext screenContext;
@@ -67,7 +68,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
         this(parent, gameOptions, ARGB.red(Configurator.COLOR), ARGB.green(Configurator.COLOR), ARGB.blue(Configurator.COLOR), (ARGB.alpha(Configurator.COLOR) / 255f) * 100, Configurator.COLOR_HOVERED, Configurator.COMPARATOR, Configurator.NOTIFICATION_PREFERENCE, Configurator.SCREEN_CONTEXT, Configurator.TOGGLE);
     }
 
-    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, int red, int green, int blue, float alpha, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, Configurator.ScreenContext screenContext, boolean toggle) {
+    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, int red, int green, int blue, float alpha, Configurator.ColorHoveredOptions colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, Configurator.ScreenContext screenContext, boolean toggle) {
         super(parent, gameOptions, Component.literal("HighLightItem"));
         this.layout.setFooterHeight(FOOTER_HEIGHT);
         this.red = red;
@@ -81,7 +82,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
         this.screenContext = screenContext;
     }
 
-    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, boolean colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, Configurator.ScreenContext screenContext, boolean toggle) {
+    private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, Configurator.ColorHoveredOptions colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, Configurator.ScreenContext screenContext, boolean toggle) {
         this(parent, gameOptions, ARGB.red(Configurator.COLOR), ARGB.green(Configurator.COLOR), ARGB.blue(Configurator.COLOR), (ARGB.alpha(Configurator.COLOR) / 255f) * 100, colorHovered, comparator, notif, screenContext, toggle);
     }
 
@@ -181,7 +182,12 @@ public class ConfigurationScreen extends OptionsSubScreen {
                     Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.screenContext, this.toggle));
                 })).build()
         );
-        this.list.addBig(OptionInstance.createBoolean("options.highlightitem.color.hovered", this.colorHovered, value -> this.colorHovered = value));
+        this.list.addBig(new OptionInstance<>("options.highlightitem.color.hovered", value ->  Tooltip.create(Component.translatable(value.getKey()))
+                , (_, value) -> Component.translatable(value.getKey())
+                , new OptionInstance.Enum<>(Arrays.asList(Configurator.ColorHoveredOptions.values()), Codec.INT.xmap(compId -> Configurator.ColorHoveredOptions.values()[compId], Configurator.ColorHoveredOptions::getId))
+                , this.colorHovered
+                , value -> this.colorHovered = value)
+        );
 
         // Modes
         this.list.addHeader(Component.translatable("options.highlightitem.logical.application"));

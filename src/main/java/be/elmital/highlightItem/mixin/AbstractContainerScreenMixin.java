@@ -88,8 +88,18 @@ public abstract class AbstractContainerScreenMixin {
 			if (hoveredSlot == null)
 				return;
 
-			if (hoveredSlot.equals(slot) && !Configurator.COLOR_HOVERED)
+			if (hoveredSlot.equals(slot))  {
+				if (!slot.isHighlightable())
+					return;
+                if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED) || (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED_NOT_EMPTY) && !slot.getItem().isEmpty())) {
+					HighlightItem.toDrawFromMod = slot;
+					extractSlotHighlightFront(guiGraphics);
+					HighlightItem.toDrawFromMod = null;
+				} else if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED) || (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED_NOT_EMPTY) && !slot.getItem().isEmpty())) {
+					extractSlotHighlightFront(guiGraphics);
+				}
 				return;
+			}
 
 			if (!slot.isActive() || slot.getItem().isEmpty())
 				return;
@@ -154,7 +164,7 @@ public abstract class AbstractContainerScreenMixin {
 			return info.getReturnValue();
 
 		if (Configurator.COLOR_HOVERED_BIND.matches(input)) {
-			HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
+			HighlightItem.configurator.changeColorHovered(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
 			return true;
 		} else if (Configurator.COMPARATOR_BIND.matches(input)) {
 			HighlightItem.configurator.changeMode(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
