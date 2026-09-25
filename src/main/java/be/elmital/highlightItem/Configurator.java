@@ -127,7 +127,9 @@ public class Configurator {
     public enum ColorHoveredOptions implements OptionEnum {
         NOT_COLORED,
         COLORED,
-        VANILLA_COLORED;
+        VANILLA_COLORED,
+        COLORED_NOT_EMPTY,
+        VANILLA_COLORED_NOT_EMPTY;
 
         @Override
         public int getId() {
@@ -151,7 +153,7 @@ public class Configurator {
 
     public enum Config {
         COLOR("color", Colors.HighLightColor.DEFAULT.json().toString()),
-        COLOR_HOVERED("color-hovered", ColorHoveredOptions.COLORED.name()),
+        COLOR_HOVERED("color-hovered", ColorHoveredOptions.NOT_COLORED.name()),
         TOGGLE("toggle", "true"),
         COMPARATOR("comparator", ItemComparator.Comparators.ITEM_ONLY.name()),
         NOTIFICATION_PREFERENCE("notif-preference", NotificationPreference.NONE.name()),
@@ -205,7 +207,7 @@ public class Configurator {
         COLOR = ARGB.color((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
         String hovered = properties.getProperty(Config.COLOR_HOVERED.getKey());
         if (hovered.equalsIgnoreCase(Boolean.TRUE.toString()) || hovered.equalsIgnoreCase(Boolean.FALSE.toString())) {
-            COLOR_HOVERED = Boolean.parseBoolean(hovered) ? ColorHoveredOptions.COLORED : ColorHoveredOptions.NOT_COLORED;
+            COLOR_HOVERED = Boolean.parseBoolean(hovered) ? ColorHoveredOptions.COLORED_NOT_EMPTY : ColorHoveredOptions.NOT_COLORED;
         } else {
             COLOR_HOVERED = ColorHoveredOptions.valueOf(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
         }

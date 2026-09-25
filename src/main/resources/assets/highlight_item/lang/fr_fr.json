@@ -30,6 +30,8 @@
   "options.highlightitem.color.hovered.not_colored" : "Non coloré",
   "options.highlightitem.color.hovered.colored" : "Coloré",
   "options.highlightitem.color.hovered.vanilla_colored" : "Vanilla ",
+  "options.highlightitem.color.hovered.colored_not_empty" : "Coloré sauf si vide",
+  "options.highlightitem.color.hovered.vanilla_colored_not_empty" : "Vanilla sauf si vide",
   "options.highlightitem.color.reset" : "Réinitialiser les valeurs de la couleur",
   "options.highlightitem.logical.application" : "Logique d'application",
   "options.highlightitem.reset" : "Réinitialiser les valeurs",

@@ -91,11 +91,11 @@ public abstract class AbstractContainerScreenMixin {
 			if (hoveredSlot.equals(slot))  {
 				if (!slot.isHighlightable())
 					return;
-                if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED)) {
+                if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED) || (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED_NOT_EMPTY) && !slot.getItem().isEmpty())) {
 					HighlightItem.toDrawFromMod = slot;
 					extractSlotHighlightFront(guiGraphics);
 					HighlightItem.toDrawFromMod = null;
-				} else if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED)) {
+				} else if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED) || (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED_NOT_EMPTY) && !slot.getItem().isEmpty())) {
 					extractSlotHighlightFront(guiGraphics);
 				}
 				return;

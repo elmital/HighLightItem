@@ -31,6 +31,8 @@
   "options.highlightitem.color.hovered.not_colored" : "Not colored",
   "options.highlightitem.color.hovered.colored" : "Colored",
   "options.highlightitem.color.hovered.vanilla_colored" : "Vanilla highlighting",
+  "options.highlightitem.color.hovered.colored_not_empty" : "Colored when not empty",
+  "options.highlightitem.color.hovered.vanilla_colored_not_empty" : "Vanilla highlighting when not empty",
   "options.highlightitem.logical.application" : "Application logic",
   "options.highlightitem.reset" : "Reset values",
   "options.highlightitem.toggle.deactivation" : "Deactivate the mod",
