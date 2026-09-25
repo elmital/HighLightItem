@@ -28,7 +28,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 public class HighLightItemClient implements ClientModInitializer {
 
@@ -38,10 +37,10 @@ public class HighLightItemClient implements ClientModInitializer {
         HighlightItem.LOGGER.info("Client side initialization start");
         HighlightItem.LOGGER.info("Registering key binds");
         KeyMapping.Category cat = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(HighlightItem.MOD_ID, "global"));
-        Configurator.TOGGLE_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, cat));
-        Configurator.COLOR_MENU = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, cat));
-        Configurator.COLOR_HOVERED_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, cat));
-        Configurator.COMPARATOR_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, cat));
+        Configurator.TOGGLE_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYBOARD, InputConstants.KEY_H, cat));
+        Configurator.COLOR_MENU = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYBOARD, InputConstants.KEY_B, cat));
+        Configurator.COLOR_HOVERED_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYBOARD, InputConstants.KEY_R, cat));
+        Configurator.COMPARATOR_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYBOARD, InputConstants.KEY_V, cat));
         HighlightItem.LOGGER.info("Key binds registered!");
         HighlightItem.LOGGER.info("Registering client scheduler...");
         Scheduler.register();

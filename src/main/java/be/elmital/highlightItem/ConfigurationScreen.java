@@ -25,7 +25,6 @@ package be.elmital.highlightItem;
 
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
 import net.minecraft.client.Minecraft;
@@ -175,11 +174,11 @@ public class ConfigurationScreen extends OptionsSubScreen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent input) {
-        if (input.input() == GLFW.GLFW_KEY_ESCAPE && this.shouldCloseOnEsc()) {
+    public boolean keyPressed(final KeyEvent event) {
+        if (event.isEscape() && this.shouldCloseOnEsc()) {
             this.close(false);
             return true;
         }
-        return super.keyPressed(input);
+        return super.keyPressed(event);
     }
 }
