@@ -23,6 +23,7 @@
 package be.elmital.highlightItem;
 
 import be.elmital.highlightItem.mixin.SystemToastAccessor;
+import be.elmital.highlightItem.utils.ConfigUtils;
 import com.google.gson.JsonParser;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
@@ -50,7 +51,7 @@ public class Configurator {
     public static int COLOR;
 
     public static KeyMapping COLOR_MENU;
-    public static boolean COLOR_HOVERED;
+    public static ColorHoveredOptions COLOR_HOVERED;
     public static KeyMapping COLOR_HOVERED_BIND;
     public static ItemComparator.Comparators COMPARATOR;
     public static KeyMapping COMPARATOR_BIND;
@@ -123,9 +124,34 @@ public class Configurator {
         }
     }
 
+    public enum ColorHoveredOptions implements OptionEnum {
+        NOT_COLORED,
+        COLORED,
+        VANILLA_COLORED;
+
+        @Override
+        public int getId() {
+            return ordinal();
+        }
+
+        @Override
+        public String getKey() {
+            return "options.highlightitem.color.hovered." + name().toLowerCase();
+        }
+
+        public static class Argument extends ConfigUtils.EnumArgumentType<ColorHoveredOptions> {
+            public static Argument COLOR_HOVERED_ARGUMENT = new Argument();
+            Argument() {
+                super(ColorHoveredOptions.class, ColorHoveredOptions.values());
+            }
+        }
+    }
+
+
+
     public enum Config {
         COLOR("color", Colors.HighLightColor.DEFAULT.json().toString()),
-        COLOR_HOVERED("color-hovered", "false"),
+        COLOR_HOVERED("color-hovered", ColorHoveredOptions.COLORED.name()),
         TOGGLE("toggle", "true"),
         COMPARATOR("comparator", ItemComparator.Comparators.ITEM_ONLY.name()),
         NOTIFICATION_PREFERENCE("notif-preference", NotificationPreference.NONE.name()),
@@ -177,7 +203,13 @@ public class Configurator {
         }
 
         COLOR = ARGB.color((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
-        COLOR_HOVERED = Boolean.parseBoolean(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
+        String hovered = properties.getProperty(Config.COLOR_HOVERED.getKey());
+        if (hovered.equalsIgnoreCase(Boolean.TRUE.toString()) || hovered.equalsIgnoreCase(Boolean.FALSE.toString())) {
+            COLOR_HOVERED = Boolean.parseBoolean(hovered) ? ColorHoveredOptions.COLORED : ColorHoveredOptions.NOT_COLORED;
+        } else {
+            COLOR_HOVERED = ColorHoveredOptions.valueOf(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
+        }
+
         COMPARATOR = ItemComparator.Comparators.valueOf(properties.getProperty(Config.COMPARATOR.getKey(), Config.COMPARATOR.getDefault()));
         NOTIFICATION_PREFERENCE = NotificationPreference.valueOf(properties.getProperty(Config.NOTIFICATION_PREFERENCE.getKey(), Config.NOTIFICATION_PREFERENCE.getDefault()));
         SCREEN_CONTEXT = ScreenContext.valueOf(properties.getProperty(Config.SCREEN_CONTEXT.getKey(), Config.SCREEN_CONTEXT.getDefault()));
@@ -227,26 +259,19 @@ public class Configurator {
                 , player);
     }
 
-    public void updateColorHovered(boolean hovered, LocalPlayer player, NotificationContext notification) {
+    public void changeColorHovered(LocalPlayer player, NotificationContext notification) {
+        ConfigUtils.changeEnumOption(Configurator.COLOR_HOVERED, ColorHoveredOptions.values(), ((colorHoveredOption) -> HighlightItem.configurator.updateColorHovered(colorHoveredOption, player, notification)));
+    }
+
+    public void updateColorHovered(ColorHoveredOptions hovered, LocalPlayer player, NotificationContext notification) {
         Configurator.COLOR_HOVERED = hovered;
         updateConfigAndNotify(Configurator.Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED, notification
-                , Configurator.COLOR_HOVERED
-                        ? Component.translatable( "notification.highlightitem.color_hovered_activated").withStyle(ChatFormatting.GRAY)
-                        : Component.translatable("notification.highlightitem.color_hovered_deactivated").withStyle(ChatFormatting.DARK_GRAY)
+                , Component.translatable("notification.highlightitem.color_hovered").withStyle(ChatFormatting.GRAY).append(Component.translatable(hovered.getKey()))
                 , player);
     }
 
     public void changeMode(LocalPlayer player, NotificationContext notification) {
-        if (Configurator.COMPARATOR.ordinal() == ItemComparator.Comparators.values().length - 1) {
-            HighlightItem.configurator.updateMode(ItemComparator.Comparators.ITEM_ONLY, player, notification);
-        } else {
-            for (ItemComparator.Comparators mode : ItemComparator.Comparators.values()) {
-                if (mode.ordinal() == Math.min(Configurator.COMPARATOR.ordinal() + 1, ItemComparator.Comparators.values().length - 1)) {
-                    HighlightItem.configurator.updateMode(mode, player, notification);
-                    break;
-                }
-            }
-        }
+        ConfigUtils.changeEnumOption(Configurator.COMPARATOR, ItemComparator.Comparators.values(), ((mode) -> HighlightItem.configurator.updateMode(mode, player, notification)));
     }
 
     public void updateMode(ItemComparator.Comparators mode, LocalPlayer player, NotificationContext notification) {

@@ -11,6 +11,10 @@
     - Player inventory : only highlight the slots that are in the player inventory
     - Player inventory and exclude Creative : if it's in the Creative screen it only highlights the slots in the hotbar when in creative screen else it only highlights the slots that are in the player inventory
     - Container only : only highlight the slots that are in the containers, in a chest or a shulker for example
+- You can now choose to color the hovered item with the minecraft vanilla highlighting. You can choose between three modes to color or not the hovered item :
+  - Not colored : the hovered item will not be highlighted at all
+  - Colored : the hovered item will be colored with the color you chose in the menu
+  - Vanilla highlighting : the hovered item will be with the vanilla highlighting, the others items matching will be colored with the color you chose in the menu
 
 ## Mod configuration menu enhancement
 

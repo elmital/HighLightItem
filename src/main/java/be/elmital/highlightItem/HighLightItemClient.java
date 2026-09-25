@@ -59,7 +59,7 @@ public class HighLightItemClient implements ClientModInitializer {
             }
 
             if (Configurator.COLOR_HOVERED_BIND.consumeClick()) {
-                HighlightItem.configurator.updateColorHovered(!Configurator.COLOR_HOVERED, client.player, Configurator.NotificationContext.IN_GAME);
+                HighlightItem.configurator.changeColorHovered(client.player, Configurator.NotificationContext.IN_GAME);
             }
 
             if (Configurator.COMPARATOR_BIND.consumeClick()) {

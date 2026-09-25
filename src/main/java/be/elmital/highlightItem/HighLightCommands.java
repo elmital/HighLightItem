@@ -22,8 +22,8 @@
 
 package be.elmital.highlightItem;
 
+import be.elmital.highlightItem.utils.ConfigUtils;
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -67,9 +67,9 @@ public class HighLightCommands {
                                 })
                         ))
                 .then(literal("hoverColor")
-                        .then(argument("boolean", BoolArgumentType.bool())
+                        .then(argument("hovered", Configurator.ColorHoveredOptions.Argument.COLOR_HOVERED_ARGUMENT)
                                 .executes(context -> {
-                                    HighlightItem.configurator.updateColorHovered(BoolArgumentType.getBool(context, "boolean"), context.getSource().getPlayer(), Configurator.NotificationContext.SENDING_COMMAND);
+                                    HighlightItem.configurator.updateColorHovered(ConfigUtils.EnumArgumentType.getArguments("hovered", Configurator.ColorHoveredOptions.class, context), context.getSource().getPlayer(), Configurator.NotificationContext.SENDING_COMMAND);
                                     return Command.SINGLE_SUCCESS;
                                 })))
                 .then(literal("toggle").executes(context -> {

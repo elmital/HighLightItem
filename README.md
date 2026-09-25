@@ -47,6 +47,12 @@ You can limit the Highlighting in some areas of the screens if you want there ar
 - Player inventory and exclude Creative : In the Creative screen it only highlights the slots in the hotbar (if they match the hovered one) else it only highlights the slots that are in the player inventory (if they match the hovered one)
 - Container only : Only highlight the slots that are in the containers (if they match the hovered one), like in chests or shulkerboxes for example
 
+**Hovered Item colored (v3.0.0+)**
+You can choose to color the hovered item with the Minecraft vanilla highlighting rather then just choose to color or not. You can choose between three modes to color or not the hovered item :
+- Not colored : the hovered item will not be highlighted at all
+- Colored : the hovered item will be colored with the color you chose in the menu
+- Vanilla highlighting : the hovered item will be with the vanilla highlighting, the others items matching will be colored with the color you chose in the menu
+
 # Commands 
 
 If you prefer commands than keybinds and the menu there are three commands available to manage the mod :
