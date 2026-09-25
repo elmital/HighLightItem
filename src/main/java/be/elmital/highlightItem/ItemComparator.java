@@ -22,20 +22,10 @@
 
 package be.elmital.highlightItem;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.arguments.ArgumentType;
+import be.elmital.highlightItem.utils.ConfigUtils;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiPredicate;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemComparator {
@@ -43,8 +33,10 @@ public class ItemComparator {
         return comparator.predicate.test(stack, stack2);
     }
 
-    public static class ComparatorArgumentType implements ArgumentType<Comparators> {
-        private static final Collection<String> EXAMPLES = generateExamples();
+    public static class ComparatorArgumentType extends ConfigUtils.EnumArgumentType<Comparators> {
+        ComparatorArgumentType() {
+            super(Comparators.class, Comparators.values());
+        }
 
         public static ComparatorArgumentType comparator() {
             return new ComparatorArgumentType();
@@ -52,37 +44,6 @@ public class ItemComparator {
 
         public static <S> Comparators getComparator(String name, CommandContext<S> context) {
             return context.getArgument(name, Comparators.class);
-        }
-
-        @Override
-        public Comparators parse(StringReader reader) throws CommandSyntaxException {
-            int areBeginning = reader.getCursor();
-            if(!reader.canRead())
-                reader.skip();
-
-            while (reader.canRead() && reader.peek() != ' ')
-                reader.skip();
-
-            String mode = reader.getString().substring(areBeginning, reader.getCursor());
-            try {
-                return Comparators.valueOf(mode.toUpperCase());
-            } catch (IllegalArgumentException iae) {
-                throw new SimpleCommandExceptionType(Component.nullToEmpty(iae.getMessage())).createWithContext(reader);
-            }
-        }
-
-        @Override
-        public Collection<String> getExamples() {
-            return EXAMPLES;
-        }
-
-        private static Collection<String> generateExamples() {
-            return Arrays.stream(Comparators.values()).map(comparator -> comparator.name().toLowerCase()).toList();
-        }
-
-        @Override
-        public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-            return SharedSuggestionProvider.suggest(EXAMPLES, builder);
         }
     }
 
