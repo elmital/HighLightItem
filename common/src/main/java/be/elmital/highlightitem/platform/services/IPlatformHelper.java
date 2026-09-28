@@ -1,5 +1,7 @@
 package be.elmital.highlightitem.platform.services;
 
+import java.nio.file.Path;
+
 public interface IPlatformHelper {
 
     /**
@@ -32,4 +34,11 @@ public interface IPlatformHelper {
     default String getEnvironmentName() {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    /**
+     * Gets the config file.
+     *
+     * @return The Path of the configuration file.
+     */
+    Path getConfigDir();
 }

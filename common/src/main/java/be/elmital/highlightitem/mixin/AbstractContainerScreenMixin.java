@@ -24,6 +24,7 @@ package be.elmital.highlightitem.mixin;
 
 import be.elmital.highlightitem.Colors;
 import be.elmital.highlightitem.Configurator;
+import be.elmital.highlightitem.Constants;
 import be.elmital.highlightitem.HighLightItemCommon;
 import be.elmital.highlightitem.ItemComparator;
 import be.elmital.highlightitem.UnsupportedMinecraftClassOperationException;
@@ -66,7 +67,7 @@ public abstract class AbstractContainerScreenMixin {
 			this.highlightItemCompatible = true;
 		} catch (UnsupportedMinecraftClassOperationException e) {
 			this.highlightItemCompatible = false;
-			// TODO Constants.LOG.error(e);
+			Constants.LOG.error("Unsupported Class found!", e);
 		} catch (UnsupportedOperationException e) {
 			// Change Screen context value if the Screen context is set to non default value
 			if (!Configurator.SCREEN_CONTEXT.equals(Configurator.ScreenContext.EVERYWHERE) || !Configurator.SCREEN_CONTEXT.equals(Configurator.ScreenContext.EXCLUDE_CREATIVE)) {
@@ -75,7 +76,7 @@ public abstract class AbstractContainerScreenMixin {
 			}
 
 			this.highlightItemCompatible = false;
-			// TODO Constants.LOG.error(e);
+			Constants.LOG.error("Unsupported Class found!", e);
 		}
 	}
 

@@ -23,9 +23,9 @@
 package be.elmital.highlightitem;
 
 import be.elmital.highlightitem.mixin.SystemToastAccessor;
+import be.elmital.highlightitem.platform.Services;
 import be.elmital.highlightitem.utils.ConfigUtils;
 import com.google.gson.JsonParser;
-// import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -66,7 +66,7 @@ public class Configurator {
     }
 
     public Configurator() throws IOException {
-        currentDirectory = null; // FabricLoader.getInstance().getConfigDir(); TODO get a way to have the configdir
+        currentDirectory = Services.PLATFORM.getConfigDir();
         loadOrGenerateConfig();
     }
 
