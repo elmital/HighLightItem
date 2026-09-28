@@ -40,7 +40,6 @@ public class HighLightItem {
 
     public HighLightItem(IEventBus eventBus) {
         HighLightItemCommon.init();
-        HighLightCommands.registerArgumentTypes();
     }
 
     @SubscribeEvent // on the mod event bus only on the physical client
@@ -61,6 +60,7 @@ public class HighLightItem {
         HighLightCommands.registerClientSide(event.getDispatcher(), new HighLightCommands<>() {
             @Override
             void sendClientFeedBack(CommandSourceStack clientCommandSource, Component text) {
+                HighLightCommands.registerArgumentTypes();
                 clientCommandSource.sendSystemMessage(text);
             }
         });
