@@ -53,14 +53,6 @@ public class HighLightItemCommon {
             Constants.LOG.info("Checking for configuration file");
             configurator = Configurator.getInstance();
             Constants.LOG.info("Config file loaded!");
-
-            var com = HighLightCommands.inst();
-            Constants.LOG.info("Registering commands...");
-            com.register();
-            Constants.LOG.info("Commands registered!");
-            Constants.LOG.info("Registering command arguments...");
-            com.registerArgumentTypes();
-            Constants.LOG.info("Command arguments registered!");
             Constants.LOG.info("Mod init!");
         } catch (IOException | URISyntaxException e) {
             Constants.LOG.error("Can't setup mod properly !", e);

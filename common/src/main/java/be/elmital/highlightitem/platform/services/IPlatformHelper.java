@@ -23,7 +23,10 @@
 package be.elmital.highlightitem.platform.services;
 
 import be.elmital.highlightitem.IScheduler;
+import com.mojang.brigadier.arguments.ArgumentType;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.resources.Identifier;
 
 import java.nio.file.Path;
 
@@ -80,4 +83,6 @@ public interface IPlatformHelper {
      * @return The Path of the configuration file.
      */
     Path getConfigDir();
+
+    void registerArgumentType(Identifier identifier, Class<? extends ArgumentType<?>> argumentTypeClass, SingletonArgumentInfo<ArgumentType<?>> argumentTypeSingletonArgumentInfo);
 }

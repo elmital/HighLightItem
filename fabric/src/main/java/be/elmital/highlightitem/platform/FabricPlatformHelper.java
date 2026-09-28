@@ -25,9 +25,13 @@ package be.elmital.highlightitem.platform;
 import be.elmital.highlightitem.FabricScheduler;
 import be.elmital.highlightitem.IScheduler;
 import be.elmital.highlightitem.platform.services.IPlatformHelper;
+import com.mojang.brigadier.arguments.ArgumentType;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.resources.Identifier;
 
 import java.nio.file.Path;
 
@@ -61,5 +65,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public Path getConfigDir() {
         return  FabricLoader.getInstance().getConfigDir();
+    }
+
+    @Override
+    public void registerArgumentType(Identifier identifier, Class<? extends ArgumentType<?>> argumentTypeClass, SingletonArgumentInfo<ArgumentType<?>> argumentTypeSingletonArgumentInfo) {
+        ArgumentTypeRegistry.registerArgumentType(identifier, argumentTypeClass, argumentTypeSingletonArgumentInfo);
     }
 }
