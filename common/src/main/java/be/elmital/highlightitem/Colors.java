@@ -20,7 +20,7 @@
  *
  */
 
-package be.elmital.highlightItem;
+package be.elmital.highlightitem;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.StringReader;

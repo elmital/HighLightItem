@@ -20,17 +20,15 @@
  *
  */
 
-package be.elmital.highlightItem.mixin;
+package be.elmital.highlightitem.mixin;
 
-import be.elmital.highlightItem.Colors;
-import be.elmital.highlightItem.Configurator;
-import be.elmital.highlightItem.HighlightItem;
-import be.elmital.highlightItem.ItemComparator;
-import be.elmital.highlightItem.UnsupportedMinecraftClassOperationException;
-import be.elmital.highlightItem.Utils;
+import be.elmital.highlightitem.Colors;
+import be.elmital.highlightitem.Configurator;
+import be.elmital.highlightitem.HighLightItemCommon;
+import be.elmital.highlightitem.ItemComparator;
+import be.elmital.highlightitem.UnsupportedMinecraftClassOperationException;
+import be.elmital.highlightitem.utils.Utils;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -52,7 +50,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 
-@Environment(EnvType.CLIENT)
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin {
 	@Shadow protected abstract void extractSlotHighlightFront(GuiGraphicsExtractor context);
@@ -69,7 +66,7 @@ public abstract class AbstractContainerScreenMixin {
 			this.highlightItemCompatible = true;
 		} catch (UnsupportedMinecraftClassOperationException e) {
 			this.highlightItemCompatible = false;
-			HighlightItem.LOGGER.error(e);
+			// TODO Constants.LOG.error(e);
 		} catch (UnsupportedOperationException e) {
 			// Change Screen context value if the Screen context is set to non default value
 			if (!Configurator.SCREEN_CONTEXT.equals(Configurator.ScreenContext.EVERYWHERE) || !Configurator.SCREEN_CONTEXT.equals(Configurator.ScreenContext.EXCLUDE_CREATIVE)) {
@@ -78,7 +75,7 @@ public abstract class AbstractContainerScreenMixin {
 			}
 
 			this.highlightItemCompatible = false;
-			HighlightItem.LOGGER.error(e);
+			// TODO Constants.LOG.error(e);
 		}
 	}
 
@@ -92,9 +89,9 @@ public abstract class AbstractContainerScreenMixin {
 				if (!slot.isHighlightable())
 					return;
                 if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED) || (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED_NOT_EMPTY) && !slot.getItem().isEmpty())) {
-					HighlightItem.toDrawFromMod = slot;
+					HighLightItemCommon.toDrawFromMod = slot;
 					extractSlotHighlightFront(guiGraphics);
-					HighlightItem.toDrawFromMod = null;
+					HighLightItemCommon.toDrawFromMod = null;
 				} else if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED) || (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED_NOT_EMPTY) && !slot.getItem().isEmpty())) {
 					extractSlotHighlightFront(guiGraphics);
 				}
@@ -108,9 +105,9 @@ public abstract class AbstractContainerScreenMixin {
 				return;
 
 			if (ItemComparator.test(Configurator.COMPARATOR, hoveredSlot.getItem(), slot.getItem())) {
-				HighlightItem.toDrawFromMod = slot;
+				HighLightItemCommon.toDrawFromMod = slot;
 				extractSlotHighlightFront(guiGraphics);
-				HighlightItem.toDrawFromMod = null;
+				HighLightItemCommon.toDrawFromMod = null;
 			}
 		}
 	}
@@ -140,37 +137,34 @@ public abstract class AbstractContainerScreenMixin {
 
 	@ModifyArgs(method = "extractSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
 	private void colorizeIfMod(Args args) {
-		if (HighlightItem.toDrawFromMod != null) {
+		if (HighLightItemCommon.toDrawFromMod != null) {
 			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {
-				args.set(2, HighlightItem.toDrawFromMod.x - 4);
-				args.set(3, HighlightItem.toDrawFromMod.y - 4);
+				args.set(2, HighLightItemCommon.toDrawFromMod.x - 4);
+				args.set(3, HighLightItemCommon.toDrawFromMod.y - 4);
 			} else {
-				args.set(2, HighlightItem.toDrawFromMod.x);
-				args.set(3, HighlightItem.toDrawFromMod.y);
-				args.set(4, HighlightItem.toDrawFromMod.x + 16);
-				args.set(5, HighlightItem.toDrawFromMod.y + 16);
+				args.set(2, HighLightItemCommon.toDrawFromMod.x);
+				args.set(3, HighLightItemCommon.toDrawFromMod.y);
+				args.set(4, HighLightItemCommon.toDrawFromMod.x + 16);
+				args.set(5, HighLightItemCommon.toDrawFromMod.y + 16);
 			}
 		}
 	}
 
 	@Inject(method = "keyPressed", at = @At("RETURN"))
-	private boolean keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> info) {
+	private void keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> info) {
 		if (Configurator.TOGGLE_BIND.matches(input)) {
-			HighlightItem.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
-			return true;
+			HighLightItemCommon.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
+			return;
 		}
 
 		if (!Configurator.TOGGLE)
-			return info.getReturnValue();
+			return;
 
 		if (Configurator.COLOR_HOVERED_BIND.matches(input)) {
-			HighlightItem.configurator.changeColorHovered(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
-			return true;
+			HighLightItemCommon.configurator.changeColorHovered(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
+			return;
 		} else if (Configurator.COMPARATOR_BIND.matches(input)) {
-			HighlightItem.configurator.changeMode(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
-			return true;
-		} else {
-			return info.getReturnValue();
+			HighLightItemCommon.configurator.changeMode(Minecraft.getInstance().player, Configurator.NotificationContext.ON_SCREEN);
 		}
 	}
 }
