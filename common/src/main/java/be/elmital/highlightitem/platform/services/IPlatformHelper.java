@@ -24,8 +24,7 @@ package be.elmital.highlightitem.platform.services;
 
 import be.elmital.highlightitem.IScheduler;
 import com.mojang.brigadier.arguments.ArgumentType;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.resources.Identifier;
 
 import java.nio.file.Path;
@@ -64,13 +63,6 @@ public interface IPlatformHelper {
     }
 
     /**
-     * Register a keybind and return it.
-     *
-     * @return The registered KeyBind.
-     */
-    KeyMapping registerKeyBind(KeyMapping keyMapping);
-
-    /**
      * Return the IScheduler.
      *
      * @return The IScheduler.
@@ -84,5 +76,5 @@ public interface IPlatformHelper {
      */
     Path getConfigDir();
 
-    void registerArgumentType(Identifier identifier, Class<? extends ArgumentType<?>> argumentTypeClass, SingletonArgumentInfo<ArgumentType<?>> argumentTypeSingletonArgumentInfo);
+    <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void registerArgumentType(Identifier id, Class<A> clazz, ArgumentTypeInfo<A, T> serializer);
 }

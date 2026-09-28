@@ -26,6 +26,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 
 public class HighLightItem implements ModInitializer {
@@ -33,6 +35,7 @@ public class HighLightItem implements ModInitializer {
     @Override
     public void onInitialize() {
         HighLightItemCommon.init();
+
         HighLightCommands.registerArgumentTypes();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> HighLightCommands.registerClientSide(dispatcher, new HighLightCommands<>() {
             @Override
@@ -41,7 +44,12 @@ public class HighLightItem implements ModInitializer {
             }
         }));
 
-        Constants.LOG.info("Registering key bind and notification tracking");
+        Constants.LOG.info("Registering key binds and notification tracking");
+        KeyMapping.Category.register(HighLightItemCommon.keyBindCategory.id());
+        for (KeyMapping keyMapping : HighLightItemCommon.keyMappings) {
+            KeyMappingHelper.registerKeyMapping(keyMapping);
+        }
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             assert client.player != null;
             if (Configurator.TOGGLE_BIND.consumeClick()) {

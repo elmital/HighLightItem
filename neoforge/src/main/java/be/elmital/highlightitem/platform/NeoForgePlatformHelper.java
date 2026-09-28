@@ -25,11 +25,14 @@ package be.elmital.highlightitem.platform;
 import be.elmital.highlightitem.IScheduler;
 import be.elmital.highlightitem.platform.services.IPlatformHelper;
 import com.mojang.brigadier.arguments.ArgumentType;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;
 
@@ -51,12 +54,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public KeyMapping registerKeyBind(KeyMapping keyMapping) {
-        // TODO
-        return null;
-    }
-
-    @Override
     public IScheduler getScheduler() {
         // TODO
         return null;
@@ -64,12 +61,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public Path getConfigDir() {
-        // TODO
-        return null;
+        return FMLPaths.CONFIGDIR.get();
     }
 
     @Override
-    public void registerArgumentType(Identifier identifier, Class<? extends ArgumentType<?>> argumentTypeClass, SingletonArgumentInfo<ArgumentType<?>> argumentTypeSingletonArgumentInfo) {
-        // TODO
+    public <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void registerArgumentType(Identifier id, Class<A> clazz, ArgumentTypeInfo<A, T> serializer) {
+        ArgumentTypeInfos.registerByClass(clazz, serializer);
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, id, serializer);
     }
 }

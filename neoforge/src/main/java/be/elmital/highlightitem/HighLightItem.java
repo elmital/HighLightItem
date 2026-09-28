@@ -22,13 +22,66 @@
 
 package be.elmital.highlightitem;
 
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
-@Mod(Constants.MOD_ID)
+@Mod("highlightitem")
+@EventBusSubscriber
 public class HighLightItem {
 
     public HighLightItem(IEventBus eventBus) {
         HighLightItemCommon.init();
+        HighLightCommands.registerArgumentTypes();
+    }
+
+    @SubscribeEvent // on the mod event bus only on the physical client
+    public static void registerBindings(RegisterKeyMappingsEvent event) {
+        Constants.LOG.info("Registering key binds and notification tracking");
+        // Register category
+        event.registerCategory(HighLightItemCommon.keyBindCategory);
+
+        // Register binding with category used
+        KeyMapping.Category.register(HighLightItemCommon.keyBindCategory.id());
+        for (KeyMapping keyMapping : HighLightItemCommon.keyMappings) {
+            event.register(keyMapping);
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerClientCommands(RegisterClientCommandsEvent event) {
+        HighLightCommands.registerClientSide(event.getDispatcher(), new HighLightCommands<>() {
+            @Override
+            void sendClientFeedBack(CommandSourceStack clientCommandSource, Component text) {
+                clientCommandSource.sendSystemMessage(text);
+            }
+        });
+    }
+
+    @SubscribeEvent // on the game event bus only on the physical client
+    public static void onClientTick(ClientTickEvent.Post event) {
+        if (Configurator.TOGGLE_BIND.consumeClick()) {
+            HighLightItemCommon.configurator.updateToggle(Minecraft.getInstance().player, Configurator.NotificationContext.IN_GAME);
+        }
+
+        if (Configurator.COLOR_MENU.consumeClick()) {
+            Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(Minecraft.getInstance().options));
+        }
+
+        if (Configurator.COLOR_HOVERED_BIND.consumeClick()) {
+            HighLightItemCommon.configurator.changeColorHovered(Minecraft.getInstance().player, Configurator.NotificationContext.IN_GAME);
+        }
+
+        if (Configurator.COMPARATOR_BIND.consumeClick()) {
+            HighLightItemCommon.configurator.changeMode(Minecraft.getInstance().player, Configurator.NotificationContext.IN_GAME);
+        }
     }
 }

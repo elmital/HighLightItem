@@ -24,6 +24,7 @@ package be.elmital.highlightitem;
 
 
 import be.elmital.highlightitem.platform.Services;
+import be.elmital.highlightitem.utils.ReturningHashSet;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
@@ -36,6 +37,8 @@ import java.net.URISyntaxException;
 public class HighLightItemCommon {
     public static Slot toDrawFromMod = null;
     public static Configurator configurator;
+    public static KeyMapping.Category keyBindCategory;
+    public static ReturningHashSet<KeyMapping> keyMappings;
 
     public static void init() {
         Constants.LOG.info("""
@@ -60,14 +63,15 @@ public class HighLightItemCommon {
             Constants.LOG.info("First initialization phase ended!");
         }
 
+        keyMappings = new ReturningHashSet<>();
         Constants.LOG.info("Client side initialization start");
-        Constants.LOG.info("Registering key binds");
-        KeyMapping.Category cat = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "global"));
-        Configurator.TOGGLE_BIND = Services.PLATFORM.registerKeyBind(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, cat));
-        Configurator.COLOR_MENU = Services.PLATFORM.registerKeyBind(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, cat));
-        Configurator.COLOR_HOVERED_BIND = Services.PLATFORM.registerKeyBind(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, cat));
-        Configurator.COMPARATOR_BIND = Services.PLATFORM.registerKeyBind(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, cat));
-        Constants.LOG.info("Key binds registered!");
+        Constants.LOG.info("Generate key binds");
+        keyBindCategory = new KeyMapping.Category(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "global"));
+        Configurator.TOGGLE_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, keyBindCategory));
+        Configurator.COLOR_MENU = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, keyBindCategory));
+        Configurator.COLOR_HOVERED_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, keyBindCategory));
+        Configurator.COMPARATOR_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, keyBindCategory));
+        Constants.LOG.info("Key binds generated!");
         Constants.LOG.info("Registering client scheduler...");
         Services.PLATFORM.getScheduler().register();
         Constants.LOG.info("Scheduler client registered!");
