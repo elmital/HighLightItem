@@ -1,5 +1,6 @@
 package be.elmital.highlightitem.platform;
 
+import be.elmital.highlightitem.IScheduler;
 import be.elmital.highlightitem.platform.services.IPlatformHelper;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
@@ -21,6 +22,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public boolean isDevelopmentEnvironment() {
         return !FMLLoader.getCurrent().isProduction();
+    }
+
+    @Override
+    public IScheduler getScheduler() {
+        // TODO
+        return null;
     }
 
     @Override

@@ -23,6 +23,7 @@
 package be.elmital.highlightitem;
 
 
+import be.elmital.highlightitem.platform.Services;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
@@ -37,7 +38,6 @@ public class HighLightItemCommon {
     public static Configurator configurator;
 
     public static void init() {
-        // TODO init all common stuff
         Constants.LOG.info("""
     
 				-------------
@@ -78,8 +78,7 @@ public class HighLightItemCommon {
         Configurator.COMPARATOR_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, cat));
         */Constants.LOG.info("Key binds registered!");
         Constants.LOG.info("Registering client scheduler...");
-        // TODO
-        // Scheduler.register();
+        Services.PLATFORM.getScheduler().register();
         Constants.LOG.info("Scheduler client registered!");
 
         Constants.LOG.info("Registering key bind and notification tracking");

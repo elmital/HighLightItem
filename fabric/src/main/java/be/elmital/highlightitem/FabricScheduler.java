@@ -22,15 +22,24 @@
 
 package be.elmital.highlightitem;
 
-// import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
+
 import java.util.ArrayList;
 
-// TODO scheduler for
-public class Scheduler /*implements ClientTickEvents.EndTick*/ {
-    /*
-    public static final Scheduler INSTANCE = new Scheduler();
+public class FabricScheduler implements IScheduler, ClientTickEvents.EndTick {
+    public static final FabricScheduler INSTANCE = new FabricScheduler();
     private final ArrayList<Task> tasks = new ArrayList<>();
+
+    @Override
+    public ArrayList<IScheduler.Task> getTasks() {
+        return this.tasks;
+    }
+
+    @Override
+    public void register() {
+        ClientTickEvents.END_CLIENT_TICK.register(INSTANCE);
+    }
 
     @Override
     public void onEndTick(Minecraft client) {
@@ -49,40 +58,4 @@ public class Scheduler /*implements ClientTickEvents.EndTick*/ {
             tasks.removeAll(toRemove);
         }
     }
-
-    static void register() {
-        ClientTickEvents.END_CLIENT_TICK.register(INSTANCE);
-    }
-
-    public static void queue(Task task) {
-        synchronized (INSTANCE.tasks) {
-            INSTANCE.tasks.add(task);
-        }
-    }
-
-    public static void remove(Task task) {
-        synchronized (INSTANCE.tasks) {
-            INSTANCE.tasks.add(task);
-        }
-    }
-
-    public static class Task {
-        final Runnable runnable;
-        final Long period;
-        long ticksUntilSomething;
-
-        public Task(Runnable runnable) {
-            this(runnable, null, null);
-        }
-
-        public Task(Runnable runnable, Long delay) {
-            this(runnable, delay, null);
-        }
-
-        public Task(Runnable runnable, Long delay, Long period) {
-            this.runnable = runnable;
-            this.ticksUntilSomething = delay == null ? 0L : delay;
-            this.period = period;
-        }
-    }*/
 }
