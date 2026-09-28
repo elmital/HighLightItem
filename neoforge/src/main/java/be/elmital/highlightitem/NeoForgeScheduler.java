@@ -22,13 +22,14 @@
 
 package be.elmital.highlightitem;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.Minecraft;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.ArrayList;
 
-public class FabricScheduler implements IScheduler, ClientTickEvents.EndTick {
-    public static final FabricScheduler INSTANCE = new FabricScheduler();
+public class NeoForgeScheduler implements IScheduler {
+    public static final NeoForgeScheduler INSTANCE = new NeoForgeScheduler();
     private final ArrayList<Task> tasks = new ArrayList<>();
 
     @Override
@@ -38,11 +39,11 @@ public class FabricScheduler implements IScheduler, ClientTickEvents.EndTick {
 
     @Override
     public void register() {
-        ClientTickEvents.END_CLIENT_TICK.register(INSTANCE);
+        NeoForge.EVENT_BUS.register(NeoForgeScheduler.class);
     }
 
-    @Override
-    public void onEndTick(Minecraft client) {
-        onEndTick();
+    @SubscribeEvent
+    public static void onClientTick(ClientTickEvent.Post event) {
+        INSTANCE.onEndTick();
     }
 }

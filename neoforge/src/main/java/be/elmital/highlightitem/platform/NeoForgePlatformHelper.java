@@ -23,6 +23,7 @@
 package be.elmital.highlightitem.platform;
 
 import be.elmital.highlightitem.IScheduler;
+import be.elmital.highlightitem.NeoForgeScheduler;
 import be.elmital.highlightitem.platform.services.IPlatformHelper;
 import com.mojang.brigadier.arguments.ArgumentType;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -55,8 +56,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public IScheduler getScheduler() {
-        // TODO
-        return null;
+        return NeoForgeScheduler.INSTANCE;
     }
 
     @Override

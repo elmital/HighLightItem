@@ -29,6 +29,23 @@ public interface IScheduler {
 
     void register();
 
+    default void onEndTick() {
+        ArrayList<Task> toRemove = new ArrayList<>();
+        synchronized (getTasks()) {
+            for (Task task : getTasks()) {
+                if (--task.ticksUntilSomething == 0L) {
+                    task.runnable.run();
+                    if (task.period != null)
+                        task.ticksUntilSomething = task.period;
+                    else
+                        toRemove.add(task);
+                }
+            }
+
+            getTasks().removeAll(toRemove);
+        }
+    }
+
     default void queue(Task task) {
         synchronized (getTasks()) {
             getTasks().add(task);
