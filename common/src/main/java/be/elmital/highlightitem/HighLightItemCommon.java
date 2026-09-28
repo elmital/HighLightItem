@@ -70,38 +70,15 @@ public class HighLightItemCommon {
 
         Constants.LOG.info("Client side initialization start");
         Constants.LOG.info("Registering key binds");
-        // TODO keybinds
-        /*KeyMapping.Category cat = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(HighlightItem.MOD_ID, "global"));
-        Configurator.TOGGLE_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, cat));
-        Configurator.COLOR_MENU = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, cat));
-        Configurator.COLOR_HOVERED_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, cat));
-        Configurator.COMPARATOR_BIND = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, cat));
-        */Constants.LOG.info("Key binds registered!");
+        KeyMapping.Category cat = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "global"));
+        Configurator.TOGGLE_BIND = Services.PLATFORM.registerKeyBind(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, cat));
+        Configurator.COLOR_MENU = Services.PLATFORM.registerKeyBind(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, cat));
+        Configurator.COLOR_HOVERED_BIND = Services.PLATFORM.registerKeyBind(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, cat));
+        Configurator.COMPARATOR_BIND = Services.PLATFORM.registerKeyBind(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, cat));
+        Constants.LOG.info("Key binds registered!");
         Constants.LOG.info("Registering client scheduler...");
         Services.PLATFORM.getScheduler().register();
         Constants.LOG.info("Scheduler client registered!");
-
-        Constants.LOG.info("Registering key bind and notification tracking");
-        // TODO keybinds
-        /*
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            assert client.player != null;
-            if (Configurator.TOGGLE_BIND.consumeClick()) {
-                HighlightItem.configurator.updateToggle(client.player, Configurator.NotificationContext.IN_GAME);
-            }
-
-            if (Configurator.COLOR_MENU.consumeClick()) {
-                client.setScreenAndShow(new ConfigurationScreen(client.options));
-            }
-
-            if (Configurator.COLOR_HOVERED_BIND.consumeClick()) {
-                HighlightItem.configurator.changeColorHovered(client.player, Configurator.NotificationContext.IN_GAME);
-            }
-
-            if (Configurator.COMPARATOR_BIND.consumeClick()) {
-                HighlightItem.configurator.changeMode(client.player, Configurator.NotificationContext.IN_GAME);
-            }
-        });*/
         Constants.LOG.info("Client side initialization done!");
     }
 }

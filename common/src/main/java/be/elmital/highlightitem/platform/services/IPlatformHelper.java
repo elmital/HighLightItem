@@ -23,6 +23,7 @@
 package be.elmital.highlightitem.platform.services;
 
 import be.elmital.highlightitem.IScheduler;
+import net.minecraft.client.KeyMapping;
 
 import java.nio.file.Path;
 
@@ -58,6 +59,13 @@ public interface IPlatformHelper {
     default String getEnvironmentName() {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    /**
+     * Register a keybind and return it.
+     *
+     * @return The registered KeyBind.
+     */
+    KeyMapping registerKeyBind(KeyMapping keyMapping);
 
     /**
      * Return the IScheduler.

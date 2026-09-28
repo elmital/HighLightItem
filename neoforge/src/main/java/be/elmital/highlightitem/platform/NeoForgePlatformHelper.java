@@ -2,6 +2,7 @@ package be.elmital.highlightitem.platform;
 
 import be.elmital.highlightitem.IScheduler;
 import be.elmital.highlightitem.platform.services.IPlatformHelper;
+import net.minecraft.client.KeyMapping;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 
@@ -22,6 +23,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public boolean isDevelopmentEnvironment() {
         return !FMLLoader.getCurrent().isProduction();
+    }
+
+    @Override
+    public KeyMapping registerKeyBind(KeyMapping keyMapping) {
+        // TODO
+        return null;
     }
 
     @Override
