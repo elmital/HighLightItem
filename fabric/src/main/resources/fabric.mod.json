@@ -17,7 +17,8 @@
     "entrypoints": {
         "main": [
             "be.elmital.highlightitem.HighLightItem"
-        ]
+        ],
+        "modmenu": [ "be.elmital.highlightitem.libs.ModMenuAPIIntegration" ]
     },
     "mixins": [
         "${mod_id}.mixins.json",
