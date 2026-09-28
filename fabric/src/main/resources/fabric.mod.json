@@ -16,7 +16,7 @@
     "icon": "${mod_id}.png",
     "environment": "client",
     "entrypoints": {
-        "main": [
+        "client": [
             "be.elmital.highlightitem.HighLightItem"
         ],
         "modmenu": [ "be.elmital.highlightitem.libs.ModMenuAPIIntegration" ]

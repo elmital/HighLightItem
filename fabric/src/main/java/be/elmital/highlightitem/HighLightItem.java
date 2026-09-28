@@ -22,7 +22,7 @@
 
 package be.elmital.highlightitem;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -30,10 +30,10 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 
-public class HighLightItem implements ModInitializer {
+public class HighLightItem implements ClientModInitializer {
 
     @Override
-    public void onInitialize() {
+    public void onInitializeClient() {
         HighLightItemCommon.init();
 
         HighLightCommands.registerArgumentTypes();

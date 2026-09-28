@@ -26,6 +26,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -34,8 +35,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
-@Mod("highlightitem")
-@EventBusSubscriber
+@Mod(value = "highlightitem", dist = Dist.CLIENT)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class HighLightItem {
 
     public HighLightItem(IEventBus eventBus) {
