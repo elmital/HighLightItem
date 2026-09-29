@@ -55,6 +55,9 @@ You can choose to color the hovered slot with the Minecraft vanilla highlighting
 - Vanilla highlighting : the hovered item will be with the vanilla highlighting, the others items matching will be colored with the color you chose in the menu
 - Vanilla highlighting when not empty: the hovered item will be with the vanilla highlighting if there is an item in it, the others items matching will be colored with the color you chose in the menu
 
+**NeoForge support (v3.0.0+)**
+The mod now supports NeoForge only on the most recents versions superior to v3.0.0
+
 # Commands 
 
 If you prefer commands than keybinds and the menu there are three commands available to manage the mod :

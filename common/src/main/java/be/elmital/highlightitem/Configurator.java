@@ -1,0 +1,344 @@
+/*
+ *  This file is part of the HighLightItem distribution (https://github.com/elmital/HighLightItem).
+ *
+ *  HighLightItem minecraft mod
+ *  Copyright (C) 2022  elmital
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *
+ */
+
+package be.elmital.highlightitem;
+
+import be.elmital.highlightitem.mixin.SystemToastAccessor;
+import be.elmital.highlightitem.platform.Services;
+import be.elmital.highlightitem.utils.ConfigUtils;
+import com.google.gson.JsonParser;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.components.toasts.Toast;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.ARGB;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Properties;
+
+
+public class Configurator {
+    public static boolean TOGGLE;
+    public static KeyMapping TOGGLE_BIND;
+    private final Path currentDirectory;
+    public static int COLOR;
+
+    public static KeyMapping COLOR_MENU;
+    public static ColorHoveredOptions COLOR_HOVERED;
+    public static KeyMapping COLOR_HOVERED_BIND;
+    public static ItemComparator.Comparators COMPARATOR;
+    public static KeyMapping COMPARATOR_BIND;
+    public static NotificationPreference NOTIFICATION_PREFERENCE;
+    public static ScreenContext SCREEN_CONTEXT;
+    private final String CONFIG = "HighLightItemConfig";
+    private final Properties properties = new Properties();
+    public static SystemToast activeToastNotification = null;
+
+    public static Configurator getInstance() throws IOException, URISyntaxException {
+        return new Configurator();
+    }
+
+    public Configurator() throws IOException {
+        currentDirectory = Services.PLATFORM.getConfigDir();
+        loadOrGenerateConfig();
+    }
+
+    public enum NotificationContext {
+        NONE,
+        ON_SCREEN,
+        SENDING_COMMAND,
+        IN_GAME
+    }
+
+    public enum NotificationPreference implements OptionEnum {
+        NONE,
+        TOAST,
+        CHAT,
+        OVERLAY;
+
+        @Override
+        public int getId() {
+            return ordinal();
+        }
+
+        @Override
+        public String getKey() {
+            return "options.highlightitem.notif." + name().toLowerCase();
+        }
+    }
+
+    public enum ScreenContext implements OptionEnum {
+        EVERYWHERE,
+        EXCLUDE_CREATIVE,
+        PLAYER_INVENTORY,
+        PLAYER_INVENTORY_AND_EXCLUDE_CREATIVE,
+        STORAGE_ONLY;
+
+        public boolean excludeCreativeScreen() {
+            return this.equals(EXCLUDE_CREATIVE) || this.equals(PLAYER_INVENTORY_AND_EXCLUDE_CREATIVE) || this.equals(STORAGE_ONLY);
+        }
+
+        public boolean inPlayerInventoryPart() {
+            return this.equals(EVERYWHERE) || this.equals(EXCLUDE_CREATIVE) || this.equals(PLAYER_INVENTORY) || this.equals(PLAYER_INVENTORY_AND_EXCLUDE_CREATIVE);
+        }
+
+        public boolean inContainer() {
+            return this.equals(STORAGE_ONLY);
+        }
+
+        @Override
+        public int getId() {
+            return ordinal();
+        }
+
+        @Override
+        public String getKey() {
+            return "options.highlightitem.screen.context." + name().toLowerCase();
+        }
+    }
+
+    public enum ColorHoveredOptions implements OptionEnum {
+        NOT_COLORED,
+        COLORED,
+        VANILLA_COLORED,
+        COLORED_NOT_EMPTY,
+        VANILLA_COLORED_NOT_EMPTY;
+
+        @Override
+        public int getId() {
+            return ordinal();
+        }
+
+        @Override
+        public String getKey() {
+            return "options.highlightitem.color.hovered." + name().toLowerCase();
+        }
+
+        public static class Argument extends ConfigUtils.EnumArgumentType<ColorHoveredOptions> {
+            public static Argument COLOR_HOVERED_ARGUMENT = new Argument();
+            Argument() {
+                super(ColorHoveredOptions.class, ColorHoveredOptions.values());
+            }
+        }
+    }
+
+
+
+    public enum Config {
+        COLOR("color", Colors.HighLightColor.DEFAULT.json().toString()),
+        COLOR_HOVERED("color-hovered", ColorHoveredOptions.NOT_COLORED.name()),
+        TOGGLE("toggle", "true"),
+        COMPARATOR("comparator", ItemComparator.Comparators.ITEM_ONLY.name()),
+        NOTIFICATION_PREFERENCE("notif-preference", NotificationPreference.NONE.name()),
+        SCREEN_CONTEXT("screen-context", ScreenContext.EXCLUDE_CREATIVE.name());
+
+        private final String key;
+        private final String def;
+        Config(String key, String def) {
+            this.key = key;
+            this.def = def;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getDefault() {
+            return def;
+        }
+    }
+
+    public void loadOrGenerateConfig() throws IOException, IllegalArgumentException {
+        if (Files.exists(getConfigPath())) {
+            InputStream input = new FileInputStream(getConfigPath().toString());
+            properties.load(input);
+        } else {
+            var stream = new FileOutputStream(getConfigPath().toString());
+
+            for (Config value : Config.values()) {
+                properties.setProperty(value.getKey(), value.getDefault());
+            }
+            properties.store(stream, null);
+        }
+
+        TOGGLE = Boolean.parseBoolean(properties.getProperty(Config.TOGGLE.getKey(), Config.TOGGLE.getDefault()));
+
+        float[] colors;
+        if (properties.containsKey("color")) {
+            var jsonColor = JsonParser.parseString(properties.getProperty(Config.COLOR.getKey())).getAsJsonObject();
+            if (jsonColor.has("default"))
+                colors = Colors.HighLightColor.fromJson(jsonColor).getShaderColor();
+            else
+                colors = Colors.customFromJson(jsonColor);
+        } else {
+            var highlightColor = Colors.HighLightColor.valueOf(properties.getProperty("highlight-color", Colors.HighLightColor.DEFAULT.name()));
+            colors = highlightColor.getShaderColor();
+            removeFromConfig("highlight-color"); // Color system is changed
+            updateConfig(Config.COLOR, highlightColor.json().toString());
+        }
+
+        COLOR = ARGB.color((int) (colors[3] * 255), (int) (colors[0] * 255), (int) (colors[1] * 255), (int) (colors[2] * 255));
+        String hovered = properties.getProperty(Config.COLOR_HOVERED.getKey());
+        if (hovered.equalsIgnoreCase(Boolean.TRUE.toString()) || hovered.equalsIgnoreCase(Boolean.FALSE.toString())) {
+            COLOR_HOVERED = Boolean.parseBoolean(hovered) ? ColorHoveredOptions.COLORED_NOT_EMPTY : ColorHoveredOptions.NOT_COLORED;
+        } else {
+            COLOR_HOVERED = ColorHoveredOptions.valueOf(properties.getProperty(Config.COLOR_HOVERED.getKey(), Config.COLOR_HOVERED.getDefault()));
+        }
+
+        COMPARATOR = ItemComparator.Comparators.valueOf(properties.getProperty(Config.COMPARATOR.getKey(), Config.COMPARATOR.getDefault()));
+        NOTIFICATION_PREFERENCE = NotificationPreference.valueOf(properties.getProperty(Config.NOTIFICATION_PREFERENCE.getKey(), Config.NOTIFICATION_PREFERENCE.getDefault()));
+        SCREEN_CONTEXT = ScreenContext.valueOf(properties.getProperty(Config.SCREEN_CONTEXT.getKey(), Config.SCREEN_CONTEXT.getDefault()));
+    }
+
+    public Path getConfigDirectoryPath() {
+        return currentDirectory;
+    }
+
+    public Path getConfigPath() {
+        return getConfigDirectoryPath().resolve(CONFIG);
+    }
+
+    public void updateConfig(Config config, String value) throws IOException {
+        var stream = new FileOutputStream(getConfigPath().toString());
+        properties.setProperty(config.getKey(), value);
+        properties.store(stream, null);
+    }
+
+    private void updateConfigAndNotify(Config config, String value, NotificationContext notificationContext, MutableComponent onSuccess, @Nullable LocalPlayer player) {
+        try {
+            updateConfig(config, value);
+            notify(notificationContext, onSuccess, player);
+        } catch (IOException _) {
+            notify(notificationContext, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
+        }
+    }
+
+    public void removeFromConfig(String key) throws IOException {
+        var stream = new FileOutputStream(getConfigPath().toString());
+        properties.remove(key);
+        properties.store(stream, null);
+    }
+
+    public void updateToggle(LocalPlayer player, NotificationContext notification) {
+        Configurator.TOGGLE = !Configurator.TOGGLE;
+        updateConfigAndNotify(Config.TOGGLE, "" + Configurator.TOGGLE, notification,
+                Configurator.TOGGLE
+                        ? Component.translatable( "notification.highlightitem.highlighting.update")
+                            .append(Component.literal(" "))
+                            .append(Component.translatable("notification.highlightitem.activate"))
+                            .withStyle(ChatFormatting.GRAY)
+                        : Component.translatable( "notification.highlightitem.highlighting.update")
+                            .append(Component.literal(" "))
+                            .append(Component.translatable("notification.highlightitem.deactivate"))
+                            .withStyle(ChatFormatting.DARK_GRAY)
+                , player);
+    }
+
+    public void changeColorHovered(LocalPlayer player, NotificationContext notification) {
+        ConfigUtils.changeEnumOption(Configurator.COLOR_HOVERED, ColorHoveredOptions.values(), ((colorHoveredOption) -> HighLightItemCommon.configurator.updateColorHovered(colorHoveredOption, player, notification)));
+    }
+
+    public void updateColorHovered(ColorHoveredOptions hovered, LocalPlayer player, NotificationContext notification) {
+        Configurator.COLOR_HOVERED = hovered;
+        updateConfigAndNotify(Config.COLOR_HOVERED, "" + Configurator.COLOR_HOVERED, notification
+                , Component.translatable("notification.highlightitem.color_hovered").withStyle(ChatFormatting.GRAY).append(Component.translatable(hovered.getKey()))
+                , player);
+    }
+
+    public void changeMode(LocalPlayer player, NotificationContext notification) {
+        ConfigUtils.changeEnumOption(Configurator.COMPARATOR, ItemComparator.Comparators.values(), ((mode) -> HighLightItemCommon.configurator.updateMode(mode, player, notification)));
+    }
+
+    public void updateMode(ItemComparator.Comparators mode, LocalPlayer player, NotificationContext notification) {
+        Configurator.COMPARATOR = mode;
+        updateConfigAndNotify(Config.COMPARATOR, mode.name(), notification
+                , Component.translatable("notification.highlightitem.comparator.change",
+                        Component.translatable(mode.translationKey())
+                                .append(" (")
+                                .append(mode.name())
+                                .append(")"))
+                        .withStyle(ChatFormatting.GRAY), player);
+    }
+
+    public void updateColor(float[] rgba, @Nullable Colors.HighLightColor highLightColor, LocalPlayer player, NotificationContext notification) {
+        Configurator.COLOR = ARGB.color((int) (rgba[3] * 255f), (int) (rgba[0] * 255f), (int) (rgba[1] * 255f), (int) (rgba[2] * 255f));
+        updateConfigAndNotify(Config.COLOR, highLightColor != null ? highLightColor.json().toString() : Colors.customToJson(rgba).toString(), notification
+                , Component.translatable("notification.highlightitem.color").withStyle(ChatFormatting.GRAY), player);
+    }
+
+    public void updateNotificationPreference(NotificationPreference notificationPreference, LocalPlayer localPlayer, NotificationContext notification) {
+        Configurator.NOTIFICATION_PREFERENCE = notificationPreference;
+        updateConfigAndNotify(Config.NOTIFICATION_PREFERENCE, notificationPreference.name(), notification, Component.translatable("notification.highlightitem.notif.preferences").withStyle(ChatFormatting.GRAY), localPlayer);
+    }
+
+    public void updateScreenContext(ScreenContext screenContext, LocalPlayer localPlayer, NotificationContext notification) {
+        Configurator.SCREEN_CONTEXT = screenContext;
+        updateConfigAndNotify(Config.SCREEN_CONTEXT, screenContext.name(), notification, Component.translatable("notification.highlightitem.screen.context").withStyle(ChatFormatting.GRAY), localPlayer);
+    }
+
+    void notify(NotificationContext type, Component text, @Nullable LocalPlayer player) {
+        if (type.equals(NotificationContext.ON_SCREEN) || NOTIFICATION_PREFERENCE.equals(NotificationPreference.TOAST)) {
+            notifyToast(text);
+            return;
+        }
+
+        if (player == null)
+            return;
+
+        if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.CHAT)) {
+            player.sendSystemMessage(text);
+            return;
+        } else if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.OVERLAY)) {
+            player.sendOverlayMessage(text);
+            return;
+        }
+        switch (type) {
+            case SENDING_COMMAND -> player.sendSystemMessage(text);
+            case IN_GAME -> player.sendOverlayMessage(text);
+        }
+    }
+
+    private void notifyToast(Component text) {
+        notifyToast(Component.literal("HighLightItem"), text);
+    }
+
+    private void notifyToast(Component text, Component desc) {
+        if (activeToastNotification == null || activeToastNotification.getWantedVisibility().equals(Toast.Visibility.HIDE)) {
+
+            Minecraft.getInstance().gui.toastManager().addToast(activeToastNotification = new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, text, desc));
+        } else {
+            activeToastNotification.reset(text, desc);
+            // We need to recalculate the width manually following the way it's done in the SystemToast class
+            ((SystemToastAccessor) activeToastNotification).setWidth(Math.max(200, Minecraft.getInstance().font.split(desc, 200)
+                    .stream().mapToInt(value -> Minecraft.getInstance().font.width(desc)).max().orElse(200)) + 30);
+            activeToastNotification.update(Minecraft.getInstance().gui.toastManager(), 5000L); // System toast is 5000L
+        }
+    }
+}
