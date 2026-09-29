@@ -27,20 +27,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(value = "highlightitem", dist = Dist.CLIENT)
 @EventBusSubscriber(value = Dist.CLIENT)
 public class HighLightItem {
 
-    public HighLightItem(IEventBus eventBus) {
+    public HighLightItem(ModContainer container) {
         HighLightItemCommon.init();
+        container.registerExtensionPoint(IConfigScreenFactory.class, ((_, modListScreen) -> new ConfigurationScreen(modListScreen, Minecraft.getInstance().options)));
     }
 
     @SubscribeEvent // on the mod event bus only on the physical client

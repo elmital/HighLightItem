@@ -59,6 +59,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
     Configurator.ScreenContext screenContext;
     final static int FOOTER_HEIGHT = 53;
     int highlightTick = 0;
+    boolean showItems;
 
     public ConfigurationScreen(Options gameOptions) {
         this(null, gameOptions);
@@ -80,6 +81,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
         this.comparator = comparator;
         this.notif = notif;
         this.screenContext = screenContext;
+        this.showItems = Minecraft.getInstance().player != null; // NeoForge allow to use screens outside being in a world, but the ItemStacks needs registries to be setup to be rendered which only happen when a player join a world (solo or multi)
     }
 
     private ConfigurationScreen(@Nullable Screen parent, Options gameOptions, Configurator.ColorHoveredOptions colorHovered, ItemComparator.Comparators comparator, Configurator.NotificationPreference notif, Configurator.ScreenContext screenContext, boolean toggle) {
@@ -218,7 +220,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
     public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         super.extractRenderState(context, mouseX, mouseY, delta);// 133 53
         final int width = 38;
-        final int height = 38;
+        final int height = showItems ? 38 : 20;
 
         final int x = 5;
         final int y = ((this.height - this.layout.getHeaderHeight()) / 2) - (height / 2);
@@ -226,10 +228,15 @@ public class ConfigurationScreen extends OptionsSubScreen {
 
         context.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/gui/container/inventory.png"), x, y, 96F, 16F, width, height, 256, 256);
         context.outline(x - 1, y - 1, width + 1, height + 1, new Color(71, 71, 71).getRGB());
-        context.fakeItem(new ItemStack(Blocks.WOOL.red(), 1), x + 2, y + 2); // 1
-        context.fakeItem(new ItemStack(Blocks.WOOL.green(), 1), x + 2 + itemOffSet, y + 2);
-        context.fakeItem(new ItemStack(Blocks.WOOL.blue(), 1), x + 2, y + 2 + itemOffSet);
-        context.fakeItem(new ItemStack(Blocks.WOOL.lightGray(), 1), x + 2 + itemOffSet, y + 2 + itemOffSet);
+        if (showItems) {
+            context.fakeItem(new ItemStack(Blocks.WOOL.red(), 1), x + 2, y + 2); // 1
+            context.fakeItem(new ItemStack(Blocks.WOOL.green(), 1), x + 2 + itemOffSet, y + 2);
+            context.fakeItem(new ItemStack(Blocks.WOOL.blue(), 1), x + 2, y + 2 + itemOffSet);
+            context.fakeItem(new ItemStack(Blocks.WOOL.lightGray(), 1), x + 2 + itemOffSet, y + 2 + itemOffSet);
+        } else {
+            drawFakeHighLight(context, x + 2, y + 2);
+            return;
+        }
 
         // Highlight
         if (this.highlightTick <= 60) {
