@@ -50,6 +50,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import java.awt.*;
+
 
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin {
@@ -72,7 +74,7 @@ public abstract class AbstractContainerScreenMixin {
 			// Change Screen context value if the Screen context is set to non default value
 			if (!Configurator.SCREEN_CONTEXT.equals(Configurator.ScreenContext.EVERYWHERE) || !Configurator.SCREEN_CONTEXT.equals(Configurator.ScreenContext.EXCLUDE_CREATIVE)) {
 				Configurator.SCREEN_CONTEXT = Configurator.ScreenContext.EXCLUDE_CREATIVE;
-				Minecraft.getInstance().player.sendSystemMessage(Component.literal("The option for Screen limitation have been deactivated due to a compatibility issue! Please, check your logs and report it to the HighLightItem issue tracker.").withColor(TextColor.RED));
+				Minecraft.getInstance().player.sendSystemMessage(Component.literal("The option for Screen limitation have been deactivated due to a compatibility issue! Please, check your logs and report it to the HighLightItem issue tracker.").withColor(Color.RED.getRGB()));
 			}
 
 			this.highlightItemCompatible = false;

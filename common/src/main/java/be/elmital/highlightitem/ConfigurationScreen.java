@@ -229,10 +229,10 @@ public class ConfigurationScreen extends OptionsSubScreen {
         context.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/gui/container/inventory.png"), x, y, 96F, 16F, width, height, 256, 256);
         context.outline(x - 1, y - 1, width + 1, height + 1, new Color(71, 71, 71).getRGB());
         if (showItems) {
-            context.fakeItem(new ItemStack(Blocks.WOOL.red(), 1), x + 2, y + 2); // 1
-            context.fakeItem(new ItemStack(Blocks.WOOL.green(), 1), x + 2 + itemOffSet, y + 2);
-            context.fakeItem(new ItemStack(Blocks.WOOL.blue(), 1), x + 2, y + 2 + itemOffSet);
-            context.fakeItem(new ItemStack(Blocks.WOOL.lightGray(), 1), x + 2 + itemOffSet, y + 2 + itemOffSet);
+            context.fakeItem(new ItemStack(Blocks.RED_WOOL, 1), x + 2, y + 2); // 1
+            context.fakeItem(new ItemStack(Blocks.GREEN_WOOL, 1), x + 2 + itemOffSet, y + 2);
+            context.fakeItem(new ItemStack(Blocks.BLUE_WOOL, 1), x + 2, y + 2 + itemOffSet);
+            context.fakeItem(new ItemStack(Blocks.LIGHT_GRAY_WOOL, 1), x + 2 + itemOffSet, y + 2 + itemOffSet);
         } else {
             drawFakeHighLight(context, x + 2, y + 2);
             return;
