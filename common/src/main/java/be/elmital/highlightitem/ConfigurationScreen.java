@@ -27,7 +27,6 @@ import com.mojang.serialization.Codec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -265,7 +264,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (input.input() == GLFW.GLFW_KEY_ESCAPE && this.shouldCloseOnEsc()) {
+        if (input.isEscape() && this.shouldCloseOnEsc()) {
             this.close(false);
             return true;
         }

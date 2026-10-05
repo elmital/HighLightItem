@@ -29,7 +29,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -67,10 +66,10 @@ public class HighLightItemCommon {
         Constants.LOG.info("Client side initialization start");
         Constants.LOG.info("Generate key binds");
         keyBindCategory = new KeyMapping.Category(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "global"));
-        Configurator.TOGGLE_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, keyBindCategory));
-        Configurator.COLOR_MENU = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, keyBindCategory));
-        Configurator.COLOR_HOVERED_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, keyBindCategory));
-        Configurator.COMPARATOR_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, keyBindCategory));
+        Configurator.TOGGLE_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.toggle", InputConstants.Type.KEYBOARD, InputConstants.KEY_H, keyBindCategory));
+        Configurator.COLOR_MENU = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.color_menu", InputConstants.Type.KEYBOARD, InputConstants.KEY_B, keyBindCategory));
+        Configurator.COLOR_HOVERED_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.color_hover", InputConstants.Type.KEYBOARD, InputConstants.KEY_R, keyBindCategory));
+        Configurator.COMPARATOR_BIND = keyMappings.addAndReturn(new KeyMapping("key.highlightitem.comparator", InputConstants.Type.KEYBOARD, InputConstants.KEY_V, keyBindCategory));
         Constants.LOG.info("Key binds generated!");
         Constants.LOG.info("Registering client scheduler...");
         Services.PLATFORM.getScheduler().register();
