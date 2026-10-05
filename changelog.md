@@ -1,3 +1,7 @@
+## Multi-loader NeoForge support
+
+The mod have been fully restructured to support other mod loaders and in particular NeoForge.
+
 ## BugFixes 
 
 - Update color notif is always sent in chat
