@@ -30,13 +30,13 @@ import be.elmital.highlightitem.ItemComparator;
 import be.elmital.highlightitem.UnsupportedMinecraftClassOperationException;
 import be.elmital.highlightitem.utils.Utils;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.Nullable;
@@ -53,13 +53,13 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin {
-	@Shadow protected abstract void extractSlotHighlightFront(GuiGraphicsExtractor context);
+	@Shadow protected abstract void renderSlotHighlightFront(GuiGraphics context);
 
 	@Shadow @Nullable protected Slot hoveredSlot;
 
 	@Unique private boolean highlightItemCompatible;
 
-	@Inject(method = "<init>(Lnet/minecraft/world/inventory/AbstractContainerMenu;Lnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/network/chat/Component;II)V", at	= @At(value = "TAIL"))
+	@Inject(method = "<init>", at	= @At(value = "TAIL"))
 	private void construct(CallbackInfo ci, @Local(argsOnly = true) AbstractContainerMenu menu) {
 		// Check possible incompatibility
 		try {
@@ -72,7 +72,7 @@ public abstract class AbstractContainerScreenMixin {
 			// Change Screen context value if the Screen context is set to non default value
 			if (!Configurator.SCREEN_CONTEXT.equals(Configurator.ScreenContext.EVERYWHERE) || !Configurator.SCREEN_CONTEXT.equals(Configurator.ScreenContext.EXCLUDE_CREATIVE)) {
 				Configurator.SCREEN_CONTEXT = Configurator.ScreenContext.EXCLUDE_CREATIVE;
-				Minecraft.getInstance().player.sendSystemMessage(Component.literal("The option for Screen limitation have been deactivated due to a compatibility issue! Please, check your logs and report it to the HighLightItem issue tracker.").withColor(TextColor.RED));
+				Minecraft.getInstance().player.displayClientMessage(Component.literal("The option for Screen limitation have been deactivated due to a compatibility issue! Please, check your logs and report it to the HighLightItem issue tracker.").withStyle(ChatFormatting.RED), false);
 			}
 
 			this.highlightItemCompatible = false;
@@ -80,8 +80,8 @@ public abstract class AbstractContainerScreenMixin {
 		}
 	}
 
-	@Inject(method = "extractSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;extractSlot(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/inventory/Slot;II)V", shift = At.Shift.AFTER))
-	private void drawSlot(GuiGraphicsExtractor guiGraphics, int i, int j, CallbackInfo ci, @Local Slot slot) {
+	@Inject(method = "renderSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;II)V", shift = At.Shift.AFTER))
+	private void drawSlot(GuiGraphics guiGraphics, int i, int j, CallbackInfo ci, @Local Slot slot) {
 		if (Configurator.TOGGLE) {
 			if (hoveredSlot == null)
 				return;
@@ -91,10 +91,10 @@ public abstract class AbstractContainerScreenMixin {
 					return;
                 if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED) || (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.COLORED_NOT_EMPTY) && !slot.getItem().isEmpty())) {
 					HighLightItemCommon.toDrawFromMod = slot;
-					extractSlotHighlightFront(guiGraphics);
+					renderSlotHighlightFront(guiGraphics);
 					HighLightItemCommon.toDrawFromMod = null;
 				} else if (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED) || (Configurator.COLOR_HOVERED.equals(Configurator.ColorHoveredOptions.VANILLA_COLORED_NOT_EMPTY) && !slot.getItem().isEmpty())) {
-					extractSlotHighlightFront(guiGraphics);
+					renderSlotHighlightFront(guiGraphics);
 				}
 				return;
 			}
@@ -107,7 +107,7 @@ public abstract class AbstractContainerScreenMixin {
 
 			if (ItemComparator.test(Configurator.COMPARATOR, hoveredSlot.getItem(), slot.getItem())) {
 				HighLightItemCommon.toDrawFromMod = slot;
-				extractSlotHighlightFront(guiGraphics);
+				renderSlotHighlightFront(guiGraphics);
 				HighLightItemCommon.toDrawFromMod = null;
 			}
 		}
@@ -131,12 +131,12 @@ public abstract class AbstractContainerScreenMixin {
 
 			if (Configurator.SCREEN_CONTEXT.inPlayerInventoryPart() && !Utils.isInPlayerInventory(slot, (AbstractContainerScreen<? extends AbstractContainerMenu>) (Object) this))
 				return true;
-		} catch (UnsupportedOperationException _) {}
+		} catch (UnsupportedOperationException unused) {}
 
 		return false;
 	}
 
-	@ModifyArgs(method = "extractSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
+	@ModifyArgs(method = "renderSlotHighlightFront", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
 	private void colorizeIfMod(Args args) {
 		if (HighLightItemCommon.toDrawFromMod != null) {
 			if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger()) {

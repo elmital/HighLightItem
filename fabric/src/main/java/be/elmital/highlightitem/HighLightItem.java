@@ -26,7 +26,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 
@@ -37,7 +37,7 @@ public class HighLightItem implements ClientModInitializer {
         HighLightItemCommon.init();
 
         HighLightCommands.registerArgumentTypes();
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> HighLightCommands.registerClientSide(dispatcher, new HighLightCommands<>() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, unused) -> HighLightCommands.registerClientSide(dispatcher, new HighLightCommands<>() {
             @Override
             void sendClientFeedBack(FabricClientCommandSource clientCommandSource, Component text) {
                 clientCommandSource.sendFeedback(text);
@@ -47,7 +47,7 @@ public class HighLightItem implements ClientModInitializer {
         Constants.LOG.info("Registering key binds and notification tracking");
         KeyMapping.Category.register(HighLightItemCommon.keyBindCategory.id());
         for (KeyMapping keyMapping : HighLightItemCommon.keyMappings) {
-            KeyMappingHelper.registerKeyMapping(keyMapping);
+            KeyBindingHelper.registerKeyBinding(keyMapping);
         }
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

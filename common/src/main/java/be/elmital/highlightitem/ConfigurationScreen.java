@@ -24,6 +24,7 @@ package be.elmital.highlightitem;
 
 
 import com.mojang.serialization.Codec;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,6 @@ import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -175,17 +175,17 @@ public class ConfigurationScreen extends OptionsSubScreen {
                 }, new OptionInstance.IntRange(0, 100), (int) this.alpha, (value) -> this.alpha = (float) value)
         );
 
-        this.list.addSmall(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (_ -> {
+        this.list.addSmall(Button.builder(Component.translatable("options.highlightitem.color.vanilla"), (unused -> {
                     close(false);
                     Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[0] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[1] * 255), (int) (Colors.HighLightColor.DEFAULT.getShaderColor()[2] * 255), Colors.HighLightColor.DEFAULT.getShaderColor()[3] * 100, colorHovered, comparator, notif,  this.screenContext, toggle));
                 })).build()
-                , Button.builder(Component.translatable("options.highlightitem.color.reset"), (_ -> {
+                , Button.builder(Component.translatable("options.highlightitem.color.reset"), (unused -> {
                     close(false);
                     Minecraft.getInstance().setScreenAndShow(new ConfigurationScreen(this.lastScreen, Minecraft.getInstance().options, this.colorHovered, this.comparator, this.notif, this.screenContext, this.toggle));
                 })).build()
         );
         this.list.addBig(new OptionInstance<>("options.highlightitem.color.hovered", value ->  Tooltip.create(Component.translatable(value.getKey()))
-                , (_, value) -> Component.translatable(value.getKey())
+                , (unused, value) -> Component.translatable(value.getKey())
                 , new OptionInstance.Enum<>(Arrays.asList(Configurator.ColorHoveredOptions.values()), Codec.INT.xmap(compId -> Configurator.ColorHoveredOptions.values()[compId], Configurator.ColorHoveredOptions::getId))
                 , this.colorHovered
                 , value -> this.colorHovered = value)
@@ -194,13 +194,13 @@ public class ConfigurationScreen extends OptionsSubScreen {
         // Modes
         this.list.addHeader(Component.translatable("options.highlightitem.logical.application"));
         this.list.addBig(new OptionInstance<>("options.highlightitem.comparator", value -> Tooltip.create(Component.translatable(value.translationKey()))
-                , (_, value) -> Component.translatable(value.getKey())
+                , (unused, value) -> Component.translatable(value.getKey())
                 , new OptionInstance.Enum<>(Arrays.asList(ItemComparator.Comparators.values()), Codec.INT.xmap(compId -> ItemComparator.Comparators.values()[compId], ItemComparator.Comparators::getId))
                 , this.comparator
                 , value -> this.comparator = value)
         );
         this.list.addBig(new OptionInstance<>("options.highlightitem.screen.context", value -> Tooltip.create(Component.translatable(value.getKey()))
-                , (_, value) -> Component.translatable(value.getKey())
+                , (unused, value) -> Component.translatable(value.getKey())
                 , new OptionInstance.Enum<>(Arrays.asList(Configurator.ScreenContext.values()), Codec.INT.xmap(id -> Configurator.ScreenContext.values()[id], Configurator.ScreenContext::getId))
                 , this.screenContext
                 , value -> this.screenContext = value)
@@ -209,7 +209,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
         // Others
         this.list.addHeader(Component.translatable("options.highlightitem.others"));
         this.list.addBig(new OptionInstance<>("options.highlightitem.notif", value -> Tooltip.create(Component.translatable(value.getKey()))
-                , (_, value) -> Component.translatable(value.getKey())
+                , (unused, value) -> Component.translatable(value.getKey())
                 , new OptionInstance.Enum<>(Arrays.asList(Configurator.NotificationPreference.values()), Codec.INT.xmap(id -> Configurator.NotificationPreference.values()[id], Configurator.NotificationPreference::getId))
                 , this.notif
                 , value -> this.notif = value)
@@ -217,8 +217,8 @@ public class ConfigurationScreen extends OptionsSubScreen {
     }
 
 
-    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-        super.extractRenderState(context, mouseX, mouseY, delta);// 133 53
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);// 133 53
         final int width = 38;
         final int height = showItems ? 38 : 20;
 
@@ -227,12 +227,12 @@ public class ConfigurationScreen extends OptionsSubScreen {
         final int itemOffSet = 18;
 
         context.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/gui/container/inventory.png"), x, y, 96F, 16F, width, height, 256, 256);
-        context.outline(x - 1, y - 1, width + 1, height + 1, new Color(71, 71, 71).getRGB());
+        context.renderOutline(x - 1, y - 1, width + 1, height + 1, new Color(71, 71, 71).getRGB());
         if (showItems) {
-            context.fakeItem(new ItemStack(Blocks.WOOL.red(), 1), x + 2, y + 2); // 1
-            context.fakeItem(new ItemStack(Blocks.WOOL.green(), 1), x + 2 + itemOffSet, y + 2);
-            context.fakeItem(new ItemStack(Blocks.WOOL.blue(), 1), x + 2, y + 2 + itemOffSet);
-            context.fakeItem(new ItemStack(Blocks.WOOL.lightGray(), 1), x + 2 + itemOffSet, y + 2 + itemOffSet);
+            context.renderFakeItem(new ItemStack(Blocks.RED_WOOL, 1), x + 2, y + 2); // 1
+            context.renderFakeItem(new ItemStack(Blocks.GREEN_WOOL, 1), x + 2 + itemOffSet, y + 2);
+            context.renderFakeItem(new ItemStack(Blocks.BLUE_WOOL, 1), x + 2, y + 2 + itemOffSet);
+            context.renderFakeItem(new ItemStack(Blocks.LIGHT_GRAY_WOOL, 1), x + 2 + itemOffSet, y + 2 + itemOffSet);
         } else {
             drawFakeHighLight(context, x + 2, y + 2);
             return;
@@ -254,7 +254,7 @@ public class ConfigurationScreen extends OptionsSubScreen {
         this.highlightTick++;
     }
 
-    private void drawFakeHighLight(GuiGraphicsExtractor context, int x, int y) {
+    private void drawFakeHighLight(GuiGraphics context, int x, int y) {
         final int color = getColor(this.red, this.green, this.blue, this.alpha);
         if (useDefaultHighLight(color)) {
             context.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("container/slot_highlight_front"), x - 4, y - 4, 24, 24);

@@ -235,7 +235,7 @@ public class Configurator {
         try {
             updateConfig(config, value);
             notify(notificationContext, onSuccess, player);
-        } catch (IOException _) {
+        } catch (IOException unused) {
             notify(notificationContext, Component.translatable("notification.highlightitem.config.update.fail").withStyle(ChatFormatting.RED), player);
         }
     }
@@ -313,15 +313,15 @@ public class Configurator {
             return;
 
         if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.CHAT)) {
-            player.sendSystemMessage(text);
+            player.displayClientMessage(text, false);
             return;
         } else if (NOTIFICATION_PREFERENCE.equals(NotificationPreference.OVERLAY)) {
-            player.sendOverlayMessage(text);
+            player.displayClientMessage(text, false);
             return;
         }
         switch (type) {
-            case SENDING_COMMAND -> player.sendSystemMessage(text);
-            case IN_GAME -> player.sendOverlayMessage(text);
+            case SENDING_COMMAND -> player.displayClientMessage(text, false);
+            case IN_GAME -> player.displayClientMessage(text, false);
         }
     }
 
@@ -332,13 +332,13 @@ public class Configurator {
     private void notifyToast(Component text, Component desc) {
         if (activeToastNotification == null || activeToastNotification.getWantedVisibility().equals(Toast.Visibility.HIDE)) {
 
-            Minecraft.getInstance().gui.toastManager().addToast(activeToastNotification = new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, text, desc));
+            Minecraft.getInstance().getToastManager().addToast(activeToastNotification = new SystemToast(SystemToast.SystemToastId.PERIODIC_NOTIFICATION, text, desc));
         } else {
             activeToastNotification.reset(text, desc);
             // We need to recalculate the width manually following the way it's done in the SystemToast class
             ((SystemToastAccessor) activeToastNotification).setWidth(Math.max(200, Minecraft.getInstance().font.split(desc, 200)
                     .stream().mapToInt(value -> Minecraft.getInstance().font.width(desc)).max().orElse(200)) + 30);
-            activeToastNotification.update(Minecraft.getInstance().gui.toastManager(), 5000L); // System toast is 5000L
+            activeToastNotification.update(Minecraft.getInstance().getToastManager(), 5000L); // System toast is 5000L
         }
     }
 }

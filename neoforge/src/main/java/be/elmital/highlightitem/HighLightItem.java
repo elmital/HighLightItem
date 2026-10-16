@@ -42,7 +42,7 @@ public class HighLightItem {
 
     public HighLightItem(ModContainer container) {
         HighLightItemCommon.init();
-        container.registerExtensionPoint(IConfigScreenFactory.class, ((_, modListScreen) -> new ConfigurationScreen(modListScreen, Minecraft.getInstance().options)));
+        container.registerExtensionPoint(IConfigScreenFactory.class, ((unused, modListScreen) -> new ConfigurationScreen(modListScreen, Minecraft.getInstance().options)));
     }
 
     @SubscribeEvent // on the mod event bus only on the physical client

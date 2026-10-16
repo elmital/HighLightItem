@@ -26,7 +26,7 @@ import be.elmital.highlightitem.Colors;
 import be.elmital.highlightitem.Configurator;
 import be.elmital.highlightitem.HighLightItemCommon;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,11 +35,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
-@Mixin(GuiGraphicsExtractor.class)
-public abstract class GuiGraphicsExtractorMixin {
+@Mixin(GuiGraphics.class)
+public abstract class GuiGraphicsMixin {
     @Shadow public abstract void fillGradient(int startX, int startY, int endX, int endY, int colorStart, int colorEnd);
 
-    @Inject(method = "blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V"), cancellable = true)
+    @Inject(method = "blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V"), cancellable = true)
     private void modifyMethodIfModCall(RenderPipeline renderPipeline, Identifier sprite, int x, int y, int width, int height, CallbackInfo ci) {
         if (HighLightItemCommon.toDrawFromMod != null) {
             if (Configurator.COLOR == Colors.HighLightColor.DEFAULT.colorInteger())

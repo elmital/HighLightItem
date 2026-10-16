@@ -2,14 +2,14 @@
   "required": true,
   "minVersion": "0.8",
   "package": "be.elmital.highlightitem.mixin",
-  "compatibilityLevel": "JAVA_25",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "HandledScreenAccessor"
   ],
   "client": [
     "AbstractContainerScreenMixin",
     "AbstractMountInventoryScreenAccessor",
-    "GuiGraphicsExtractorMixin",
+    "GuiGraphicsMixin",
     "SystemToastAccessor"
   ],
   "injectors": {
